@@ -38,11 +38,11 @@ $categorie = ['nom' => ''];
                     <?php if (!empty($vehicules)) {
                         foreach ($vehicules as $vehicule) { ?>
                             <tr>
-                                <td><?= htmlspecialchars($vehicule['Id']); ?></td>
+                                <td><?= htmlspecialchars($vehicule['id']); ?></td>
                                 <td><?= htmlspecialchars($vehicule['nom']); ?></td>
                                 <td>
-                                    <a href="#" class="btn btn-sm btn-danger">Supprimer</a>
-                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?= $vehicule['Id']; ?>" data-nom="<?= htmlspecialchars($vehicule['nom']); ?>">Modifier</a>
+                                    <a href="vehicule_delete.php?id=<?= htmlspecialchars($vehicule['id']); ?>" class="btn btn-sm btn-danger">Supprimer</a>
+                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?= $vehicule['id']; ?>" data-nom="<?= htmlspecialchars($vehicule['nom']); ?>">Modifier</a>
                                 </td>
                             </tr>
                         <?php }

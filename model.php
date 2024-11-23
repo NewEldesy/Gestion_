@@ -22,17 +22,7 @@ function getById($table, $idColumn, $id) { // Fonctions pour obtenir un enregist
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute(); return $stmt->fetch(PDO::FETCH_ASSOC);
 }
-
-function updateVehicule($data){
-    $database = dbConnect();
-    
-    $query = "UPDATE vehicule SET nom = :nom WHERE Id = :id";
-    $stmt = $database->prepare($query);
-    $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
-    $stmt->bindValue(':nom', $data['nom'], PDO::PARAM_STR);
-    $stmt->execute();
-}
-
+// Vehicule function
 function addVehicule($data) {
     if (!is_array($data) || !isset($data['nom'])) {
         throw new InvalidArgumentException("Invalid data provided for addVehicule.");
@@ -44,7 +34,17 @@ function addVehicule($data) {
     $stmt->bindValue(':nom', $data['nom'], PDO::PARAM_STR);
     $stmt->execute();
 }
-
+function updateVehicule($data){
+    $database = dbConnect();
+    
+    $query = "UPDATE vehicule SET nom = :nom WHERE id = :id";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
+    $stmt->bindValue(':nom', $data['nom'], PDO::PARAM_STR);
+    $stmt->execute();
+}
+function removeVehicule($id) { deleteRecord('vehicule', 'id', $id); }
+// Vehicule function
 function addProd($data) {
     $database = dbConnect(); $query = ("INSERT INTO produits (nom, prix, id, img) VALUES (:nom, :prix, :categorie_id, :img)");
     $stmt = $database->prepare($query); $stmt->bindValue(":nom", $data['nom']); $stmt->bindValue(":prix", $data['prix']);
