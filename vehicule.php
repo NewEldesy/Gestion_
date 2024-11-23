@@ -22,7 +22,6 @@ $categorie = ['nom' => ''];
             </div>
         </div>
     </div>
-
     <div>
         <h5 class="mb-5">Liste des Véhicules</h5>
         <div class="table-responsive">
@@ -50,7 +49,7 @@ $categorie = ['nom' => ''];
                         <tr>
                             <td colspan="3" class="text-center">
                                 <div class="alert alert-warning" role="alert">
-                                    Pas de véhicule enregistré !
+                                    Pas de véhicules enregistré !
                                 </div>
                             </td>
                         </tr>
