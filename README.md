@@ -27,7 +27,7 @@ Ce projet est une application de gestion. L'application est développée en PHP,
 2. **Accédez au répertoire du projet**
 
     ```bash
-        cd Logiciel_Gestion
+        cd Gestion_
     ```
 
 3. **Configurez la base de données**
@@ -40,4 +40,4 @@ Ce projet est une application de gestion. L'application est développée en PHP,
 
 5. **Accédez à l'application**
 
-    Ouvrez votre navigateur et accédez à `http://localhost/Logiciel_Gestion/index.php`.
+    Ouvrez votre navigateur et accédez à `http://localhost/Gestion_/index.php`.
