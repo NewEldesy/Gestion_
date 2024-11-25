@@ -57,7 +57,7 @@ $categorie = ['nom' => ''];
                         <?php }
                     } else { ?>
                         <tr>
-                            <td colspan="3" class="text-center">
+                            <td colspan="8" class="text-center">
                                 <div class="alert alert-warning" role="alert">
                                     Pas de prestataires enregistré !
                                 </div>

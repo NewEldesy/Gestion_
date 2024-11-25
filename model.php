@@ -97,6 +97,29 @@ function updateProduits($data){
 }
 function removeProduits($id) { deleteRecord('Produits', 'id', $id); }
 // Produits function
+// Stocks function
+function addStock($data) {
+    if (!is_array($data) || !isset($data['id_produit']) || !isset($data['quantite'])) {
+        throw new InvalidArgumentException("Invalid data provided for addStock.");
+    }
+
+    $database = dbConnect();
+    $query = "INSERT INTO Stock (id_produit, quantite) VALUES (:id_produit, :quantite)";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':id_produit', $data['id_produit'], PDO::PARAM_STR); $stmt->bindValue(':quantite', $data['quantite'], PDO::PARAM_STR);
+    $stmt->execute();
+}
+function updateStock($data){
+    $database = dbConnect();
+    
+    $query = "UPDATE Stock SET id_produit=:id_produit, quantite=:quantite WHERE id = :id";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
+    $stmt->bindValue(':id_produit', $data['id_produit'], PDO::PARAM_STR); $stmt->bindValue(':quantite', $data['quantite'], PDO::PARAM_STR);
+    $stmt->execute();
+}
+function removeStock($id) { deleteRecord('Stock', 'id', $id); }
+// Stocks function
 // Fonctions pour lire des enregistrements dans différentes tables
 function getProducts() { 
     $database = dbConnect();
