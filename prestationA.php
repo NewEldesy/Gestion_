@@ -17,7 +17,7 @@ $categorie = ['nom' => ''];
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group mr-2">
                 <a href="#" id="addProd" data-bs-toggle="modal" data-bs-target="#exampleModalAdd" class="btn btn-sm btn-outline-primary">
-                    Nouveau Produit
+                    Autre Prestation
                 </a>
             </div>
         </div>
@@ -31,8 +31,8 @@ $categorie = ['nom' => ''];
                         <th>#</th>
                         <th>Désignation</th>
                         <th>Marque Véhicule</th>
-                        <th>Prix</th>
-                        <th>Description</th>
+                        <th>Quantité</th>
+                        <th>Prix Unitaire</th>
                         <th>Options</th>
                     </tr>
                 </thead>
@@ -43,11 +43,11 @@ $categorie = ['nom' => ''];
                                 <td><?=htmlspecialchars($produit['id']);?></td>
                                 <td><?=htmlspecialchars($produit['designation']);?></td>
                                 <td><?=htmlspecialchars($produit['vehicule']);?></td>
+                                <td><?=htmlspecialchars($produit['quantite']);?></td>
                                 <td><?=htmlspecialchars($produit['pu']);?> FCFA</td>
-                                <td><?=htmlspecialchars($produit['description']);?></td>
                                 <td>
-                                    <a href="produits_delete.php?id=<?=htmlspecialchars($produit['id']);?>" class="btn btn-sm btn-danger">Supprimer</a>
-                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$produit['id'];?>" data-designation="<?=htmlspecialchars($produit['designation']);?>" data-vehicule="<?=htmlspecialchars($produit['vehicule']);?>" data-description="<?=htmlspecialchars($produit['description']);?>" data-prixunitaire="<?=htmlspecialchars($produit['pu']);?>">Modifier</a>
+                                    <a href="vehicule_delete.php?id=<?=htmlspecialchars($produit['id']);?>" class="btn btn-sm btn-danger">Supprimer</a>
+                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$produit['id'];?>" data-designation="<?=htmlspecialchars($produit['designation']);?>" data-vehicule="<?=htmlspecialchars($produit['vehicule']);?>" data-quantite="<?=htmlspecialchars($produit['quantite']);?>" data-prixunitaire="<?=htmlspecialchars($produit['pu']);?>">Modifier</a>
                                 </td>
                             </tr>
                         <?php }
@@ -75,19 +75,22 @@ $categorie = ['nom' => ''];
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="produits_add.php" method="POST">
+                <form action="vehicule_add.php" method="POST">
                     <div class="mb-3">
-                        <label for="designation" class="form-label">Désignation</label>
-                        <input type="text" class="form-control" id="designation" name="designation" required>
+                        <label for="deignation" class="form-label">Désignation</label>
+                        <input type="text" class="form-control" id="deignation" name="deignation" required>
                         <br>
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
                         <input type="text" class="form-control" id="vehicule" name="vehicule" required>
+                        <div class="invalid-feedback">Veuillez renseigner le nom du véhicule.</div>
+                        <br>
+                        <label for="quantite" class="form-label">Quantité Produit</label>
+                        <input type="text" class="form-control" id="quantite" name="quantite" required>
+                        <div class="invalid-feedback">Veuillez renseigner le nom du véhicule.</div>
                         <br>
                         <label for="pu" class="form-label">Prix Unitaire</label>
                         <input type="text" class="form-control" id="pu" name="pu" required>
-                        <br>
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        <div class="invalid-feedback">Veuillez renseigner les champs.</div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Ajouter</button>
@@ -108,7 +111,7 @@ $categorie = ['nom' => ''];
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="produits_update.php" method="POST">
+                <form action="vehicule_update.php" method="POST">
                     <input type="hidden" name="id" id="produit_id">
                     <div class="mb-3">
                         <label for="designation" class="form-label">Designation</label>
@@ -119,12 +122,12 @@ $categorie = ['nom' => ''];
                         <input type="text" class="form-control" id="produit_vehicule" name="vehicule" required>
                     </div>
                     <div class="mb-3">
-                        <label for="prixunitaire" class="form-label">Prix Unitaire</label>
-                        <input type="text" class="form-control" id="produit_prixunitaire" name="prixunitaire" required>
+                        <label for="quantite" class="form-label">Quantité</label>
+                        <input type="number" class="form-control" id="produit_quantite" name="quantite" required>
                     </div>
                     <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="produit_description" name="description" rows="3" required></textarea>
+                        <label for="prixunitaire" class="form-label">Prix Unitaire</label>
+                        <input type="text" class="form-control" id="produit_prixunitaire" name="prixunitaire" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Modifier</button>
                 </form>
@@ -145,14 +148,14 @@ $categorie = ['nom' => ''];
         var id = button.getAttribute('data-id');
         var designation = button.getAttribute('data-designation');
         var vehicule = button.getAttribute('data-vehicule');
+        var quantite = button.getAttribute('data-quantite');
         var prixunitaire = button.getAttribute('data-prixunitaire');
-        var description = button.getAttribute('data-description');
 
         // Remplir les champs cachés et visibles
         document.getElementById('produit_id').value = id;
         document.getElementById('produit_designation').value = designation;
         document.getElementById('produit_vehicule').value = vehicule;
+        document.getElementById('produit_quantite').value = quantite;
         document.getElementById('produit_prixunitaire').value = prixunitaire;
-        document.getElementById('produit_description').value = description;
     });
 </script>

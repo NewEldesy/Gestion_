@@ -69,11 +69,6 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="prestation.php">
-                                    Prestation
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link" href="produits.php">
                                     Produits
                                 </a>
@@ -91,6 +86,26 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="vente.php">
                                     Vente
+                                </a>
+                            </li>
+                        </ul>
+                        <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                            <span>Prestation</span>
+                        </h5>
+                        <ul class="nav flex-column mb-2">
+                            <li class="nav-item">
+                                <a class="nav-link" href="prestationM.php">
+                                    Mécanique
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="prestationT.php">
+                                    Tractage
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="prestationA.php">
+                                    Autre
                                 </a>
                             </li>
                         </ul>

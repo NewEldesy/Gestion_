@@ -23,7 +23,7 @@ $categorie = ['nom' => ''];
         </div>
     </div>
     <div>
-        <h5 class="mb-5">Liste des Véhicules</h5>
+        <h5 class="mb-5">Liste de Véhicules</h5>
         <div class="table-responsive">
             <table id="productTable" class="table table-striped table-sm">
                 <thead>
@@ -60,7 +60,7 @@ $categorie = ['nom' => ''];
     </div>
 </main>
 
-<!-- Modal Ajout Véhicule -->
+<!-- Modal Ajout-->
 <div class="modal fade" id="exampleModalAdd" tabindex="-1" aria-labelledby="AddModal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -83,9 +83,9 @@ $categorie = ['nom' => ''];
         </div>
     </div>
 </div>
-<!-- Modal Ajout Véhicule -->
+<!-- Modal Ajout-->
 
-<!-- Modal Modification Véhicule -->
+<!-- Modal Modification-->
 <div class="modal fade" id="exampleModalMaj" tabindex="-1" aria-labelledby="UpdateModal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -106,7 +106,7 @@ $categorie = ['nom' => ''];
         </div>
     </div>
 </div>
-<!-- Modal Modification Véhicule -->
+<!-- Modal Modification-->
 
 <!-- JavaScript -->
 <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>

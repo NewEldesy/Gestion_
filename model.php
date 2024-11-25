@@ -45,57 +45,66 @@ function updateVehicule($data){
 }
 function removeVehicule($id) { deleteRecord('vehicule', 'id', $id); }
 // Vehicule function
-function addProd($data) {
-    $database = dbConnect(); $query = ("INSERT INTO produits (nom, prix, id, img) VALUES (:nom, :prix, :categorie_id, :img)");
-    $stmt = $database->prepare($query); $stmt->bindValue(":nom", $data['nom']); $stmt->bindValue(":prix", $data['prix']);
-    $stmt->bindValue(":categorie_id", $data['categorie_id']); $stmt->bindValue(":img", $data['img']); $stmt->execute();
-}
-// Fonctions pour lire des enregistrements dans différentes tables
-function getCats() { 
+// Prestataire function
+function addPrestataire($data) {
+    if (!is_array($data) || !isset($data['nom']) || !isset($data['prenom']) || !isset($data['date_naissance']) || !isset($data['description']) || !isset($data['poste'])) {
+        throw new InvalidArgumentException("Invalid data provided for addPrestaire.");
+    }
+
     $database = dbConnect();
-    $stmt = $database->query("SELECT * FROM categories");
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $query = "INSERT INTO prestataire (nom, prenom, date_naissance, telephone, telephone2, poste) VALUES (:nom, :prenom, :date_naissance, :telephone, :telephone2, :poste)";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':nom', $data['nom'], PDO::PARAM_STR); $stmt->bindValue(':prenom', $data['nom'], PDO::PARAM_STR);
+    $stmt->bindValue(':date_naissance', $data['date_naissance'], PDO::PARAM_STR); $stmt->bindValue(':telephone', $data['telephone'], PDO::PARAM_STR);
+    $stmt->bindValue(':telephone2', $data['telephone2'], PDO::PARAM_STR); $stmt->bindValue(':poste', $data['poste'], PDO::PARAM_STR);
+    $stmt->execute();
 }
+function updatePrestataire($data){
+    $database = dbConnect();
+    
+    $query = "UPDATE prestataire SET nom=:nom, prenom=:prenom, date_naissance=:date_naissance, telephone=:telephone, telephone2=:telephone2, poste=:poste WHERE id = :id";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
+    $stmt->bindValue(':nom', $data['nom'], PDO::PARAM_STR); $stmt->bindValue(':prenom', $data['prenom'], PDO::PARAM_STR);
+    $stmt->bindValue(':date_naissance', $data['date_naissance'], PDO::PARAM_STR); $stmt->bindValue(':telephone', $data['telephone'], PDO::PARAM_STR);
+    $stmt->bindValue(':telephone2', $data['telephone2'], PDO::PARAM_STR); $stmt->bindValue(':poste', $data['poste'], PDO::PARAM_STR);
+    $stmt->execute();
+}
+function removePrestataire($id) { deleteRecord('prestataire', 'id', $id); }
+// Prestataire function
+// Produits function
+function addProduit($data) {
+    if (!is_array($data) || !isset($data['designation']) || !isset($data['vehicule']) || !isset($data['pu'])) {
+        throw new InvalidArgumentException("Invalid data provided for addProduit.");
+    }
+
+    $database = dbConnect();
+    $query = "INSERT INTO Produits (designation, vehicule, pu, description) VALUES (:designation, :vehicule, :pu, :description)";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':designation', $data['designation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
+    $stmt->bindValue(':pu', $data['pu'], PDO::PARAM_STR); $stmt->bindValue(':description', $data['description'], PDO::PARAM_STR);
+    $stmt->execute();
+}
+function updateProduits($data){
+    $database = dbConnect();
+    
+    $query = "UPDATE Produits SET designation=:designation, vehicule=:vehicule, pu=:pu, description=:description WHERE id = :id";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
+    $stmt->bindValue(':designation', $data['designation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
+    $stmt->bindValue(':pu', $data['pu'], PDO::PARAM_STR); $stmt->bindValue(':description', $data['description'], PDO::PARAM_STR);
+    $stmt->execute();
+}
+function removeProduits($id) { deleteRecord('Produits', 'id', $id); }
+// Produits function
+// Fonctions pour lire des enregistrements dans différentes tables
 function getProducts() { 
     $database = dbConnect();
     $stmt = $database->query("SELECT * FROM produits");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-function getT() {
-    $database = dbConnect();
-    $stmt = $database->query("SELECT * FROM transactions");
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 // D'autres fonctions spécifiques pour obtenir des enregistrements par ID pour différentes tables
 function getProduitById($id) { return getById('produits', 'id', $id); }
-function getCatById($id) { return getById('categories', 'id', $id); }
-function getTById($id) { return getById('transactions', 'id', $id); }
-// Fonctions pour supprimer des enregistrements de différentes tables
-function removeCat($id) { deleteRecord('categories', 'id', $id); }
-function removeProd($id) { deleteRecord('produits', 'id', $id); }
-// Fonctions pour mettre à jour des enregistrements dans différentes tables
-function updateCat($data) {
-    $database = dbConnect(); $query = ("UPDATE categories SET nom = :nom WHERE id = :id");
-    $stmt = $database->prepare($query); $stmt->bindValue(":nom", $data['nom']);
-    $stmt->bindValue(":id", $data['id'], PDO::PARAM_INT); $stmt->execute();
-}
-function updateProd($data) {
-    $database = dbConnect(); $query = ("UPDATE produits SET nom = :nom, prix=:prix, categorie_id=:categorie_id, img=:img WHERE id = :id");
-    $stmt = $database->prepare($query); $stmt->bindValue(":nom", $data['nom']); $stmt->bindValue(":prix", $data['prix']);
-    $stmt->bindValue(":categorie_id", $data['categorie_id']); $stmt->bindValue(":img", $data['img']);
-    $stmt->bindValue(":id", $data['id'], PDO::PARAM_INT); $stmt->execute();
-}
-function updateT($data) {
-    $database = dbConnect(); $query = ("UPDATE transactions SET statuts = :statuts WHERE id = :id");
-    $stmt = $database->prepare($query); $stmt->bindValue(":statuts", $data['statuts']);
-    $stmt->bindValue(":id", $data['id'], PDO::PARAM_INT); $stmt->execute();
-}
-function getProdByCatId(){
-    $database = dbConnect();
-    $query = $database->prepare('SELECT * FROM produits WHERE categorie_id = :category_id');
-    $query->bindParam(':category_id', $_POST['category_id'], PDO::PARAM_INT);
-    $query->execute(); return $query->fetchAll(PDO::FETCH_ASSOC);
-}
 // Last Transaction Id
 function lastId() {
     $database = dbConnect();
