@@ -61,7 +61,7 @@ $categorie = ['nom' => ''];
                         <?php }
                     } else { ?>
                         <tr>
-                            <td colspan="9" class="text-center">
+                            <td colspan="10" class="text-center">
                                 <div class="alert alert-warning" role="alert">
                                     Pas de produits enregistré !
                                 </div>

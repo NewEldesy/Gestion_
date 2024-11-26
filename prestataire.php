@@ -42,16 +42,16 @@ $categorie = ['nom' => ''];
                     <?php if (!empty($prestataires)) {
                         foreach ($prestataires as $prestataire) { ?>
                             <tr>
-                                <td><?= htmlspecialchars($prestataire['id']); ?></td>
-                                <td><?= htmlspecialchars($prestataire['nom']); ?></td>
-                                <td><?= htmlspecialchars($prestataire['prenom']); ?></td>
-                                <td><?= htmlspecialchars($prestataire['date_naissance']); ?></td>
-                                <td><?= htmlspecialchars($prestataire['telephone']); ?></td>
-                                <td><?= htmlspecialchars($prestataire['telephone2']); ?></td>
-                                <td><?= htmlspecialchars($prestataire['poste']); ?></td>
+                                <td><?=htmlspecialchars($prestataire['id']); ?></td>
+                                <td><?=htmlspecialchars($prestataire['nom']); ?></td>
+                                <td><?=htmlspecialchars($prestataire['prenom']); ?></td>
+                                <td><?=htmlspecialchars($prestataire['date_naissance']); ?></td>
+                                <td><?=htmlspecialchars($prestataire['telephone']); ?></td>
+                                <td><?=$prestataire['telephone2'];?></td>
+                                <td><?=htmlspecialchars($prestataire['poste']); ?></td>
                                 <td>
-                                    <a href="prestataire_delete.php?id=<?= htmlspecialchars($prestataire['id']); ?>" class="btn btn-sm btn-danger">Supprimer</a>
-                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?= $prestataire['id']; ?>" data-nom="<?= htmlspecialchars($prestataire['nom']); ?>" data-prenom="<?= htmlspecialchars($prestataire['prenom']); ?>" data-date_naissance="<?= htmlspecialchars($prestataire['date_naissance']); ?>" data-telephone="<?= htmlspecialchars($prestataire['telephone']); ?>" data-telephone2="<?= htmlspecialchars($prestataire['telephone2']); ?>" data-poste="<?= htmlspecialchars($prestataire['poste']); ?>">Modifier</a>
+                                    <a href="prestataire_delete.php?id=<?=$prestataire['id'];?>" class="btn btn-sm btn-danger">Supprimer</a>
+                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$prestataire['id'];?>" data-nom="<?=$prestataire['nom'];?>" data-prenom="<?=$prestataire['prenom'];?>" data-date_naissance="<?=$prestataire['date_naissance'];?>" data-telephone="<?=$prestataire['telephone'];?>" data-telephone2="<?=$prestataire['telephone2'];?>" data-poste="<?=$prestataire['poste'];?>">Modifier</a>
                                 </td>
                             </tr>
                         <?php }

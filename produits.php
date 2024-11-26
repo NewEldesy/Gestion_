@@ -46,8 +46,8 @@ $categorie = ['nom' => ''];
                                 <td><?=htmlspecialchars($produit['pu']);?> FCFA</td>
                                 <td><?=htmlspecialchars($produit['description']);?></td>
                                 <td>
-                                    <a href="produits_delete.php?id=<?=htmlspecialchars($produit['id']);?>" class="btn btn-sm btn-danger">Supprimer</a>
-                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$produit['id'];?>" data-designation="<?=htmlspecialchars($produit['designation']);?>" data-vehicule="<?=htmlspecialchars($produit['vehicule']);?>" data-description="<?=htmlspecialchars($produit['description']);?>" data-prixunitaire="<?=htmlspecialchars($produit['pu']);?>">Modifier</a>
+                                    <a href="produits_delete.php?id=<?=$produit['id'];?>" class="btn btn-sm btn-danger">Supprimer</a>
+                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$produit['id'];?>" data-designation="<?=$produit['designation'];?>" data-vehicule="<?=$produit['vehicule'];?>" data-description="<?=$produit['description'];?>" data-prixunitaire="<?=$produit['pu'];?>">Modifier</a>
                                 </td>
                             </tr>
                         <?php }

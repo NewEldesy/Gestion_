@@ -40,8 +40,8 @@ $categorie = ['nom' => ''];
                                 <td><?= htmlspecialchars($vehicule['id']); ?></td>
                                 <td><?= htmlspecialchars($vehicule['nom']); ?></td>
                                 <td>
-                                    <a href="vehicule_delete.php?id=<?= htmlspecialchars($vehicule['id']); ?>" class="btn btn-sm btn-danger">Supprimer</a>
-                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?= $vehicule['id']; ?>" data-nom="<?= htmlspecialchars($vehicule['nom']); ?>">Modifier</a>
+                                    <a href="vehicule_delete.php?id=<?=$vehicule['id'];?>" class="btn btn-sm btn-danger">Supprimer</a>
+                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$vehicule['id'];?>" data-nom="<?=$vehicule['nom'];?>">Modifier</a>
                                 </td>
                             </tr>
                         <?php }

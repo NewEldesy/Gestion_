@@ -47,7 +47,7 @@ function removeVehicule($id) { deleteRecord('vehicule', 'id', $id); }
 // Vehicule function
 // Prestataire function
 function addPrestataire($data) {
-    if (!is_array($data) || !isset($data['nom']) || !isset($data['prenom']) || !isset($data['date_naissance']) || !isset($data['description']) || !isset($data['poste'])) {
+    if (!is_array($data) || !isset($data['nom']) || !isset($data['prenom']) || !isset($data['date_naissance']) || !isset($data['telephone']) || !isset($data['poste'])) {
         throw new InvalidArgumentException("Invalid data provided for addPrestaire.");
     }
 
