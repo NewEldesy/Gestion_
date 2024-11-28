@@ -16,7 +16,7 @@ $categorie = ['nom' => ''];
         <h3 class="h3">Gestion Prestations Tractage</h3>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group mr-2">
-                <a href="#" id="addProd" data-bs-toggle="modal" data-bs-target="#exampleModalAdd" class="btn btn-sm btn-outline-primary">
+                <a href="#" id="addProd" data-bs-toggle="modal" data-bs-target="#exampleModalAdd" class="btn btn-primary">
                     Nouvelle Prestation Tractage
                 </a>
             </div>
@@ -54,8 +54,8 @@ $categorie = ['nom' => ''];
                                 <td><?=htmlspecialchars($tractage['prestataire']);?></td>
                                 <td><?=htmlspecialchars($tractage['observation']);?></td>
                                 <td>
-                                    <a href="vehicule_delete.php?id=<?=htmlspecialchars($tractage['id']);?>" class="btn btn-sm btn-danger">Supprimer</a>
-                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$tractage['id'];?>" data-num_immatriculation="<?=htmlspecialchars($tractage['num_immatriculation']);?>" data-vehicule="<?=htmlspecialchars($tractage['vehicule']);?>" data-proprietaire_contact="<?=htmlspecialchars($tractage['proprietaire_contact']);?>" data-lieu_kilometrage="<?=htmlspecialchars($tractage['lieu_kilometrage']);?>" data-date_entree="<?=htmlspecialchars($tractage['date_entree']);?>" data-montant="<?=htmlspecialchars($tractage['montant']);?>"  data-prestataire="<?=htmlspecialchars($tractage['prestataire']);?>"  data-observation="<?=htmlspecialchars($tractage['observation']);?>">Modifier</a>
+                                    <a href="vehicule_delete.php?id=<?=$tractage['id'];?>" class="btn btn-sm btn-danger">Supprimer</a>
+                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$tractage['id'];?>" data-num_immatriculation="<?=$tractage['num_immatriculation'];?>" data-vehicule="<?=$tractage['vehicule'];?>" data-proprietaire_contact="<?=$tractage['proprietaire_contact'];?>" data-lieu_kilometrage="<?=$tractage['lieu_kilometrage'];?>" data-date_entree="<?=$tractage['date_entree'];?>" data-montant="<?=$tractage['montant'];?>"  data-prestataire="<?=$tractage['prestataire'];?>"  data-observation="<?=$tractage['observation'];?>">Modifier</a>
                                 </td>
                             </tr>
                         <?php }
@@ -63,7 +63,7 @@ $categorie = ['nom' => ''];
                         <tr>
                             <td colspan="10" class="text-center">
                                 <div class="alert alert-warning" role="alert">
-                                    Pas de produits enregistré !
+                                    Pas de Prestation de Tractage enregistré !
                                 </div>
                             </td>
                         </tr>

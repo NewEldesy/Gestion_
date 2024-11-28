@@ -13,7 +13,7 @@ $stocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <h3 class="h3">Gestion Stocks</h3>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group mr-2">
-                <a href="#" id="addProd" data-bs-toggle="modal" data-bs-target="#exampleModalAdd" class="btn btn-sm btn-outline-primary">
+                <a href="#" id="addProd" data-bs-toggle="modal" data-bs-target="#exampleModalAdd" class="btn btn-primary">
                     Gérer Stock
                 </a>
             </div>
@@ -48,7 +48,7 @@ $stocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <tr>
                             <td colspan="4" class="text-center">
                                 <div class="alert alert-warning" role="alert">
-                                    Pas de véhicules enregistré !
+                                    Pas de Produits en Stocks !!!
                                 </div>
                             </td>
                         </tr>

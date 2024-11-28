@@ -16,7 +16,7 @@ $categorie = ['nom' => ''];
         <h3 class="h3">Gestion Produits</h3>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group mr-2">
-                <a href="#" id="addProd" data-bs-toggle="modal" data-bs-target="#exampleModalAdd" class="btn btn-sm btn-outline-primary">
+                <a href="#" id="addProd" data-bs-toggle="modal" data-bs-target="#exampleModalAdd" class="btn btn-primary">
                     Autre Prestation
                 </a>
             </div>
@@ -55,7 +55,7 @@ $categorie = ['nom' => ''];
                         <tr>
                             <td colspan="9" class="text-center">
                                 <div class="alert alert-warning" role="alert">
-                                    Pas de produits enregistré !
+                                    Pas de prestations enregistré !
                                 </div>
                             </td>
                         </tr>
@@ -71,7 +71,7 @@ $categorie = ['nom' => ''];
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="AddModal">Enregistrement Produit</h5>
+                <h5 class="modal-title" id="AddModal">Enregistrement Prestation</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -107,7 +107,7 @@ $categorie = ['nom' => ''];
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="UpdateModal">Modifier Véhicule</h5>
+                <h5 class="modal-title" id="UpdateModal">Modifier Prestation</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

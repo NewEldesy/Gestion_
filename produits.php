@@ -16,7 +16,7 @@ $categorie = ['nom' => ''];
         <h3 class="h3">Gestion Produits</h3>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group mr-2">
-                <a href="#" id="addProd" data-bs-toggle="modal" data-bs-target="#exampleModalAdd" class="btn btn-sm btn-outline-primary">
+                <a href="#" id="addProd" data-bs-toggle="modal" data-bs-target="#exampleModalAdd" class="btn btn-primary">
                     Nouveau Produit
                 </a>
             </div>

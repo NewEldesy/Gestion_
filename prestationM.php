@@ -4,11 +4,8 @@ include_once('model.php');
 $database = dbConnect();
 
 // Récupérer tous les véhicules depuis la base de données
-$stmt = $database->query("SELECT * FROM produits");
-$Produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Initialisation des variables pour le modal de modification
-$categorie = ['nom' => ''];
+$stmt = $database->query("SELECT * FROM Mecaniques");
+$Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
@@ -16,7 +13,7 @@ $categorie = ['nom' => ''];
         <h3 class="h3">Gestion Prestation Mécanique</h3>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group mr-2">
-                <a href="#" id="addProd" data-bs-toggle="modal" data-bs-target="#exampleModalAdd" class="btn btn-sm btn-outline-primary">
+                <a href="#" id="addProd" data-bs-toggle="modal" data-bs-target="#exampleModalAdd" class="btn btn-primary">
                     Nouvelle Prestation Mécanique
                 </a>
             </div>
@@ -29,25 +26,31 @@ $categorie = ['nom' => ''];
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Désignation</th>
+                        <th>N° Immatriculation</th>
                         <th>Marque Véhicule</th>
-                        <th>Quantité</th>
-                        <th>Prix Unitaire</th>
+                        <th>Contact Propriétaire</th>
+                        <th>Date Entrée</th>
+                        <th>Date Sortie</th>
+                        <th>Prestataire</th>
+                        <th>Observation</th>
                         <th>Options</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (!empty($Produits)) {
-                        foreach ($Produits as $produit) { ?>
+                    <?php if (!empty($Mecaniques)) {
+                        foreach ($Mecaniques as $mecanique) { ?>
                             <tr>
-                                <td><?=htmlspecialchars($produit['id']);?></td>
-                                <td><?=htmlspecialchars($produit['designation']);?></td>
-                                <td><?=htmlspecialchars($produit['vehicule']);?></td>
-                                <td><?=htmlspecialchars($produit['quantite']);?></td>
-                                <td><?=htmlspecialchars($produit['pu']);?> FCFA</td>
+                                <td><?=htmlspecialchars($mecanique['id']);?></td>
+                                <td><?=htmlspecialchars($mecanique['num_immatriculation']);?></td>
+                                <td><?=htmlspecialchars($mecanique['vehicule']);?></td>
+                                <td><?=htmlspecialchars($mecanique['proprietaire_contact']);?></td>
+                                <td><?=htmlspecialchars($mecanique['date_entree']);?></td>
+                                <td><?=htmlspecialchars($mecanique['date_sortie']);?></td>
+                                <td><?=htmlspecialchars($mecanique['prestataire']);?></td>
+                                <td><?=htmlspecialchars($mecanique['observation']);?></td>
                                 <td>
-                                    <a href="vehicule_delete.php?id=<?=htmlspecialchars($produit['id']);?>" class="btn btn-sm btn-danger">Supprimer</a>
-                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$produit['id'];?>" data-designation="<?=htmlspecialchars($produit['designation']);?>" data-vehicule="<?=htmlspecialchars($produit['vehicule']);?>" data-quantite="<?=htmlspecialchars($produit['quantite']);?>" data-prixunitaire="<?=htmlspecialchars($produit['pu']);?>">Modifier</a>
+                                    <a href="vehicule_delete.php?id=<?=$mecanique['id'];?>" class="btn btn-sm btn-danger">Supprimer</a>
+                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$mecanique['id'];?>" data-num_immatriculation="<?=$mecanique['num_immatriculation'];?>" data-vehicule="<?=$mecanique['vehicule'];?>" data-proprietaire_contact="<?=$mecanique['proprietaire_contact'];?>" data-date_entree="<?=$mecanique['date_entree'];?>" data-date_sortie="<?=$mecanique['date_sortie'];?>" data-prestataire="<?=$mecanique['prestataire'];?>" data-observation="<?=$mecanique['observation'];?>">Modifier</a>
                                 </td>
                             </tr>
                         <?php }
@@ -55,7 +58,7 @@ $categorie = ['nom' => ''];
                         <tr>
                             <td colspan="9" class="text-center">
                                 <div class="alert alert-warning" role="alert">
-                                    Pas de produits enregistré !
+                                    Pas de Prestations Mécaniques enregistré !
                                 </div>
                             </td>
                         </tr>
@@ -71,26 +74,32 @@ $categorie = ['nom' => ''];
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="AddModal">Enregistrement Produit</h5>
+                <h5 class="modal-title" id="AddModal">Enregistrement Prestation Mécanique</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="vehicule_add.php" method="POST">
+                <form action="PrestationM_add.php" method="POST">
                     <div class="mb-3">
-                        <label for="deignation" class="form-label">Désignation</label>
-                        <input type="text" class="form-control" id="deignation" name="deignation" required>
+                        <label for="immatriculation" class="form-label">N° Immatriculation</label>
+                        <input type="text" class="form-control" id="immatriculation" name="immatriculation" required>
                         <br>
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
                         <input type="text" class="form-control" id="vehicule" name="vehicule" required>
-                        <div class="invalid-feedback">Veuillez renseigner le nom du véhicule.</div>
                         <br>
-                        <label for="quantite" class="form-label">Quantité Produit</label>
-                        <input type="text" class="form-control" id="quantite" name="quantite" required>
-                        <div class="invalid-feedback">Veuillez renseigner le nom du véhicule.</div>
+                        <label for="proprietaire_contact" class="form-label">Contact Propriétaire</label>
+                        <input type="text" class="form-control" id="proprietaire_contact" name="proprietaire_contact" required>
                         <br>
-                        <label for="pu" class="form-label">Prix Unitaire</label>
-                        <input type="text" class="form-control" id="pu" name="pu" required>
-                        <div class="invalid-feedback">Veuillez renseigner les champs.</div>
+                        <label for="date_entree" class="form-label">Date Entrée</label>
+                        <input type="date" class="form-control" id="date_entree" name="date_entree" required>
+                        <br>
+                        <label for="date_sortie" class="form-label">Date Sortie</label>
+                        <input type="date" class="form-control" id="date_sortie" name="date_sortie" required>
+                        <br>
+                        <label for="prestataire" class="form-label">Prestataire</label>
+                        <input type="text" class="form-control" id="prestataire" name="prestataire" required>
+                        <br>
+                        <label for="observation" class="form-label">Observation</label>
+                        <input type="text" class="form-control" id="observation" name="observation" required>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Ajouter</button>
@@ -107,27 +116,39 @@ $categorie = ['nom' => ''];
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="UpdateModal">Modifier Véhicule</h5>
+                <h5 class="modal-title" id="UpdateModal">Modifier Prestation Mécanique</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="vehicule_update.php" method="POST">
-                    <input type="hidden" name="id" id="produit_id">
+                <form action="prestationM_update.php" method="POST">
+                    <input type="hidden" name="id" id="PM_id">
                     <div class="mb-3">
-                        <label for="designation" class="form-label">Designation</label>
-                        <input type="text" class="form-control" id="produit_designation" name="designation" required>
+                        <label for="immatriculation" class="form-label">N° Immatriculation</label>
+                        <input type="text" class="form-control" id="PM_num_immatriculation" name="immatriculation" required>
                     </div>
                     <div class="mb-3">
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <input type="text" class="form-control" id="produit_vehicule" name="vehicule" required>
+                        <input type="text" class="form-control" id="PM_vehicule" name="vehicule" required>
                     </div>
                     <div class="mb-3">
-                        <label for="quantite" class="form-label">Quantité</label>
-                        <input type="number" class="form-control" id="produit_quantite" name="quantite" required>
+                        <label for="proprietaire_contact" class="form-label">Contact Propriétaire</label>
+                        <input type="text" class="form-control" id="PM_proprietaire_contact" name="proprietaire_contact" required>
                     </div>
                     <div class="mb-3">
-                        <label for="prixunitaire" class="form-label">Prix Unitaire</label>
-                        <input type="text" class="form-control" id="produit_prixunitaire" name="prixunitaire" required>
+                        <label for="date_entree" class="form-label">Date Entrée</label>
+                        <input type="date" class="form-control" id="PM_date_entree" name="date_entree" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date_sortie" class="form-label">Date Sortie</label>
+                        <input type="date" class="form-control" id="PM_date_sortie" name="date_sortie" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="prestataire" class="form-label">Prestataire</label>
+                        <input type="text" class="form-control" id="PM_prestataire" name="prestataire" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observation" class="form-label">Observation</label>
+                        <input type="text" class="form-control" id="PM_observation" name="observation" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Modifier</button>
                 </form>
@@ -146,16 +167,22 @@ $categorie = ['nom' => ''];
     exampleModalMaj.addEventListener('show.bs.modal', function (event) {
         var button = event.relatedTarget;
         var id = button.getAttribute('data-id');
-        var designation = button.getAttribute('data-designation');
+        var num_immatriculation = button.getAttribute('data-num_immatriculation');
         var vehicule = button.getAttribute('data-vehicule');
-        var quantite = button.getAttribute('data-quantite');
-        var prixunitaire = button.getAttribute('data-prixunitaire');
+        var proprietaire_contact = button.getAttribute('data-proprietaire_contact');
+        var date_entree = button.getAttribute('data-date_entree');
+        var date_sortie = button.getAttribute('data-date_sortie');
+        var prestataire = button.getAttribute('data-prestataire');
+        var observation = button.getAttribute('data-observation');
 
         // Remplir les champs cachés et visibles
-        document.getElementById('produit_id').value = id;
-        document.getElementById('produit_designation').value = designation;
-        document.getElementById('produit_vehicule').value = vehicule;
-        document.getElementById('produit_quantite').value = quantite;
-        document.getElementById('produit_prixunitaire').value = prixunitaire;
+        document.getElementById('PM_id').value = id;
+        document.getElementById('PM_num_immatriculation').value = num_immatriculation;
+        document.getElementById('PM_vehicule').value = vehicule;
+        document.getElementById('PM_proprietaire_contact').value = proprietaire_contact;
+        document.getElementById('PM_date_entree').value = date_entree;
+        document.getElementById('PM_date_sortie').value = date_sortie;
+        document.getElementById('PM_prestataire').value = prestataire;
+        document.getElementById('PM_observation').value = observation;
     });
 </script>
