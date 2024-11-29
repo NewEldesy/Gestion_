@@ -26,12 +26,12 @@
                                 <div id="quantiteFeedback" class="invalid-feedback"></div>
                                 <div class="mt-2">
                                     <input type="number" id="quantite" class="form-control" placeholder="Quantité" min="1">
-                                    <button class="btn btn-primary mt-2" id="ajouterProduit">Ajouter</button>
+                                    <button class="btn btn-success mt-2" id="ajouterProduit">Ajouter</button>
                                 </div>
                             </div>
                             <!-- Panier -->
                             <div class="col-md-6">
-                                <h4>Facture N° : <span id="lastId"></span></h4>
+                                <h4>Facture N° : <span id="venteId"></span></h4>
                                 <table class="table table-bordered" id="panierTable">
                                     <thead>
                                         <tr>
@@ -50,7 +50,10 @@
                                     <input type="number" class="form-control" id="remise" min="5" placeholder="Exemple : 5 ou 10%">
                                 </div>
                                 <h5>Total : <span id="total">0.00</span> FCFA</h5>
-                                <button class="btn btn-success" id="imprimer">Imprimer la Facture</button>
+                                <div class="col d-flex justify-content-center">
+                                    <input type="button" class="btn btn-danger" id="imprimer" value="Imprimer Facture">
+                                    <div id="loading" style="display: none;">Traitement en cours...</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -64,134 +67,26 @@
         <script src="assets/dataTables/js/dataTables.js"></script>
         <script src="assets/jquery.min.js"></script>
 
-        <!-- <script>
-            $(document).ready(function () {
-                let panier = [];
-                let total = 0;
-
-                // Charger les produits depuis la base de données (AJAX)
-                function chargerProduits() {
-                    $.ajax({
-                        url: 'getProduits.php', // Endpoint pour récupérer les produits
-                        method: 'GET',
-                        dataType: 'json',
-                        success: function (data) {
-                            $('#produit').empty().append('<option value="">Sélectionnez un produit</option>');
-                            data.forEach(function (produit) {
-                                // Ajout des données dans les options avec des attributs pour prix et quantité
-                                $('#produit').append(
-                                    `<option value="${produit.id}" data-prix="${produit.pu}" data-quantite="${produit.quantite}">
-                                        ${produit.designation}
-                                    </option>`
-                                );
-                            });
-                        }
-                    });
-                }
-                chargerProduits();
-
-                // Événement pour détecter le changement de produit sélectionné
-                $('#produit').on('change', function () {
-                    const quantite = $('#produit option:selected').data('quantite'); // Récupérer la quantité disponible
-                    if (quantite !== undefined) {
-                        $('#quantite_produit').val(quantite); // Mettre à jour le champ de quantité disponible
-                    } else {
-                        $('#quantite_produit').val(''); // Réinitialiser si aucun produit n'est sélectionné
-                    }
-                });
-
-                // Ajouter un produit au panier
-                $('#ajouterProduit').click(function () {
-                    const produitId = $('#produit').val();
-                    const produitNom = $('#produit option:selected').text();
-                    const produitPrix = parseFloat($('#produit option:selected').data('prix'));
-                    const quantite = parseInt($('#quantite').val());
-
-                    // Vérifier les valeurs
-                    if (!produitId) {
-                        alert('Veuillez sélectionner un produit.');
-                        return;
-                    }
-                    if (isNaN(quantite) || quantite <= 0) {
-                        alert('Veuillez renseigner une quantité valide.');
-                        return;
-                    }
-
-                    // Vérifier si le produit existe déjà dans le panier
-                    const produitExistant = panier.find(item => item.produitId === produitId);
-                    if (produitExistant) {
-                        // Incrémenter la quantité et recalculer le sous-total
-                        produitExistant.quantite = quantite;
-                        produitExistant.sousTotal = produitExistant.quantite * produitPrix;
-
-                        // Mettre à jour la ligne correspondante dans le tableau
-                        const row = $(`#panierTable tr[data-id="${produitId}"]`);
-                        row.find('td:nth-child(3)').text(produitExistant.quantite); // Mettre à jour la quantité
-                        row.find('td:nth-child(4)').text(produitExistant.sousTotal.toFixed(2) + " FCFA"); // Mettre à jour le sous-total
-                    } else {
-                        // Ajouter un nouveau produit au panier
-                        const sousTotal = produitPrix * quantite;
-                        panier.push({ produitId, produitNom, produitPrix, quantite, sousTotal });
-
-                        // Ajouter au tableau
-                        $('#panierTable tbody').append(`
-                            <tr data-id="${produitId}">
-                                <td>${produitNom}</td>
-                                <td>${produitPrix.toFixed(2)} FCFA</td>
-                                <td>${quantite}</td>
-                                <td>${sousTotal.toFixed(2)} FCFA</td>
-                                <td><button class="btn btn-danger btn-sm supprimer">Supprimer</button></td>
-                            </tr>
-                        `);
-                    }
-
-                    // Mettre à jour le total
-                    total = panier.reduce((acc, item) => acc + item.sousTotal, 0);
-                    $('#total').text(total.toFixed(2));
-
-                    $('#quantite').val(''); // Réinitialiser la quantité
-                });
-
-                // Supprimer un produit du panier
-                $('#panierTable').on('click', '.supprimer', function () {
-                    const tr = $(this).closest('tr');
-                    const produitId = tr.data('id');
-
-                    // Mettre à jour le panier et recalculer le total
-                    panier = panier.filter(item => item.produitId !== produitId);
-                    total = panier.reduce((acc, item) => acc + item.sousTotal, 0);
-
-                    // Supprimer la ligne correspondante
-                    tr.remove();
-                    $('#total').text(total.toFixed(2));
-                });
-
-                // Imprimer le reçu
-                $('#imprimer').click(function () {
-                    const venteData = { panier, total };
-
-                    // Envoyer la vente au backend pour enregistrement et impression
-                    $.ajax({
-                        url: 'saveVente.php',
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(venteData),
-                        success: function (response) {
-                            alert('Vente enregistrée avec succès !');
-                            // Réinitialiser le panier
-                            panier = [];
-                            total = 0;
-                            $('#panierTable tbody').empty();
-                            $('#total').text('0.00');
-                        }
-                    });
-                });
-            });
-        </script> -->
         <script>
             $(document).ready(function () {
                 let panier = [];
                 let total = 0;
+
+                // Charger l'ID de la dernière vente
+                function chargerDernierIdVente() {
+                    $.ajax({
+                        url: 'getLastVenteId.php', // Endpoint pour récupérer le dernier ID de vente
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (response) {
+                            $('#venteId').text(response.lastId); // Afficher le prochain ID
+                        },
+                        error: function () {
+                            console.error('Impossible de charger le dernier ID de vente.');
+                        }
+                    });
+                }
+                chargerDernierIdVente();
 
                 // Charger les produits depuis la base de données (AJAX)
                 function chargerProduits() {
@@ -249,7 +144,6 @@
                     const quantiteDispo = parseInt($('#quantite_produit').val());
                     const quantite = parseInt($('#quantite').val());
 
-                    // Vérifier les valeurs
                     if (!produitId) {
                         alert('Veuillez sélectionner un produit.');
                         return;
@@ -263,23 +157,18 @@
                         return;
                     }
 
-                    // Vérifier si le produit existe déjà dans le panier
                     const produitExistant = panier.find(item => item.produitId === produitId);
                     if (produitExistant) {
-                        // Incrémenter la quantité et recalculer le sous-total
                         produitExistant.quantite = quantite;
                         produitExistant.sousTotal = produitExistant.quantite * produitPrix;
 
-                        // Mettre à jour la ligne correspondante dans le tableau
                         const row = $(`#panierTable tr[data-id="${produitId}"]`);
-                        row.find('td:nth-child(3)').text(produitExistant.quantite); // Mettre à jour la quantité
-                        row.find('td:nth-child(4)').text(produitExistant.sousTotal.toFixed(2) + " FCFA"); // Mettre à jour le sous-total
+                        row.find('td:nth-child(3)').text(produitExistant.quantite);
+                        row.find('td:nth-child(4)').text(produitExistant.sousTotal.toFixed(2) + " FCFA");
                     } else {
-                        // Ajouter un nouveau produit au panier
                         const sousTotal = produitPrix * quantite;
                         panier.push({ produitId, produitNom, produitPrix, quantite, sousTotal });
 
-                        // Ajouter au tableau
                         $('#panierTable tbody').append(`
                             <tr data-id="${produitId}">
                                 <td>${produitNom}</td>
@@ -291,11 +180,10 @@
                         `);
                     }
 
-                    // Mettre à jour le total
                     total = panier.reduce((acc, item) => acc + item.sousTotal, 0);
                     $('#total').text(total.toFixed(2));
 
-                    $('#quantite').val(''); // Réinitialiser la quantité
+                    $('#quantite').val('');
                 });
 
                 // Supprimer un produit du panier
@@ -303,11 +191,9 @@
                     const tr = $(this).closest('tr');
                     const produitId = tr.data('id');
 
-                    // Mettre à jour le panier et recalculer le total
                     panier = panier.filter(item => item.produitId !== produitId);
                     total = panier.reduce((acc, item) => acc + item.sousTotal, 0);
 
-                    // Supprimer la ligne correspondante
                     tr.remove();
                     $('#total').text(total.toFixed(2));
                 });
@@ -316,7 +202,6 @@
                 $('#imprimer').click(function () {
                     const venteData = { panier, total };
 
-                    // Envoyer la vente au backend pour enregistrement et impression
                     $.ajax({
                         url: 'saveVente.php',
                         method: 'POST',
@@ -324,11 +209,13 @@
                         data: JSON.stringify(venteData),
                         success: function (response) {
                             alert('Vente enregistrée avec succès !');
-                            // Réinitialiser le panier
                             panier = [];
                             total = 0;
                             $('#panierTable tbody').empty();
                             $('#total').text('0.00');
+
+                            // Recharger le dernier ID de vente
+                            chargerDernierIdVente();
                         }
                     });
                 });

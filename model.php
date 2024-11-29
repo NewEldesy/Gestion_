@@ -155,3 +155,15 @@ function getTransactionTotals() {
     ];
     return $totals;
 }
+function getIdVente() {
+    $database = dbConnect();
+    $query = "SELECT MAX(id) AS lastId FROM Vente"; // Remplacez "ventes" par le nom exact de votre table
+    $stmt = $database->prepare($query); $stmt->execute();
+    $data = $stmt->fetch(PDO::FETCH_ASSOC); return $data['lastId'];
+}
+function getVehicule() {
+    $database = dbConnect();
+    $query = "SELECT id, nom FROM Vehicule";
+    $stmt = $database->prepare($query); $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}

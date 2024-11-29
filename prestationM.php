@@ -84,7 +84,15 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <input type="text" class="form-control" id="immatriculation" name="immatriculation" required>
                         <br>
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <input type="text" class="form-control" id="vehicule" name="vehicule" required>
+                        <select id="vehicule" class="form-select">
+                            <option value="">Sélectionnez un Vehicule</option>
+                            <?php 
+                                $vehicules = getVehicule();
+                                foreach($vehicules as $vehicule) {
+                            ?>
+                            <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?></option>
+                            <?php } ?>
+                        </select>
                         <br>
                         <label for="proprietaire_contact" class="form-label">Contact Propriétaire</label>
                         <input type="text" class="form-control" id="proprietaire_contact" name="proprietaire_contact" required>
@@ -128,7 +136,15 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <div class="mb-3">
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <input type="text" class="form-control" id="PM_vehicule" name="vehicule" required>
+                        <select id="PM_vehicule" class="form-select">
+                            <option value="">Sélectionnez un Vehicule</option>
+                            <?php 
+                                $vehicules = getVehicule();
+                                foreach($vehicules as $vehicule) {
+                            ?>
+                            <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?></option>
+                            <?php } ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="proprietaire_contact" class="form-label">Contact Propriétaire</label>

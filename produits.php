@@ -81,7 +81,15 @@ $categorie = ['nom' => ''];
                         <input type="text" class="form-control" id="designation" name="designation" required>
                         <br>
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <input type="text" class="form-control" id="vehicule" name="vehicule" required>
+                        <select id="vehicule" class="form-select">
+                            <option value="">Sélectionnez un Vehicule</option>
+                            <?php 
+                                $vehicules = getVehicule();
+                                foreach($vehicules as $vehicule) {
+                            ?>
+                            <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?></option>
+                            <?php } ?>
+                        </select>
                         <br>
                         <label for="pu" class="form-label">Prix Unitaire</label>
                         <input type="text" class="form-control" id="pu" name="pu" required>
@@ -116,7 +124,15 @@ $categorie = ['nom' => ''];
                     </div>
                     <div class="mb-3">
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <input type="text" class="form-control" id="produit_vehicule" name="vehicule" required>
+                        <select id="vehicule" class="form-select">
+                            <option value="">Sélectionnez un Vehicule</option>
+                            <?php 
+                                $vehicules = getVehicule();
+                                foreach($vehicules as $vehicule) {
+                            ?>
+                            <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?></option>
+                            <?php } ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="prixunitaire" class="form-label">Prix Unitaire</label>
@@ -154,5 +170,39 @@ $categorie = ['nom' => ''];
         document.getElementById('produit_vehicule').value = vehicule;
         document.getElementById('produit_prixunitaire').value = prixunitaire;
         document.getElementById('produit_description').value = description;
+    });
+
+    $(document).ready(function () {
+        // Charger les véhicules depuis la base de données (AJAX)
+        function chargerVehicules() {
+            $.ajax({
+                url: 'getVehicules.php', // Endpoint pour récupérer les véhicules
+                method: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    $('#vehicule').empty().append('<option value="">Sélectionnez un véhicule</option>');
+                    data.forEach(function (vehicule) {
+                        // Ajout des véhicules dans les options avec des attributs pour id et marque
+                        $('#vehicule').append(
+                            `<option value="${vehicule.id}"">
+                                ${vehicule.nom}
+                            </option>`
+                        );
+                    });
+                }
+            });
+        }
+
+        chargerVehicules();
+
+        // Récupérer la marque du véhicule sélectionné
+        $('#vehicule').on('change', function () {
+            const id = $('#vehicule option:selected').data('id');
+            if (id) {
+                alert('Marque du véhicule sélectionné : ' + id);
+            } else {
+                alert('Veuillez sélectionner un véhicule.');
+            }
+        });
     });
 </script>

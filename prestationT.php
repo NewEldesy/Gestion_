@@ -89,8 +89,15 @@ $categorie = ['nom' => ''];
                         <input type="text" class="form-control" id="deignation" name="deignation" required>
                         <br>
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <input type="text" class="form-control" id="vehicule" name="vehicule" required>
-                        <div class="invalid-feedback">Veuillez renseigner le nom du véhicule.</div>
+                        <select id="vehicule" class="form-select">
+                            <option value="">Sélectionnez un Vehicule</option>
+                            <?php 
+                                $vehicules = getVehicule();
+                                foreach($vehicules as $vehicule) {
+                            ?>
+                            <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?></option>
+                            <?php } ?>
+                        </select>
                         <br>
                         <label for="quantite" class="form-label">Quantité Produit</label>
                         <input type="text" class="form-control" id="quantite" name="quantite" required>
@@ -127,7 +134,15 @@ $categorie = ['nom' => ''];
                     </div>
                     <div class="mb-3">
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <input type="text" class="form-control" id="produit_vehicule" name="vehicule" required>
+                        <select id="produit_vehicule" class="form-select">
+                            <option value="">Sélectionnez un Vehicule</option>
+                            <?php 
+                                $vehicules = getVehicule();
+                                foreach($vehicules as $vehicule) {
+                            ?>
+                            <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?></option>
+                            <?php } ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="quantite" class="form-label">Quantité</label>
