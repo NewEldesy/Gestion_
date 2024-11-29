@@ -123,7 +123,7 @@ function removeStock($id) { deleteRecord('Stock', 'id', $id); }
 // Fonctions pour lire des enregistrements dans différentes tables
 function getProducts() { 
     $database = dbConnect();
-    $stmt = $database->query("SELECT * FROM produits");
+    $stmt = $database->query("SELECT produits.id, produits.designation, produits.pu, IFNULL(Stock.quantite, 0) AS quantite FROM Produits LEFT JOIN Stock ON produits.id = Stock.id_produit");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 // D'autres fonctions spécifiques pour obtenir des enregistrements par ID pour différentes tables
