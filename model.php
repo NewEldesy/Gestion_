@@ -163,7 +163,13 @@ function getIdVente() {
 }
 function getVehicule() {
     $database = dbConnect();
-    $query = "SELECT id, nom FROM Vehicule";
+    $query = "SELECT * FROM Vehicule";
+    $stmt = $database->prepare($query); $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+function getPrestataire(){
+    $database = dbConnect();
+    $query = "SELECT id, nom, prenom FROM Prestataire";
     $stmt = $database->prepare($query); $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }

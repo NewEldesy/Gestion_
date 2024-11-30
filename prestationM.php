@@ -82,7 +82,8 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="mb-3">
                         <label for="immatriculation" class="form-label">N° Immatriculation</label>
                         <input type="text" class="form-control" id="immatriculation" name="immatriculation" required>
-                        <br>
+                    </div>
+                    <div class="mb-3">
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
                         <select id="vehicule" class="form-select">
                             <option value="">Sélectionnez un Vehicule</option>
@@ -93,25 +94,36 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?></option>
                             <?php } ?>
                         </select>
-                        <br>
+                    </div>
+                    <div class="mb-3">
                         <label for="proprietaire_contact" class="form-label">Contact Propriétaire</label>
                         <input type="text" class="form-control" id="proprietaire_contact" name="proprietaire_contact" required>
-                        <br>
+                    </div>
+                    <div class="mb-3">
                         <label for="date_entree" class="form-label">Date Entrée</label>
                         <input type="date" class="form-control" id="date_entree" name="date_entree" required>
-                        <br>
+                    </div>
+                    <div class="mb-3">
                         <label for="date_sortie" class="form-label">Date Sortie</label>
                         <input type="date" class="form-control" id="date_sortie" name="date_sortie" required>
-                        <br>
+                    </div>
+                    <div class="mb-3">
                         <label for="prestataire" class="form-label">Prestataire</label>
-                        <input type="text" class="form-control" id="prestataire" name="prestataire" required>
-                        <br>
+                        <select id="prestataire" class="form-select">
+                            <option value="">Sélectionnez un Prestataire</option>
+                            <?php 
+                                $vehicules = getPrestataire();
+                                foreach($vehicules as $vehicule) {
+                            ?>
+                            <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?> <?=$vehicule['prenom'];?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label for="observation" class="form-label">Observation</label>
-                        <input type="text" class="form-control" id="observation" name="observation" required>
+                        <textarea class="form-control" id="observation" name="observation" rows="3" required></textarea>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Ajouter</button>
-                    </div>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
                 </form>
             </div>
         </div>
@@ -124,7 +136,7 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="UpdateModal">Modifier Prestation Mécanique</h5>
+                <h5 class="modal-title" id="UpdateModal">Modification Prestation Mécanique</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -160,11 +172,19 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <div class="mb-3">
                         <label for="prestataire" class="form-label">Prestataire</label>
-                        <input type="text" class="form-control" id="PM_prestataire" name="prestataire" required>
+                        <select id="PM_prestataire" class="form-select">
+                            <option value="">Sélectionnez un Prestataire</option>
+                            <?php 
+                                $vehicules = getPrestataire();
+                                foreach($vehicules as $vehicule) {
+                            ?>
+                            <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?> <?=$vehicule['prenom'];?></option>
+                            <?php } ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="observation" class="form-label">Observation</label>
-                        <input type="text" class="form-control" id="PM_observation" name="observation" required>
+                        <textarea class="form-control" id="PM_observation" name="observation" rows="3" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Modifier</button>
                 </form>

@@ -75,9 +75,7 @@ $categorie = ['nom' => ''];
                         <input type="text" class="form-control" id="nom" name="nom" required>
                         <div class="invalid-feedback">Veuillez renseigner le nom du véhicule.</div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Ajouter</button>
-                    </div>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
                 </form>
             </div>
         </div>
@@ -90,7 +88,7 @@ $categorie = ['nom' => ''];
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="UpdateModal">Modifier Véhicule</h5>
+                <h5 class="modal-title" id="UpdateModal">Modification Véhicule</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

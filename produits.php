@@ -79,7 +79,8 @@ $categorie = ['nom' => ''];
                     <div class="mb-3">
                         <label for="designation" class="form-label">Désignation</label>
                         <input type="text" class="form-control" id="designation" name="designation" required>
-                        <br>
+                    </div>
+                    <div class="mb-3">
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
                         <select id="vehicule" class="form-select">
                             <option value="">Sélectionnez un Vehicule</option>
@@ -90,16 +91,16 @@ $categorie = ['nom' => ''];
                             <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?></option>
                             <?php } ?>
                         </select>
-                        <br>
+                    </div>
+                    <div class="mb-3">
                         <label for="pu" class="form-label">Prix Unitaire</label>
                         <input type="text" class="form-control" id="pu" name="pu" required>
-                        <br>
+                    </div>
+                    <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Ajouter</button>
-                    </div>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
                 </form>
             </div>
         </div>
@@ -112,7 +113,7 @@ $categorie = ['nom' => ''];
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="UpdateModal">Modifier Véhicule</h5>
+                <h5 class="modal-title" id="UpdateModal">Modification Produit</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

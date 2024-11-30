@@ -79,15 +79,16 @@ $categorie = ['nom' => ''];
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="AddModal">Enregistrement Produit</h5>
+                <h5 class="modal-title" id="AddModal">Enregistrement Prestation Tractage</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="vehicule_add.php" method="POST">
                     <div class="mb-3">
-                        <label for="deignation" class="form-label">Désignation</label>
-                        <input type="text" class="form-control" id="deignation" name="deignation" required>
-                        <br>
+                        <label for="immatriculation" class="form-label">N° Immatriculation</label>
+                        <input type="text" class="form-control" id="immatriculation" name="immatriculation" required>
+                    </div>
+                    <div class="mb-3">
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
                         <select id="vehicule" class="form-select">
                             <option value="">Sélectionnez un Vehicule</option>
@@ -98,18 +99,40 @@ $categorie = ['nom' => ''];
                             <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?></option>
                             <?php } ?>
                         </select>
-                        <br>
-                        <label for="quantite" class="form-label">Quantité Produit</label>
-                        <input type="text" class="form-control" id="quantite" name="quantite" required>
-                        <div class="invalid-feedback">Veuillez renseigner le nom du véhicule.</div>
-                        <br>
-                        <label for="pu" class="form-label">Prix Unitaire</label>
-                        <input type="text" class="form-control" id="pu" name="pu" required>
-                        <div class="invalid-feedback">Veuillez renseigner les champs.</div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    <div class="mb-3">
+                        <label for="proprietaire_contact" class="form-label">Contact Propriétaire</label>
+                        <input type="text" class="form-control" id="proprietaire_contact" name="proprietaire_contact" required>
                     </div>
+                    <div class="mb-3">
+                        <label for="lieu_kilometrage" class="form-label">Lieu Kilometrage</label>
+                        <input type="text" class="form-control" id="lieu_kilometrage" name="lieu_kilometrage" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date_entree" class="form-label">Lieu Kilometrage</label>
+                        <input type="text" class="form-control" id="date_entree" name="date_entree" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="montant" class="form-label">Montant Prestation</label>
+                        <input type="text" class="form-control" id="montant" name="montant" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="prestataire" class="form-label">Prestataire</label>
+                        <select id="prestataire" class="form-select">
+                            <option value="">Sélectionnez un Prestataire</option>
+                            <?php 
+                                $vehicules = getPrestataire();
+                                foreach($vehicules as $vehicule) {
+                            ?>
+                            <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?> <?=$vehicule['prenom'];?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observation" class="form-label">Observation</label>
+                        <textarea class="form-control" id="observation" name="observation" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
                 </form>
             </div>
         </div>
@@ -122,19 +145,19 @@ $categorie = ['nom' => ''];
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="UpdateModal">Modifier Véhicule</h5>
+                <h5 class="modal-title" id="UpdateModal">Modification Prestation Tractage</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="vehicule_update.php" method="POST">
-                    <input type="hidden" name="id" id="produit_id">
+                    <input type="hidden" name="id" id="PT_id">
                     <div class="mb-3">
-                        <label for="designation" class="form-label">Designation</label>
-                        <input type="text" class="form-control" id="produit_designation" name="designation" required>
+                        <label for="immatriculation" class="form-label">N° Immatriculation</label>
+                        <input type="text" class="form-control" id="PT_num_immatriculation" name="immatriculation" required>
                     </div>
                     <div class="mb-3">
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <select id="produit_vehicule" class="form-select">
+                        <select id="PT_vehicule" class="form-select">
                             <option value="">Sélectionnez un Vehicule</option>
                             <?php 
                                 $vehicules = getVehicule();
@@ -145,12 +168,36 @@ $categorie = ['nom' => ''];
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="quantite" class="form-label">Quantité</label>
-                        <input type="number" class="form-control" id="produit_quantite" name="quantite" required>
+                        <label for="proprietaire_contact" class="form-label">Contact Propriétaire</label>
+                        <input type="text" class="form-control" id="PT_proprietaire_contact" name="proprietaire_contact" required>
                     </div>
                     <div class="mb-3">
-                        <label for="lieu_kilometrage" class="form-label">Prix Unitaire</label>
-                        <input type="text" class="form-control" id="produit_prixunitaire" name="prixunitaire" required>
+                        <label for="lieu_kilometrage" class="form-label">Lieu Kilometrage</label>
+                        <input type="text" class="form-control" id="PT_lieu_kilometrage" name="lieu_kilometrage" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date_entree" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="PT_date_entree" name="date_entree" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="montant" class="form-label">Montant Prestation</label>
+                        <input type="text" class="form-control" id="PT_montant" name="montant" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="prestataire" class="form-label">Prestataire</label>
+                        <select id="PT_prestataire" class="form-select">
+                            <option value="">Sélectionnez un Prestataire</option>
+                            <?php 
+                                $vehicules = getPrestataire();
+                                foreach($vehicules as $vehicule) {
+                            ?>
+                            <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?> <?=$vehicule['prenom'];?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observation" class="form-label">Observation</label>
+                        <textarea class="form-control" id="PT_observation" name="observation" rows="3" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Modifier</button>
                 </form>
@@ -169,16 +216,24 @@ $categorie = ['nom' => ''];
     exampleModalMaj.addEventListener('show.bs.modal', function (event) {
         var button = event.relatedTarget;
         var id = button.getAttribute('data-id');
-        var designation = button.getAttribute('data-designation');
+        var num_immatriculation = button.getAttribute('data-num_immatriculation');
         var vehicule = button.getAttribute('data-vehicule');
-        var quantite = button.getAttribute('data-quantite');
-        var prixunitaire = button.getAttribute('data-prixunitaire');
+        var proprietaire_contact = button.getAttribute('data-proprietaire_contact');
+        var lieu_kilometrage = button.getAttribute('data-lieu_kilometrage');
+        var date_entree = button.getAttribute('data-date_entree');
+        var montant = button.getAttribute('data-montant');
+        var prestataire = button.getAttribute('data-prestataire');
+        var observation = button.getAttribute('data-observation');
 
         // Remplir les champs cachés et visibles
-        document.getElementById('produit_id').value = id;
-        document.getElementById('produit_designation').value = designation;
-        document.getElementById('produit_vehicule').value = vehicule;
-        document.getElementById('produit_quantite').value = quantite;
-        document.getElementById('produit_prixunitaire').value = prixunitaire;
+        document.getElementById('PT_id').value = id;
+        document.getElementById('PT_num_immatriculation').value = num_immatriculation;
+        document.getElementById('PT_vehicule').value = vehicule;
+        document.getElementById('PT_proprietaire_contact').value = proprietaire_contact;
+        document.getElementById('PT_lieu_kilometrage').value = lieu_kilometrage;
+        document.getElementById('PT_date_entree').value = date_entree;
+        document.getElementById('PT_montant').value = montant;
+        document.getElementById('PT_prestataire').value = prestataire;
+        document.getElementById('PT_observation').value = observation;
     });
 </script>

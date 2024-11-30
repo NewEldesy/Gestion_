@@ -77,9 +77,7 @@ $stocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <label for="quantite" class="form-label">Quantité</label>
                         <input type="text" class="form-control" id="quantite" name="quantite" required>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Ajouter</button>
-                    </div>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
                 </form>
             </div>
         </div>
@@ -92,7 +90,7 @@ $stocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="UpdateModal">Modifier Stock Produit</h5>
+                <h5 class="modal-title" id="UpdateModal">Modification Stock Produit</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

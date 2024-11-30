@@ -104,9 +104,7 @@ $categorie = ['nom' => ''];
                         <label for="poste" class="form-label">Poste *</label>
                         <input type="text" class="form-control" id="poste" name="poste" required>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Ajouter</button>
-                    </div>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
                 </form>
             </div>
         </div>
@@ -119,7 +117,7 @@ $categorie = ['nom' => ''];
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="UpdateModal">Modifier Prestataire</h5>
+                <h5 class="modal-title" id="UpdateModal">Modification Prestataire</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
