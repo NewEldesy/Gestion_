@@ -4,7 +4,8 @@ include_once('model.php');
 $database = dbConnect();
 
 // Récupérer tous les véhicules depuis la base de données
-$stmt = $database->query("SELECT * FROM produits");
+$stmt = $database->prepare("SELECT p.id, p.designation, p.pu, p.description, p.vehicule, v.nom AS vehicule_nom FROM produits p LEFT JOIN vehicule v ON p.vehicule = v.id");
+$stmt->execute();
 $Produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Initialisation des variables pour le modal de modification
@@ -42,7 +43,7 @@ $categorie = ['nom' => ''];
                             <tr>
                                 <td><?=htmlspecialchars($produit['id']);?></td>
                                 <td><?=htmlspecialchars($produit['designation']);?></td>
-                                <td><?=htmlspecialchars($produit['vehicule']);?></td>
+                                <td><?=htmlspecialchars($produit['vehicule_nom']);?></td>
                                 <td><?=htmlspecialchars($produit['pu']);?> FCFA</td>
                                 <td><?=htmlspecialchars($produit['description']);?></td>
                                 <td>
@@ -82,7 +83,7 @@ $categorie = ['nom' => ''];
                     </div>
                     <div class="mb-3">
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <select id="vehicule" class="form-select">
+                        <select id="vehicule" name="vehicule" class="form-select">
                             <option value="">Sélectionnez un Vehicule</option>
                             <?php 
                                 $vehicules = getVehicule();
@@ -125,7 +126,7 @@ $categorie = ['nom' => ''];
                     </div>
                     <div class="mb-3">
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <select id="vehicule" class="form-select">
+                        <select id="produit_vehicule" name="vehicule" class="form-select">
                             <option value="">Sélectionnez un Vehicule</option>
                             <?php 
                                 $vehicules = getVehicule();

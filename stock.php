@@ -4,7 +4,8 @@ include_once('model.php');
 $database = dbConnect();
 
 // Récupérer tous les véhicules depuis la base de données
-$stmt = $database->query("SELECT * FROM Stock");
+$stmt = $database->prepare("SELECT s.id, s.quantite, s.id_produit, p.designation AS nom_produit FROM stock s LEFT JOIN produits p ON s.id_produit = p.id");
+$stmt->execute();
 $stocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -36,7 +37,7 @@ $stocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         foreach ($stocks as $stock) { ?>
                             <tr>
                                 <td><?=htmlspecialchars($stock['id']);?></td>
-                                <td><?=htmlspecialchars($stock['id_produit']);?></td>
+                                <td><?=htmlspecialchars($stock['nom_produit']);?></td>
                                 <td><?=htmlspecialchars($stock['quantite']);?></td>
                                 <td>
                                     <a href="stock_delete.php?id=<?= htmlspecialchars($stock['id']); ?>" class="btn btn-sm btn-danger">Supprimer</a>
@@ -71,7 +72,15 @@ $stocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <form action="stock_add.php" method="POST">
                     <div class="mb-3">
                         <label for="produit" class="form-label">Produits</label>
-                        <input type="text" class="form-control" id="produit" name="produit" required>
+                        <select id="produit" name="produit" class="form-select">
+                            <option value="">Sélectionnez un Produit</option>
+                            <?php 
+                                $produits = getProduits();
+                                foreach($produits as $produit) {
+                            ?>
+                            <option value="<?=$produit['id'];?>"><?=$produit['designation'];?></option>
+                            <?php } ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="quantite" class="form-label">Quantité</label>
@@ -98,7 +107,15 @@ $stocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <input type="hidden" name="id" id="stock_id">
                     <div class="mb-3">
                         <label for="produit" class="form-label">Produits</label>
-                        <input type="text" class="form-control" id="stock_produit" name="produit" required>
+                        <select id="stock_produit" name="produit" class="form-select">
+                            <option value="">Sélectionnez un Produit</option>
+                            <?php 
+                                $produits = getProduits();
+                                foreach($produits as $produit) {
+                            ?>
+                            <option value="<?=$produit['id'];?>"><?=$produit['designation'];?></option>
+                            <?php } ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="quantite" class="form-label">Quantité</label>

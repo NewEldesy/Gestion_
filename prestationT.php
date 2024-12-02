@@ -4,7 +4,11 @@ include_once('model.php');
 $database = dbConnect();
 
 // Récupérer tous les véhicules depuis la base de données
-$stmt = $database->query("SELECT * FROM Tractage");
+$stmt = $database->prepare("SELECT t.id, t.date_entree, t.vehicule, t.num_immatriculation, t.proprietaire_contact, t.lieu_kilometrage, t.montant, 
+    t.prestataire, t.observation, v.nom AS vehicule_nom, p.nom AS prestataire_nom, p.prenom AS prestataire_prenom FROM Tractage t
+    LEFT JOIN vehicule v ON t.vehicule = v.id
+    LEFT JOIN prestataire p ON t.prestataire = p.id");
+$stmt->execute();
 $tractages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Initialisation des variables pour le modal de modification
@@ -46,12 +50,12 @@ $categorie = ['nom' => ''];
                             <tr>
                                 <td><?=htmlspecialchars($tractage['id']);?></td>
                                 <td><?=htmlspecialchars($tractage['num_immatriculation']);?></td>
-                                <td><?=htmlspecialchars($tractage['vehicule']);?></td>
+                                <td><?=htmlspecialchars($tractage['vehicule_nom']);?></td>
                                 <td><?=htmlspecialchars($tractage['proprietaire_contact']);?></td>
                                 <td><?=htmlspecialchars($tractage['lieu_kilometrage']);?></td>
                                 <td><?=htmlspecialchars($tractage['date_entree']);?></td>
                                 <td><?=htmlspecialchars($tractage['montant']);?></td>
-                                <td><?=htmlspecialchars($tractage['prestataire']);?></td>
+                                <td><?=htmlspecialchars($tractage['prestataire_nom']);?> <?=htmlspecialchars($tractage['prestataire_prenom']);?></td>
                                 <td><?=htmlspecialchars($tractage['observation']);?></td>
                                 <td>
                                     <a href="vehicule_delete.php?id=<?=$tractage['id'];?>" class="btn btn-sm btn-danger">Supprimer</a>

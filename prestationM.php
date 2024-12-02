@@ -4,7 +4,10 @@ include_once('model.php');
 $database = dbConnect();
 
 // Récupérer tous les véhicules depuis la base de données
-$stmt = $database->query("SELECT * FROM Mecaniques");
+$stmt = $database->prepare("SELECT m.id, m.date_entree, m.vehicule, m.num_immatriculation, m.proprietaire_contact, m.date_sortie, m.prestataire,
+    m.observation, m.montant, v.nom AS vehicule_nom, p.nom AS prestataire_nom, p.prenom AS prestataire_prenom FROM Mecaniques m 
+    LEFT JOIN vehicule v ON m.vehicule = v.id LEFT JOIN prestataire p ON m.prestataire = p.id");
+$stmt->execute();
 $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -29,6 +32,7 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <th>N° Immatriculation</th>
                         <th>Marque Véhicule</th>
                         <th>Contact Propriétaire</th>
+                        <th>Montant</th>
                         <th>Date Entrée</th>
                         <th>Date Sortie</th>
                         <th>Prestataire</th>
@@ -42,15 +46,16 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <tr>
                                 <td><?=htmlspecialchars($mecanique['id']);?></td>
                                 <td><?=htmlspecialchars($mecanique['num_immatriculation']);?></td>
-                                <td><?=htmlspecialchars($mecanique['vehicule']);?></td>
+                                <td><?=htmlspecialchars($mecanique['vehicule_nom']);?></td>
                                 <td><?=htmlspecialchars($mecanique['proprietaire_contact']);?></td>
+                                <td><?=htmlspecialchars($mecanique['montant']);?> FCFA</td>
                                 <td><?=htmlspecialchars($mecanique['date_entree']);?></td>
                                 <td><?=htmlspecialchars($mecanique['date_sortie']);?></td>
-                                <td><?=htmlspecialchars($mecanique['prestataire']);?></td>
+                                <td><?=htmlspecialchars($mecanique['prestataire_nom']);?> <?=htmlspecialchars($mecanique['prestataire_prenom']);?></td>
                                 <td><?=htmlspecialchars($mecanique['observation']);?></td>
                                 <td>
                                     <a href="vehicule_delete.php?id=<?=$mecanique['id'];?>" class="btn btn-sm btn-danger">Supprimer</a>
-                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$mecanique['id'];?>" data-num_immatriculation="<?=$mecanique['num_immatriculation'];?>" data-vehicule="<?=$mecanique['vehicule'];?>" data-proprietaire_contact="<?=$mecanique['proprietaire_contact'];?>" data-date_entree="<?=$mecanique['date_entree'];?>" data-date_sortie="<?=$mecanique['date_sortie'];?>" data-prestataire="<?=$mecanique['prestataire'];?>" data-observation="<?=$mecanique['observation'];?>">Modifier</a>
+                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$mecanique['id'];?>" data-num_immatriculation="<?=$mecanique['num_immatriculation'];?>" data-vehicule="<?=$mecanique['vehicule'];?>" data-proprietaire_contact="<?=$mecanique['proprietaire_contact'];?>" data-montant="<?=$mecanique['montant'];?>" data-date_entree="<?=$mecanique['date_entree'];?>" data-date_sortie="<?=$mecanique['date_sortie'];?>" data-prestataire="<?=$mecanique['prestataire'];?>" data-observation="<?=$mecanique['observation'];?>">Modifier</a>
                                 </td>
                             </tr>
                         <?php }
@@ -94,6 +99,10 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?></option>
                             <?php } ?>
                         </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="montant" class="form-label">Montant Prestation</label>
+                        <input type="number" class="form-control" id="montant" name="montant" required>
                     </div>
                     <div class="mb-3">
                         <label for="proprietaire_contact" class="form-label">Contact Propriétaire</label>
@@ -163,6 +172,10 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <input type="text" class="form-control" id="PM_proprietaire_contact" name="proprietaire_contact" required>
                     </div>
                     <div class="mb-3">
+                        <label for="montant" class="form-label">Montant Prestataire</label>
+                        <input type="number" class="form-control" id="PM_montant" name="montant" required>
+                    </div>
+                    <div class="mb-3">
                         <label for="date_entree" class="form-label">Date Entrée</label>
                         <input type="date" class="form-control" id="PM_date_entree" name="date_entree" required>
                     </div>
@@ -206,6 +219,7 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
         var num_immatriculation = button.getAttribute('data-num_immatriculation');
         var vehicule = button.getAttribute('data-vehicule');
         var proprietaire_contact = button.getAttribute('data-proprietaire_contact');
+        var montant = button.getAttribute('data-montant');
         var date_entree = button.getAttribute('data-date_entree');
         var date_sortie = button.getAttribute('data-date_sortie');
         var prestataire = button.getAttribute('data-prestataire');
@@ -216,6 +230,7 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
         document.getElementById('PM_num_immatriculation').value = num_immatriculation;
         document.getElementById('PM_vehicule').value = vehicule;
         document.getElementById('PM_proprietaire_contact').value = proprietaire_contact;
+        document.getElementById('PM_montant').value = montant;
         document.getElementById('PM_date_entree').value = date_entree;
         document.getElementById('PM_date_sortie').value = date_sortie;
         document.getElementById('PM_prestataire').value = prestataire;

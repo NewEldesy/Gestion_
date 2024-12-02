@@ -121,9 +121,9 @@ function updateStock($data){
 function removeStock($id) { deleteRecord('Stock', 'id', $id); }
 // Stocks function
 // Fonctions pour lire des enregistrements dans différentes tables
-function getProducts() { 
+function getProduits() { 
     $database = dbConnect();
-    $stmt = $database->query("SELECT produits.id, produits.designation, produits.pu, IFNULL(Stock.quantite, 0) AS quantite FROM Produits LEFT JOIN Stock ON produits.id = Stock.id_produit");
+    $stmt = $database->query("SELECT id, designation FROM Produits");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 // D'autres fonctions spécifiques pour obtenir des enregistrements par ID pour différentes tables
@@ -137,7 +137,8 @@ function lastId() {
 }
 function getTotalTransactions($startDate, $endDate) {
     $database = dbConnect();
-    $query = "SELECT SUM(total) AS total FROM transactions WHERE statuts = 'payé' AND date BETWEEN :startDate AND :endDate";
+    // $query = "SELECT SUM(total) AS total FROM transactions WHERE statuts = 'payé' AND date BETWEEN :startDate AND :endDate";
+    $query = "SELECT SUM(total) AS total FROM Vente WHERE date_vente BETWEEN :startDate AND :endDate";
     $stmt = $database->prepare($query);
     $stmt->bindParam(':startDate', $startDate);
     $stmt->bindParam(':endDate', $endDate);
