@@ -54,9 +54,41 @@ function addPrestataire($data) {
     $database = dbConnect();
     $query = "INSERT INTO prestataire (nom, prenom, date_naissance, telephone, telephone2, poste) VALUES (:nom, :prenom, :date_naissance, :telephone, :telephone2, :poste)";
     $stmt = $database->prepare($query);
-    $stmt->bindValue(':nom', $data['nom'], PDO::PARAM_STR); $stmt->bindValue(':prenom', $data['nom'], PDO::PARAM_STR);
+    $stmt->bindValue(':nom', $data['nom'], PDO::PARAM_STR); $stmt->bindValue(':prenom', $data['prenom'], PDO::PARAM_STR);
     $stmt->bindValue(':date_naissance', $data['date_naissance'], PDO::PARAM_STR); $stmt->bindValue(':telephone', $data['telephone'], PDO::PARAM_STR);
     $stmt->bindValue(':telephone2', $data['telephone2'], PDO::PARAM_STR); $stmt->bindValue(':poste', $data['poste'], PDO::PARAM_STR);
+    $stmt->execute();
+}
+function addPM($data) {
+    if (!is_array($data) || !isset($data['num_immatriculation']) || !isset($data['vehicule']) || !isset($data['montant']) || !isset($data['proprietaire_contact']) || !isset($data['date_entree'])
+        || !isset($data['date_sortie']) || !isset($data['prestataire']) || !isset($data['observation'])) {
+        throw new InvalidArgumentException("Invalid data provided for addPrestionM.");
+    }
+
+    $database = dbConnect();
+    $query = "INSERT INTO Mecaniques (num_immatriculation, vehicule, montant, proprietaire_contact, date_entree, date_sortie, prestataire, observation) 
+        VALUES (:num_immatriculation, :vehicule, :montant, :proprietaire_contact, :date_entree, :date_sortie, :prestataire, :observation)";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':num_immatriculation', $data['num_immatriculation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
+    $stmt->bindValue(':montant', $data['montant'], PDO::PARAM_STR); $stmt->bindValue(':proprietaire_contact', $data['proprietaire_contact'], PDO::PARAM_STR);
+    $stmt->bindValue(':date_entree', $data['date_entree'], PDO::PARAM_STR); $stmt->bindValue(':date_sortie', $data['date_sortie'], PDO::PARAM_STR);
+    $stmt->bindValue(':prestataire', $data['prestataire'], PDO::PARAM_STR); $stmt->bindValue(':observation', $data['observation'], PDO::PARAM_STR);
+    $stmt->execute();
+}
+function addPT($data) {
+    if (!is_array($data) || !isset($data['num_immatriculation']) || !isset($data['vehicule']) || !isset($data['montant']) || !isset($data['proprietaire_contact']) || !isset($data['date_entree'])
+        || !isset($data['lieu_kilometrage']) || !isset($data['prestataire']) || !isset($data['observation'])) {
+        throw new InvalidArgumentException("Invalid data provided for addPrestionT.");
+    }
+
+    $database = dbConnect();
+    $query = "INSERT INTO Tractage (num_immatriculation, vehicule, montant, proprietaire_contact, date_entree, lieu_kilometrage, prestataire, observation) 
+        VALUES (:num_immatriculation, :vehicule, :montant, :proprietaire_contact, :date_entree, :lieu_kilometrage, :prestataire, :observation)";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':num_immatriculation', $data['num_immatriculation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
+    $stmt->bindValue(':montant', $data['montant'], PDO::PARAM_STR); $stmt->bindValue(':proprietaire_contact', $data['proprietaire_contact'], PDO::PARAM_STR);
+    $stmt->bindValue(':date_entree', $data['date_entree'], PDO::PARAM_STR); $stmt->bindValue(':lieu_kilometrage', $data['lieu_kilometrage'], PDO::PARAM_STR);
+    $stmt->bindValue(':prestataire', $data['prestataire'], PDO::PARAM_STR); $stmt->bindValue(':observation', $data['observation'], PDO::PARAM_STR);
     $stmt->execute();
 }
 function updatePrestataire($data){
@@ -70,7 +102,35 @@ function updatePrestataire($data){
     $stmt->bindValue(':telephone2', $data['telephone2'], PDO::PARAM_STR); $stmt->bindValue(':poste', $data['poste'], PDO::PARAM_STR);
     $stmt->execute();
 }
+function updatePM($data) {
+    $database = dbConnect();
+    
+    $query = "UPDATE Mecaniques SET num_immatriculation=:num_immatriculation, vehicule=:vehicule, montant=:montant, proprietaire_contact=:proprietaire_contact, 
+        date_entree=:date_entree, date_sortie=:date_sortie, prestataire=:prestataire, observation=:observation WHERE id = :id";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
+    $stmt->bindValue(':num_immatriculation', $data['num_immatriculation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
+    $stmt->bindValue(':montant', $data['montant'], PDO::PARAM_STR); $stmt->bindValue(':proprietaire_contact', $data['proprietaire_contact'], PDO::PARAM_STR);
+    $stmt->bindValue(':date_entree', $data['date_entree'], PDO::PARAM_STR); $stmt->bindValue(':date_sortie', $data['date_sortie'], PDO::PARAM_STR);
+    $stmt->bindValue(':prestataire', $data['prestataire'], PDO::PARAM_STR); $stmt->bindValue(':observation', $data['observation'], PDO::PARAM_STR);
+    $stmt->execute();
+}
+function updatePT($data) {
+    $database = dbConnect();
+    
+    $query = "UPDATE Tractage SET num_immatriculation=:num_immatriculation, vehicule=:vehicule, montant=:montant, proprietaire_contact=:proprietaire_contact, 
+        date_entree=:date_entree, lieu_kilometrage=:lieu_kilometrage, prestataire=:prestataire, observation=:observation WHERE id = :id";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
+    $stmt->bindValue(':num_immatriculation', $data['num_immatriculation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
+    $stmt->bindValue(':montant', $data['montant'], PDO::PARAM_STR); $stmt->bindValue(':proprietaire_contact', $data['proprietaire_contact'], PDO::PARAM_STR);
+    $stmt->bindValue(':date_entree', $data['date_entree'], PDO::PARAM_STR); $stmt->bindValue(':lieu_kilometrage', $data['lieu_kilometrage'], PDO::PARAM_STR);
+    $stmt->bindValue(':prestataire', $data['prestataire'], PDO::PARAM_STR); $stmt->bindValue(':observation', $data['observation'], PDO::PARAM_STR);
+    $stmt->execute();
+}
 function removePrestataire($id) { deleteRecord('prestataire', 'id', $id); }
+function removePM($id) { deleteRecord('Mecaniques', 'id', $id); }
+function removePT($id) { deleteRecord('Tractage', 'id', $id); }
 // Prestataire function
 // Produits function
 function addProduit($data) {

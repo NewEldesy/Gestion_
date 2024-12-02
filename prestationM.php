@@ -54,8 +54,9 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <td><?=htmlspecialchars($mecanique['prestataire_nom']);?> <?=htmlspecialchars($mecanique['prestataire_prenom']);?></td>
                                 <td><?=htmlspecialchars($mecanique['observation']);?></td>
                                 <td>
-                                    <a href="vehicule_delete.php?id=<?=$mecanique['id'];?>" class="btn btn-sm btn-danger">Supprimer</a>
+                                    <a href="prestationM_delete.php?id=<?=$mecanique['id'];?>" class="btn btn-sm btn-danger">Supprimer</a>
                                     <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$mecanique['id'];?>" data-num_immatriculation="<?=$mecanique['num_immatriculation'];?>" data-vehicule="<?=$mecanique['vehicule'];?>" data-proprietaire_contact="<?=$mecanique['proprietaire_contact'];?>" data-montant="<?=$mecanique['montant'];?>" data-date_entree="<?=$mecanique['date_entree'];?>" data-date_sortie="<?=$mecanique['date_sortie'];?>" data-prestataire="<?=$mecanique['prestataire'];?>" data-observation="<?=$mecanique['observation'];?>">Modifier</a>
+                                    <a href="" class="btn btn-sm btn-dark">print</a>
                                 </td>
                             </tr>
                         <?php }
@@ -83,14 +84,14 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="PrestationM_add.php" method="POST">
+                <form action="prestationM_add.php" method="POST">
                     <div class="mb-3">
                         <label for="immatriculation" class="form-label">N° Immatriculation</label>
                         <input type="text" class="form-control" id="immatriculation" name="immatriculation" required>
                     </div>
                     <div class="mb-3">
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <select id="vehicule" class="form-select">
+                        <select id="vehicule" name="vehicule" class="form-select">
                             <option value="">Sélectionnez un Vehicule</option>
                             <?php 
                                 $vehicules = getVehicule();
@@ -118,7 +119,7 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <div class="mb-3">
                         <label for="prestataire" class="form-label">Prestataire</label>
-                        <select id="prestataire" class="form-select">
+                        <select id="prestataire" name="prestataire" class="form-select">
                             <option value="">Sélectionnez un Prestataire</option>
                             <?php 
                                 $vehicules = getPrestataire();
@@ -157,7 +158,7 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <div class="mb-3">
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <select id="PM_vehicule" class="form-select">
+                        <select id="PM_vehicule" name="vehicule" class="form-select">
                             <option value="">Sélectionnez un Vehicule</option>
                             <?php 
                                 $vehicules = getVehicule();
@@ -185,7 +186,7 @@ $Mecaniques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <div class="mb-3">
                         <label for="prestataire" class="form-label">Prestataire</label>
-                        <select id="PM_prestataire" class="form-select">
+                        <select id="PM_prestataire" name="prestataire" class="form-select">
                             <option value="">Sélectionnez un Prestataire</option>
                             <?php 
                                 $vehicules = getPrestataire();

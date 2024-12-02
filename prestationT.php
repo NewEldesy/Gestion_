@@ -37,7 +37,7 @@ $categorie = ['nom' => ''];
                         <th>Marque Véhicule</th>
                         <th>Contact Propriétaire</th>
                         <th>Lieu</th>
-                        <th>Date</th>
+                        <th>Date Tractage</th>
                         <th>Montant</th>
                         <th>Prestataire</th>
                         <th>Observation</th>
@@ -58,7 +58,7 @@ $categorie = ['nom' => ''];
                                 <td><?=htmlspecialchars($tractage['prestataire_nom']);?> <?=htmlspecialchars($tractage['prestataire_prenom']);?></td>
                                 <td><?=htmlspecialchars($tractage['observation']);?></td>
                                 <td>
-                                    <a href="vehicule_delete.php?id=<?=$tractage['id'];?>" class="btn btn-sm btn-danger">Supprimer</a>
+                                    <a href="prestationT_delete.php?id=<?=$tractage['id'];?>" class="btn btn-sm btn-danger">Supprimer</a>
                                     <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$tractage['id'];?>" data-num_immatriculation="<?=$tractage['num_immatriculation'];?>" data-vehicule="<?=$tractage['vehicule'];?>" data-proprietaire_contact="<?=$tractage['proprietaire_contact'];?>" data-lieu_kilometrage="<?=$tractage['lieu_kilometrage'];?>" data-date_entree="<?=$tractage['date_entree'];?>" data-montant="<?=$tractage['montant'];?>"  data-prestataire="<?=$tractage['prestataire'];?>"  data-observation="<?=$tractage['observation'];?>">Modifier</a>
                                 </td>
                             </tr>
@@ -87,14 +87,14 @@ $categorie = ['nom' => ''];
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="vehicule_add.php" method="POST">
+                <form action="prestationT_add.php" method="POST">
                     <div class="mb-3">
                         <label for="immatriculation" class="form-label">N° Immatriculation</label>
                         <input type="text" class="form-control" id="immatriculation" name="immatriculation" required>
                     </div>
                     <div class="mb-3">
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <select id="vehicule" class="form-select">
+                        <select id="vehicule" name="vehicule" class="form-select">
                             <option value="">Sélectionnez un Vehicule</option>
                             <?php 
                                 $vehicules = getVehicule();
@@ -113,16 +113,16 @@ $categorie = ['nom' => ''];
                         <input type="text" class="form-control" id="lieu_kilometrage" name="lieu_kilometrage" required>
                     </div>
                     <div class="mb-3">
-                        <label for="date_entree" class="form-label">Lieu Kilometrage</label>
-                        <input type="text" class="form-control" id="date_entree" name="date_entree" required>
+                        <label for="date_entree" class="form-label">Date Tractage</label>
+                        <input type="date" class="form-control" id="date_entree" name="date_entree" required>
                     </div>
                     <div class="mb-3">
                         <label for="montant" class="form-label">Montant Prestation</label>
-                        <input type="text" class="form-control" id="montant" name="montant" required>
+                        <input type="number" class="form-control" id="montant" name="montant" required>
                     </div>
                     <div class="mb-3">
                         <label for="prestataire" class="form-label">Prestataire</label>
-                        <select id="prestataire" class="form-select">
+                        <select id="prestataire" name="prestataire" class="form-select">
                             <option value="">Sélectionnez un Prestataire</option>
                             <?php 
                                 $vehicules = getPrestataire();
@@ -153,7 +153,7 @@ $categorie = ['nom' => ''];
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="vehicule_update.php" method="POST">
+                <form action="prestationT_update.php" method="POST">
                     <input type="hidden" name="id" id="PT_id">
                     <div class="mb-3">
                         <label for="immatriculation" class="form-label">N° Immatriculation</label>
@@ -161,7 +161,7 @@ $categorie = ['nom' => ''];
                     </div>
                     <div class="mb-3">
                         <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <select id="PT_vehicule" class="form-select">
+                        <select id="PT_vehicule" name="vehicule" class="form-select">
                             <option value="">Sélectionnez un Vehicule</option>
                             <?php 
                                 $vehicules = getVehicule();
@@ -180,7 +180,7 @@ $categorie = ['nom' => ''];
                         <input type="text" class="form-control" id="PT_lieu_kilometrage" name="lieu_kilometrage" required>
                     </div>
                     <div class="mb-3">
-                        <label for="date_entree" class="form-label">Date</label>
+                        <label for="date_entree" class="form-label">Date Tractage</label>
                         <input type="date" class="form-control" id="PT_date_entree" name="date_entree" required>
                     </div>
                     <div class="mb-3">
@@ -189,7 +189,7 @@ $categorie = ['nom' => ''];
                     </div>
                     <div class="mb-3">
                         <label for="prestataire" class="form-label">Prestataire</label>
-                        <select id="PT_prestataire" class="form-select">
+                        <select id="PT_prestataire" name="prestataire" class="form-select">
                             <option value="">Sélectionnez un Prestataire</option>
                             <?php 
                                 $vehicules = getPrestataire();
