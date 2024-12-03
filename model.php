@@ -91,6 +91,22 @@ function addPT($data) {
     $stmt->bindValue(':prestataire', $data['prestataire'], PDO::PARAM_STR); $stmt->bindValue(':observation', $data['observation'], PDO::PARAM_STR);
     $stmt->execute();
 }
+function addPA($data) {
+    if (!is_array($data) || !isset($data['num_immatriculation']) || !isset($data['vehicule']) || !isset($data['montant']) || !isset($data['contact_proprietaire']) || !isset($data['date_entree'])
+        || !isset($data['type_prestation']) || !isset($data['prestataire']) || !isset($data['observation'])) {
+        throw new InvalidArgumentException("Invalid data provided for addPrestionT.");
+    }
+
+    $database = dbConnect();
+    $query = "INSERT INTO AutreP (num_immatriculation, vehicule, contact_proprietaire, type_prestation, montant, date_entree, prestataire, observation) 
+        VALUES (:num_immatriculation, :vehicule, :contact_proprietaire, :type_prestation, :montant, :date_entree, :prestataire, :observation)";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':num_immatriculation', $data['num_immatriculation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
+    $stmt->bindValue(':montant', $data['montant'], PDO::PARAM_STR); $stmt->bindValue(':contact_proprietaire', $data['contact_proprietaire'], PDO::PARAM_STR);
+    $stmt->bindValue(':date_entree', $data['date_entree'], PDO::PARAM_STR); $stmt->bindValue(':type_prestation', $data['type_prestation'], PDO::PARAM_STR);
+    $stmt->bindValue(':prestataire', $data['prestataire'], PDO::PARAM_STR); $stmt->bindValue(':observation', $data['observation'], PDO::PARAM_STR);
+    $stmt->execute();
+}
 function updatePrestataire($data){
     $database = dbConnect();
     
@@ -128,9 +144,23 @@ function updatePT($data) {
     $stmt->bindValue(':prestataire', $data['prestataire'], PDO::PARAM_STR); $stmt->bindValue(':observation', $data['observation'], PDO::PARAM_STR);
     $stmt->execute();
 }
+function updatePA($data) {
+    $database = dbConnect();
+    
+    $query = "UPDATE AutreP SET num_immatriculation=:num_immatriculation, vehicule=:vehicule, contact_proprietaire=:contact_proprietaire, type_prestation=:type_prestation,
+        montant=:montant, date_entree=:date_entree, prestataire=:prestataire, observation=:observation WHERE id = :id";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
+    $stmt->bindValue(':num_immatriculation', $data['num_immatriculation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
+    $stmt->bindValue(':montant', $data['montant'], PDO::PARAM_STR); $stmt->bindValue(':contact_proprietaire', $data['contact_proprietaire'], PDO::PARAM_STR);
+    $stmt->bindValue(':date_entree', $data['date_entree'], PDO::PARAM_STR); $stmt->bindValue(':type_prestation', $data['type_prestation'], PDO::PARAM_STR);
+    $stmt->bindValue(':prestataire', $data['prestataire'], PDO::PARAM_STR); $stmt->bindValue(':observation', $data['observation'], PDO::PARAM_STR);
+    $stmt->execute();
+}
 function removePrestataire($id) { deleteRecord('prestataire', 'id', $id); }
 function removePM($id) { deleteRecord('Mecaniques', 'id', $id); }
 function removePT($id) { deleteRecord('Tractage', 'id', $id); }
+function removePA($id) { deleteRecord('AutreP', 'id', $id); }
 // Prestataire function
 // Produits function
 function addProduit($data) {
