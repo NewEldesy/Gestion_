@@ -65,7 +65,7 @@
         <!--JavaScript -->
         <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="assets/dataTables/js/dataTables.js"></script>
-        <script src="assets/jquery.min.js"></script>
+        <script src="assets/js/jquery-3.6.0.min.js"></script>
 
         <script>
             $(document).ready(function () {

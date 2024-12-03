@@ -68,7 +68,7 @@
                                 <div class="bg-success rounded shadow-lg d-flex align-items-center justify-content-between p-5">
                                     <div class="ms-3 text-white">
                                         <h6 class="mb-0">Total Général</h6>
-                                        <p class="mb-2"><span id=""></span> F CFA</p>
+                                        <p class="mb-2"><span id="p_total"></span> F CFA</p>
                                     </div>
                                 </div>
                             </div>
@@ -80,7 +80,7 @@
                                 <div class="bg-primary rounded shadow-lg d-flex align-items-center justify-content-between p-5">
                                     <div class="ms-3 text-white">
                                         <h6 class="mb-0">Aujourd'hui</h6>
-                                        <p class="mb-2"><span id=""></span> F CFA</p>
+                                        <p class="mb-2"><span id="p_today"></span> F CFA</p>
                                     </div>
                                 </div>
                             </div>
@@ -88,7 +88,7 @@
                                 <div class="bg-warning rounded shadow-lg d-flex align-items-center justify-content-between p-5">
                                     <div class="ms-3 text-white">
                                         <h6 class="mb-0">Cette semaine</h6>
-                                        <p class="mb-2"><span id=""></span> F CFA</p>
+                                        <p class="mb-2"><span id="p_week"></span> F CFA</p>
                                     </div>
                                 </div>
                             </div>
@@ -96,7 +96,7 @@
                                 <div class="bg-danger rounded shadow-lg d-flex align-items-center justify-content-between p-5">
                                     <div class="ms-3 text-white">
                                         <h6 class="mb-0">Ce mois</h6>
-                                        <p class="mb-2"><span id=""></span> F CFA</p>
+                                        <p class="mb-2"><span id="p_month"></span> F CFA</p>
                                     </div>
                                 </div>
                             </div>
@@ -104,7 +104,7 @@
                                 <div class="bg-light rounded shadow-lg d-flex align-items-center justify-content-between p-5">
                                     <div class="ms-3">
                                         <h6 class="mb-0">Cette année</h6>
-                                        <p class="mb-2"><span id=""></span> F CFA</p>
+                                        <p class="mb-2"><span id="p_year"></span> F CFA</p>
                                     </div>
                                 </div>
                             </div>
