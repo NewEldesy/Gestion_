@@ -77,7 +77,7 @@ function getProduits() {
 function getProducts() {
     $database = dbConnect();
     $stmt = $database->query("
-        SELECT p.id, p.designation, s.quantite FROM Produits p
+        SELECT p.id, p.designation,p.pu , s.quantite FROM Produits p
         LEFT JOIN Stock s ON p.id = s.id_produit WHERE s.quantite IS NOT NULL");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);}
 // Stocks Function
