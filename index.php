@@ -1,4 +1,7 @@
-<?php 
+<?php
+    // if(!isset($_SESSION)){
+    //     header('Location: /Gestion_/login.php');
+    // }
     require_once('header.php');
 ?>
 

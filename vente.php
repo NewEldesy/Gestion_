@@ -13,6 +13,7 @@
                     </div>
                     <div class="container mt-4">
                         <h2>Interface de Vente</h2>
+                        <div id="msg_print"></div>
                         <div class="row">
                             <!-- Liste des produits -->
                             <div class="col-md-6">
@@ -42,8 +43,7 @@
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                    </tbody>
+                                    <tbody></tbody>
                                 </table>
                                 <div class="mb-3">
                                     <label for="remise" class="form-label">Remise (en %)</label>
@@ -51,7 +51,7 @@
                                 </div>
                                 <h5>Total : <span id="total">0.00</span> FCFA</h5>
                                 <div class="col d-flex justify-content-center">
-                                    <input type="button" class="btn btn-danger" id="imprimer" value="Imprimer Facture">
+                                    <input type="button" class="btn btn-primary" id="imprimer" value="Imprimer Facture">
                                     <div id="loading" style="display: none;">Traitement en cours...</div>
                                 </div>
                             </div>
@@ -64,13 +64,147 @@
 
         <!--JavaScript -->
         <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="assets/dataTables/js/dataTables.js"></script>
         <script src="assets/js/jquery-3.6.0.min.js"></script>
 
         <script>
             $(document).ready(function () {
                 let panier = [];
                 let total = 0;
+
+                $('#imprimer').on('click', function () {
+                    // Montrer l'indicateur de chargement
+                    $('#loading').show();
+                    $('#imprimer').prop('disabled', true);
+
+                    // Récupérer les informations de la facture
+                    var venteId = $('#venteId').text();
+                    var total = parseFloat($('#total').text());
+                    var remise = parseFloat($('#remise').val()) || 0; // Par défaut, aucune remise si non spécifié
+                    var statuts = 'payé';
+                    var items = [];
+
+                    // Récupérer les articles du tableau
+                    $('#panierTable tbody tr').each(function () {
+                        var item = {
+                            produitId: $(this).data('id'), // Récupérer l'ID du produit stocké dans l'attribut `data-id`
+                            produitNom: $(this).find('td:eq(0)').text(), // Récupérer le nom du produit à partir de la première colonne
+                            produitPrix: parseFloat($(this).find('td:eq(1)').text()), // Prix unitaire
+                            quantite: parseInt($(this).find('td:eq(2)').text()), // Quantité
+                            sousTotal: parseFloat($(this).find('td:eq(3)').text()) // Sous-total
+                        };
+                        items.push(item);
+                    });
+
+                    // Vérifier s'il y a des articles ou un total à 0
+                    if (items.length === 0 || total <= 0) {
+                        alert('Aucune vente en cours');
+                        $('#loading').hide();
+                        $('#imprimer').prop('disabled', false);
+                        return; // Arrêter l'exécution
+                    }
+
+                    // Envoyer la requête AJAX pour enregistrer la transaction
+                    $.ajax({
+                        url: 'save_vente.php',
+                        method: 'POST',
+                        data: {
+                            venteId: venteId,
+                            total: total,
+                            remise: remise,
+                            statuts: statuts,
+                            items: JSON.stringify(items)
+                        },
+                        success: function (response) {
+                            // Afficher un message de confirmation
+                            $("#msg_print").html(response).delay(700).slideDown(700);
+                            $("#msg_print").delay(2000).slideUp(700);
+                            setTimeout(function () { // Imprimer et réinitialiser l'interface après un court délai
+                                print(); chargerProduits(); chargerDernierIdVente(); clearTableBody();
+                            }, 100);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Erreur AJAX:', error);
+                            alert('Erreur lors de l\'enregistrement du reçu.');
+                        },
+                        complete: function () { // Cacher l'indicateur de chargement et réactiver le bouton après la requête
+                            $('#loading').hide();
+                            $('#imprimer').prop('disabled', false);
+                        }
+                    });
+                });
+
+                function print() {
+                    // Créer un nouveau document d'impression
+                    var printWindow = window.open('', '', 'width=800, height=600');
+
+                    // Récupérer le contenu du tableau de la facture
+                    var tableContent = $('#panierTable').html();
+                    var total = $('#total').text();
+                    var remise = $('#remise').val();
+                    var venteId = $('#venteId').text();
+
+                    // Contenu HTML pour la page d'impression
+                    var printContent = `
+                        <html>
+                        <head>
+                            <title>Facture N° ${venteId}</title>
+                            <style>
+                                body { font-family: Arial, sans-serif; padding: 20px; }
+                                h1, h3 { text-align: center; }
+                                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                                table, th, td { border: 1px solid #000; }
+                                th, td { padding: 8px; text-align: left; }
+                                th { background-color: #f2f2f2; }
+                                .total { text-align: right; margin-top: 20px; font-weight: bold; }
+                            </style>
+                        </head>
+                        <body>
+                            <h1>Facture N° ${venteId}</h1>
+                            <h3>Date : ${new Date().toLocaleDateString()}</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Produit</th>
+                                        <th>Prix Unitaire</th>
+                                        <th>Quantité</th>
+                                        <th>Sous-total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableContent}
+                                </tbody>
+                            </table>
+                            <div class="total">
+                                <p>Remise: ${remise}%</p>
+                                <p>Total : ${total} FCFA</p>
+                            </div>
+                        </body>
+                        </html>
+                    `;
+
+                    // Charger le contenu dans la fenêtre d'impression
+                    printWindow.document.open();
+                    printWindow.document.write(printContent);
+                    printWindow.document.close();
+
+                    // Lancer l'impression
+                    printWindow.print();
+
+                    // Fermer la fenêtre après l'impression
+                    printWindow.close();
+                }
+
+                // Fonction pour réinitialiser le contenu du tableau après impression
+                function clearTableBody() {
+                    $('#panierTable tbody').empty(); // Vider le contenu du tableau
+
+                    // Réinitialiser les valeurs du total et de la remise
+                    $('#total').text('0.00'); $('#remise').val('');
+                    $('#venteId').text(''); // Optionnel: Réinitialiser l'ID de la facture
+
+                    // Réinitialiser le champ de quantité (si nécessaire)
+                    $('#quantite').val(''); $('#quantite_produit').val('');
+                }
 
                 // Charger l'ID de la dernière vente
                 function chargerDernierIdVente() {
@@ -196,28 +330,6 @@
 
                     tr.remove();
                     $('#total').text(total.toFixed(2));
-                });
-
-                // Imprimer le reçu
-                $('#imprimer').click(function () {
-                    const venteData = { panier, total };
-
-                    $.ajax({
-                        url: 'saveVente.php',
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(venteData),
-                        success: function (response) {
-                            alert('Vente enregistrée avec succès !');
-                            panier = [];
-                            total = 0;
-                            $('#panierTable tbody').empty();
-                            $('#total').text('0.00');
-
-                            // Recharger le dernier ID de vente
-                            chargerDernierIdVente();
-                        }
-                    });
                 });
             });
         </script>

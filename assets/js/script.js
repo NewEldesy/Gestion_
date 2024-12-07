@@ -23,9 +23,8 @@ function updatePrestationTotals() {
         dataType: 'json',
         success: function(data) {
             if (data && data.today !== undefined && data.week !== undefined && data.month !== undefined && data.year !== undefined) {
-                $('#p_today').text(Number(data.today).toFixed(2));
-                $('#p_week').text(Number(data.week).toFixed(2));
-                $('#p_month').text(Number(data.month).toFixed(2));
+                $('#p_total').text(Number(data.total).toFixed(2)); $('#p_today').text(Number(data.today).toFixed(2));
+                $('#p_week').text(Number(data.week).toFixed(2)); $('#p_month').text(Number(data.month).toFixed(2));
                 $('#p_year').text(Number(data.year).toFixed(2));
             } else {
                 console.error('Données invalides reçues:', data);

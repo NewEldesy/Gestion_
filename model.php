@@ -41,6 +41,68 @@ function getTransactionTotals() {
         $query = "SELECT MAX(id) AS lastId FROM Vente";
         $stmt = $database->prepare($query); $stmt->execute();
         $data = $stmt->fetch(PDO::FETCH_ASSOC); return $data['lastId'];}
+// Add Vente
+function addVente($data) {
+    $database = dbConnect();
+    
+    $transactionId = $data['venteId'];
+    $date = date('Y-m-d'); $total = $data['total'];
+    $remise = isset($data['remise']) && is_numeric($data['remise']) ? $data['remise'] : 0; // Remise par défaut à 0 si non envoyée
+    $statuts = $data['statuts']; $items = json_decode($data['items'], true); // Décoder le JSON des éléments
+    
+    $database->beginTransaction(); // Début de la transaction
+    try {
+        // Calculer le total après remise
+        $totalAvecRemise = $total - ($total * $remise / 100);
+
+        // Insérer les données dans la table `Vente`
+        $queryFacture = "INSERT INTO Vente (date_vente, total, remise, statuts) 
+                         VALUES (:date_vente, :total, :remise, :statuts)";
+        $stmtFacture = $database->prepare($queryFacture);
+        $stmtFacture->bindParam(':date_vente', $date);
+        $stmtFacture->bindParam(':total', $totalAvecRemise);
+        $stmtFacture->bindParam(':remise', $remise);
+        $stmtFacture->bindParam(':statuts', $statuts);
+        $stmtFacture->execute();
+
+        // Insérer les éléments de la facture dans la table `transaction_details`
+        $queryElementFacture = "INSERT INTO elementVente (vente, produit, pu, quantite, soustotal) 
+                                VALUES (:vente, :produit, :pu, :quantite, :soustotal)";
+        $stmt = $database->prepare($queryElementFacture);
+
+        // Mettre à jour les quantités des produits dans le stock
+        $queryUpdateStock = "UPDATE Stock SET quantite = :quantite WHERE id_produit = :id_produit";
+        $stmtUpdateStock = $database->prepare($queryUpdateStock);
+
+        // Boucle pour traiter chaque élément de la facture
+        foreach ($items as $element) {
+            $produit = $element['produitId'];
+            $pu = $element['produitPrix'];
+            $quantite = $element['quantite'];
+            $soustotal = $element['sousTotal'];
+
+            // Ajouter à `transaction_details`
+            $stmt->bindParam(':vente', $transactionId);
+            $stmt->bindParam(':produit', $produit);
+            $stmt->bindParam(':pu', $pu);
+            $stmt->bindParam(':quantite', $quantite);
+            $stmt->bindParam(':soustotal', $soustotal);
+            $stmt->execute();
+
+            // Réduire la quantité dans `Stock`
+            $qty = getQtyById($produit);
+            $quantiteF = $qty - $quantite;
+            $stmtUpdateStock->bindParam(':quantite', $quantiteF, PDO::PARAM_INT);
+            $stmtUpdateStock->bindParam(':id_produit', $produit, PDO::PARAM_INT);
+            $stmtUpdateStock->execute();
+        }
+
+        $database->commit(); // Valider la transaction
+    } catch (Exception $e) {
+        $database->rollBack(); // Annuler la transaction en cas d'erreur
+        throw $e; // Rejeter l'erreur pour un traitement ultérieur
+    }
+}
 // End Gestion Vente
 
 // Start Gestion Produits Et Stock
@@ -104,6 +166,11 @@ function updateStock($data){
     $stmt->bindValue(':id_produit', $data['id_produit'], PDO::PARAM_STR); $stmt->bindValue(':quantite', $data['quantite'], PDO::PARAM_STR);
     $stmt->execute();}
 function removeStock($id) { deleteRecord('Stock', 'id', $id); }
+function getQtyById($id) {
+    $database = dbConnect();
+    $stmt = $database->prepare("SELECT quantite FROM Stock WHERE id_produit = :id_produit");
+    $stmt->bindParam(':id_produit', $id, PDO::PARAM_INT); $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC); return $result['quantite'];}
 // End Gestion Produits Et Stock
 
 // Start Gestion Prestation
