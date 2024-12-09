@@ -150,7 +150,7 @@ $(document).ready(function () {
 });
 ///////////////////////////////////////////////////////////////// End Prestataire //////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////// Start Produit ///////////////////////////////////////////////////////////////////////////////////////////
-// Add Prestation
+// Add Produit
 $(document).on('click', '#btn_add_produit', function(e){
     e.preventDefault();
     var designation = $("#designation").val(); var vehicule = $("#vehicule").val(); var pu = $("#pu").val(); var description = $("#description").val();
@@ -161,7 +161,7 @@ $(document).on('click', '#btn_add_produit', function(e){
             data: {designation: designation, vehicule: vehicule, pu: pu,description:description},
             success: function(data){
                 $("#result_produit").html(data).delay(700).slideDown(700);
-                affPProduits();
+                affProduits();
                 $("#result_produit").delay(2000).slideUp(700);
             },
             error: function(){$("#result_produit").html('<div class="alert alert-danger">Erreur lors de l\'ajout du prestataire.</div>');}
@@ -169,8 +169,8 @@ $(document).on('click', '#btn_add_produit', function(e){
         $('#exampleModalAdd').modal('hide');
     } else {$("#result_produit").html('<div class="alert alert-warning">Les champs ne peuvent pas être vide.</div>');}
 });
-// Aff Prestataire
-function affPProduits(){
+// Aff Produit
+function affProduits(){
     $.ajax({
         url: "produits_read.php",
         type: "post",
@@ -183,8 +183,8 @@ function affPProduits(){
         }
     });
 }
-affPProduits();
-//Supprimer Prestataire
+affProduits();
+//Supprimer Produit
 $(document).on('click', '.btn_del_produit', function(e){
     e.preventDefault();
     if (window.confirm("Voulez-vous supprimer ce Produit?")) {
@@ -196,7 +196,7 @@ $(document).on('click', '.btn_del_produit', function(e){
             data: { id: id },
             success: function(data) {
                 $("#result_produit").html(data).delay(700).slideDown(700);
-                affPProduits();
+                affProduits();
                 $("#result_produit").delay(2000).slideUp(700);
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -206,8 +206,8 @@ $(document).on('click', '.btn_del_produit', function(e){
         });
     } else {return false;}
 });
-//Fonction pour modifier le prestataire
-function updatePrestataire()
+//Fonction pour modifier le Produit
+function updateProduit()
 {
     $(document).on("click" , "#btn_up_produit" , function(e)
     {
@@ -224,8 +224,8 @@ function updatePrestataire()
         });
     });
 }
-updatePrestataire();
-//fonction de mise a jour categorie
+updateProduit();
+//fonction de mise a jour du Produit
 $(document).ready(function () {
     // Capture le clic sur le bouton de mise à jour
     $(document).on("click", "#btn_maj_produit", function (e) {
@@ -240,7 +240,7 @@ $(document).ready(function () {
             },
             success: function (data) {
                 $("#result_produit").html(data).delay(700).slideDown(700);
-                affPProduits();
+                affProduits();
                 $("#result_produit").delay(2000).slideUp(700);
                 $("#exampleModalMaj").modal("hide");
             },
@@ -252,3 +252,62 @@ $(document).ready(function () {
     });
 });
 ///////////////////////////////////////////////////////////////// End Produit /////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////// Start Stock ///////////////////////////////////////////////////////////////////////////////////////////
+// Aff Stock
+function affStocks(){
+    $.ajax({
+        url: "stock_read.php",
+        type: "post",
+        success: function(data) {
+            $("#affStock").html(data).delay(500).slideDown(500);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error('Erreur lors de la récupération du stock des produits :', textStatus, errorThrown);
+            $("#affStock").html('<div class="alert alert-danger">Erreur lors du chargement des produits en stock.</div>');
+        }
+    });
+}
+affStocks();
+//Fonction pour modifier le Stock
+function updateStock()
+{
+    $(document).on("click" , "#btn_up_stock" , function(e)
+    {
+        e.preventDefault(); var id = $(this).attr("value");
+        $.ajax({
+            url:"stock_mod.php",
+            type:"post",
+            data:{
+                id:id
+            },
+            success: function(data){
+                $("#stock_mod").html(data);
+            }
+        });
+    });
+}
+updateStock();
+//fonction de mise a jour Stock
+$(document).ready(function () {
+    // Capture le clic sur le bouton de mise à jour
+    $(document).on("click", "#btn_maj_stock", function (e) {
+        e.preventDefault(); // Empêche le comportement par défaut
+        var id = $("#stock_id").val(); var id_produit = $("#stock_produit").val(); var quantite = $("#stock_quantite").val();
+        $.ajax({ // Envoie les données via AJAX
+            url: "stock_update.php", // Le script côté serveur qui gère la mise à jour
+            type: "POST",
+            data: {id: id, id_produit: id_produit, quantite: quantite,},
+            success: function (data) {
+                $("#result_stock").html(data).delay(700).slideDown(700);
+                affStocks();
+                $("#result_stock").delay(2000).slideUp(700);
+                $("#exampleModalMaj").modal("hide");
+            },
+            error: function (xhr, status, error) {
+                console.error("Erreur lors de la mise à jour :", error);
+                $("#result_stock").html('<div class="alert alert-danger">Erreur lors de la mis à jour.</div>').delay(2000).slideUp(700);
+            },
+        });
+    });
+});
+///////////////////////////////////////////////////////////////// End Stock /////////////////////////////////////////////////////////////////////////////////////////////
