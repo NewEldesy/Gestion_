@@ -1,22 +1,21 @@
 <?php
-include_once('model.php');
-// var_dump($_POST);
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $data['id'] = $_POST['id'] ?? null; $data['nom'] = $_POST['nom'] ?? null;
-    $data['prenom'] = $_POST['prenom'] ?? null; $data['poste'] = $_POST['poste'] ?? null;
-    $data['date_naissance'] = $_POST['date_naissance'] ?? null;
-    $data['telephone'] = $_POST['telephone'] ?? null; $data['telephone2'] = $_POST['telephone2'];
-    // Validate the input
-    if (!$data['id'] || !$data['nom'] || !$data['prenom'] || !$data['date_naissance'] || !$data['telephone'] || !$data['poste']) {
-        echo "All fields are required."; exit;
+    include_once('model.php');
+    
+    if (isset($_POST['id']) && isset($_POST['nom']) && isset($_POST['prenom']) && isset($_POST['date_naissance']) && isset($_POST['telephone']) && isset($_POST['telephone2']) && isset($_POST['poste'])) {
+        if (!empty($_POST['id']) && !empty($_POST['nom']) && !empty($_POST['prenom']) && !empty($_POST['date_naissance']) && !empty($_POST['telephone']) && !empty($_POST['telephone2']) && !empty($_POST['poste'])) {
+            $data['id'] = (int)$_POST['id']; $data['nom'] = $_POST['nom']; $data['prenom'] = $_POST['prenom']; $data['date_naissance'] = $_POST['date_naissance']; 
+            $data['telephone'] = $_POST['telephone']; $data['telephone2'] = $_POST['telephone2']; $data['poste'] = $_POST['poste']; 
+            
+            $maj = updatePrestataire($data);
+            if (!$maj) {
+                echo '<div class="alert alert-success" role="alert">Informations Prestataires modifiée avec succès</div>
+                <script>$("#exampleModalMaj").modal("hide")</script>';
+            } else {
+                echo '<div class="alert alert-danger" role="alert">Échec de la modification</div>';
+            }
+        } else {
+            echo '<div class="alert alert-warning" role="alert">Veuillez remplir tous les champs.</div>';
+        }
+    } else {
+        echo '<div class="alert alert-warning" role="alert">Données manquantes pour la mise à jour.</div>';
     }
-
-    try {
-        updatePrestataire($data);
-        header("Location: prestataire.php");
-        exit;}
-    catch (PDOException $e) { echo "Database error: " . $e->getMessage(); }
-    catch (Exception $e) { echo "Error: " . $e->getMessage(); }
-}
-?>

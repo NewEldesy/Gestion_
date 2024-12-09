@@ -1,16 +1,4 @@
-<?php
-include_once('header.php');
-include_once('model.php');
-$database = dbConnect();
-
-// Récupérer tous les véhicules depuis la base de données
-$stmt = $database->prepare("SELECT p.id, p.designation, p.pu, p.description, p.vehicule, v.nom AS vehicule_nom FROM produits p LEFT JOIN vehicule v ON p.vehicule = v.id");
-$stmt->execute();
-$Produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Initialisation des variables pour le modal de modification
-$categorie = ['nom' => ''];
-?>
+<?php include_once('header.php'); ?>
 
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
@@ -24,46 +12,8 @@ $categorie = ['nom' => ''];
         </div>
     </div>
     <div>
-        <h5 class="mb-5">Liste des Produits</h5>
-        <div class="table-responsive">
-            <table id="productTable" class="table table-striped table-sm">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Désignation</th>
-                        <th>Marque Véhicule</th>
-                        <th>Prix</th>
-                        <th>Description</th>
-                        <th>Options</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($Produits)) {
-                        foreach ($Produits as $produit) { ?>
-                            <tr>
-                                <td><?=htmlspecialchars($produit['id']);?></td>
-                                <td><?=htmlspecialchars($produit['designation']);?></td>
-                                <td><?=htmlspecialchars($produit['vehicule_nom']);?></td>
-                                <td><?=htmlspecialchars($produit['pu']);?> FCFA</td>
-                                <td><?=htmlspecialchars($produit['description']);?></td>
-                                <td>
-                                    <a href="produits_delete.php?id=<?=$produit['id'];?>" class="btn btn-sm btn-danger">Supprimer</a>
-                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" data-id="<?=$produit['id'];?>" data-designation="<?=$produit['designation'];?>" data-vehicule="<?=$produit['vehicule'];?>" data-description="<?=$produit['description'];?>" data-prixunitaire="<?=$produit['pu'];?>">Modifier</a>
-                                </td>
-                            </tr>
-                        <?php }
-                    } else { ?>
-                        <tr>
-                            <td colspan="6" class="text-center">
-                                <div class="alert alert-warning" role="alert">
-                                    Pas de produits enregistré !
-                                </div>
-                            </td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        </div>
+        <div id="result_produit"></div>
+        <div id="aff_produit"></div>
     </div>
 </main>
 
@@ -76,7 +26,7 @@ $categorie = ['nom' => ''];
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="produits_add.php" method="POST">
+                <form method="POST">
                     <div class="mb-3">
                         <label for="designation" class="form-label">Désignation</label>
                         <input type="text" class="form-control" id="designation" name="designation" required>
@@ -101,7 +51,7 @@ $categorie = ['nom' => ''];
                         <label for="description" class="form-label">Description</label>
                         <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                    <button type="submit" id="btn_add_produit" class="btn btn-primary">Ajouter</button>
                 </form>
             </div>
         </div>
@@ -118,62 +68,16 @@ $categorie = ['nom' => ''];
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="produits_update.php" method="POST">
-                    <input type="hidden" name="id" id="produit_id">
-                    <div class="mb-3">
-                        <label for="designation" class="form-label">Designation</label>
-                        <input type="text" class="form-control" id="produit_designation" name="designation" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="vehicule" class="form-label">Marque Véhicule</label>
-                        <select id="produit_vehicule" name="vehicule" class="form-select">
-                            <option value="">Sélectionnez un Vehicule</option>
-                            <?php 
-                                $vehicules = getVehicule();
-                                foreach($vehicules as $vehicule) {
-                            ?>
-                            <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="prixunitaire" class="form-label">Prix Unitaire</label>
-                        <input type="text" class="form-control" id="produit_prixunitaire" name="prixunitaire" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="produit_description" name="description" rows="3" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Modifier</button>
-                </form>
+                <div id="produit_mod"></div>
+                <button type="submit" id="btn_maj_produit" class="btn btn-primary">Modifier</button>
             </div>
         </div>
     </div>
 </div>
 <!-- Modal Modification-->
 
-<!-- JavaScript -->
-<script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="assets/dataTables/js/dataTables.js"></script>
+<?php include_once('footer.php');?>
 <script>
-    // Remplir les champs du modal "Modifier" avec les données
-    var exampleModalMaj = document.getElementById('exampleModalMaj');
-    exampleModalMaj.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        var id = button.getAttribute('data-id');
-        var designation = button.getAttribute('data-designation');
-        var vehicule = button.getAttribute('data-vehicule');
-        var prixunitaire = button.getAttribute('data-prixunitaire');
-        var description = button.getAttribute('data-description');
-
-        // Remplir les champs cachés et visibles
-        document.getElementById('produit_id').value = id;
-        document.getElementById('produit_designation').value = designation;
-        document.getElementById('produit_vehicule').value = vehicule;
-        document.getElementById('produit_prixunitaire').value = prixunitaire;
-        document.getElementById('produit_description').value = description;
-    });
-
     $(document).ready(function () {
         // Charger les véhicules depuis la base de données (AJAX)
         function chargerVehicules() {

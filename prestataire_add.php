@@ -1,30 +1,17 @@
 <?php
-include_once('model.php');
+    include_once('model.php');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nom = $_POST['nom'] ?? null;
-    $prenom = $_POST['prenom'] ?? null;
-    $date_naissance = $_POST['date_naissance'] ?? null;
-    $telephone = $_POST['telephone'] ?? null;
-    $telephone2 = $_POST['telephone2'];
-    $poste = $_POST['poste'] ?? null;
-
-    if ($nom || $prenom || $date_naissance || $telephone || $poste) {
-        try {
-            addPrestataire([
-                'nom' => $nom,
-                'prenom' => $prenom,
-                'date_naissance' => $date_naissance,
-                'telephone' => $telephone,
-                'telephone2' => $telephone2,
-                'poste' => $poste
-            ]);
-            header("Location: prestataire.php");
-            exit;
-        } catch (PDOException $e) {
-            echo "Database error: " . $e->getMessage();
-        } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+    if(isset($_POST['nom']) && isset($_POST['prenom']) && isset($_POST['date_naissance']) && isset($_POST['telephone']) && isset($_POST['poste'])) {
+        if(!empty($_POST['nom']) && !empty($_POST['prenom']) && !empty($_POST['date_naissance']) && !empty($_POST['telephone']) && !empty($_POST['poste'])) {
+            $data['nom']=$_POST['nom']; $data['prenom']=$_POST['prenom']; $data['date_naissance']=$_POST['date_naissance'];
+            $data['telephone']=$_POST['telephone']; $data['telephone2']=$_POST['telephone2']; $data['poste']=$_POST['poste'];
+            $prestataire = addPrestataire($data);
+            if(!$prestataire){
+                echo '<div class="alert alert-success" role="alert">Prestataire ajoutée avec succès.</div>';
+            } else {
+                echo '<div class="alert alert-danger" role="alert">Échec de l\'ajout du Prestataire.</div>';
+            }
         }
+    } else {
+        echo '<div class="alert alert-warning" role="alert">Le champ est vide, veuillez remplir le nom du Prestataire.</div>';
     }
-}
