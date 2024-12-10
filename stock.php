@@ -17,40 +17,6 @@
     </div>
 </main>
 
-<!-- Modal Ajout-->
-<!-- <div class="modal fade" id="exampleModalAdd" tabindex="-1" aria-labelledby="AddModal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="AddModal">Enregistrement Stock Produits</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="stock_add.php" method="POST">
-                    <div class="mb-3">
-                        <label for="produit" class="form-label">Produits</label>
-                        <select id="produit" name="produit" class="form-select">
-                            <option value="">Sélectionnez un Produit</option>
-                            <?php 
-                                // $produits = getProduits();
-                                // foreach($produits as $produit) {
-                            ?>
-                            <option value="<?//=$produit['id'];?>"><?//=$produit['designation'];?></option>
-                            <?php // } ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="quantite" class="form-label">Quantité</label>
-                        <input type="text" class="form-control" id="quantite" name="quantite" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Ajouter</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div> -->
-<!-- Modal Ajout-->
-
 <!-- Modal Modification-->
 <div class="modal fade" id="exampleModalMaj" tabindex="-1" aria-labelledby="UpdateModal" aria-hidden="true">
     <div class="modal-dialog">

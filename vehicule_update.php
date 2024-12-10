@@ -1,28 +1,20 @@
 <?php
-include_once('model.php'); // Ensure model.php contains the dbConnect function
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Retrieve data from the form
-    $data['id'] = $_POST['id'] ?? null;
-    $data['nom'] = $_POST['nom'] ?? null;
-
-    // Validate the input
-    if (!$data['id'] || !$data['nom']) {
-        echo "All fields are required.";
-        exit;
+    include_once('model.php');
+    
+    if (isset($_POST['id']) && isset($_POST['nom'])) {
+        if (!empty($_POST['id']) && !empty($_POST['nom'])) {
+            $data['id'] = (int)$_POST['id']; $data['nom'] = $_POST['nom'];
+            
+            $maj = updateVehicule($data);
+            if (!$maj) {
+                echo '<div class="alert alert-success" role="alert">Informations Vehicule modifiée avec succès</div>
+                <script>$("#exampleModalMaj").modal("hide")</script>';
+            } else {
+                echo '<div class="alert alert-danger" role="alert">Échec de la modification</div>';
+            }
+        } else {
+            echo '<div class="alert alert-warning" role="alert">Veuillez remplir tous les champs.</div>';
+        }
+    } else {
+        echo '<div class="alert alert-warning" role="alert">Données manquantes pour la mise à jour.</div>';
     }
-
-    try {
-        // Update the vehicle in the database
-        updateVehicule($data);
-
-        // Redirect after successful update
-        header("Location: vehicule.php?update=success");
-        exit;
-    } catch (PDOException $e) {
-        echo "Database error: " . $e->getMessage();
-    } catch (Exception $e) {
-        echo "Error: " . $e->getMessage();
-    }
-}
-?>

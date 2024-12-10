@@ -311,3 +311,102 @@ $(document).ready(function () {
     });
 });
 ///////////////////////////////////////////////////////////////// End Stock /////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////// Start Vehicule /////////////////////////////////////////////////////////////////////////////////////////
+// Add Vehicule
+$(document).on('click', '#btn_add_vehicule', function(e){
+    e.preventDefault();
+    var nom = $("#nom").val();
+    if (nom.trim() !== "") {
+        $.ajax({
+            url: "vehicule_add.php",
+            type: "POST",
+            data: {nom: nom,},
+            success: function(data){
+                $("#result_vehicule").html(data).delay(700).slideDown(700);
+                affPrestataires();
+                $("#result_vehicule").delay(2000).slideUp(700);
+            },
+            error: function(){$("#result_vehicule").html('<div class="alert alert-danger">Erreur lors de l\'ajout du prestataire.</div>');}
+        });
+        $('#exampleModalAdd').modal('hide');
+    } else {$("#result_vehicule").html('<div class="alert alert-warning">Les champs ne peuvent pas être vide.</div>');}
+});
+// Aff Vehicule
+function affVehicules(){
+    $.ajax({
+        url: "vehicule_read.php",
+        type: "post",
+        success: function(data) {
+            $("#affVehicule").html(data).delay(500).slideDown(500);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error('Erreur lors de la récupération des véhicules :', textStatus, errorThrown);
+            $("#affVehicule").html('<div class="alert alert-danger">Erreur lors du chargement des véhicules.</div>');
+        }
+    });
+}
+affVehicules();
+//Supprimer Vehicule
+$(document).on('click', '.btn_del_vehicule', function(e){
+    e.preventDefault();
+    if (window.confirm("Voulez-vous supprimer ce véhicule?")) {
+        var v_id = $(this).data("id");
+        $.ajax({
+            url: "vehicule_delete.php",
+            type: "POST",
+            data: { id: v_id },
+            success: function(response) {
+                $("#result_vehicule").html(response).delay(700).slideDown(700);
+                affVehicules();
+                $("#result_vehicule").delay(2000).slideUp(700);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Erreur lors de la suppression :', textStatus, errorThrown);
+                $("#result_vehicule").html('<div class="alert alert-danger">Erreur lors de la suppression du véhicule.</div>').delay(2000).slideUp(700);
+            }
+        });
+    } else {return false;}
+});
+//Fonction pour modifier le Vehicule
+function updateVehicule() {
+    $(document).on("click", "#btn_up_vehicule", function (e) {
+        e.preventDefault();
+        var vehiculeId  = $(this).attr("value");
+        $.ajax({
+            url:"vehicule_mod.php",
+            type:"POST",
+            data:{ id: vehiculeId  },
+            success: function(response){
+                $("#vehicule_mod").html(response);
+            },
+            error: function (xhr, status, error) {
+                console.error("Erreur lors du chargement du formulaire :", error);
+            }
+        });
+    });
+}
+updateVehicule();
+//fonction de mise a jour Vehicule
+$(document).ready(function () {
+    // Capture le clic sur le bouton de mise à jour
+    $(document).on("click", "#btn_maj_vehicule", function (e) {
+        e.preventDefault(); // Empêche le comportement par défaut
+        var id = $("#vehicule_id").val(); var nom = $("#vehicule_nom").val(); // Récupère les données du formulaire
+        $.ajax({ // Envoie les données via AJAX
+            url: "vehicule_update.php", // Le script côté serveur qui gère la mise à jour
+            type: "POST",
+            data: {id: id, nom: nom },
+            success: function (data) {
+                $("#result_vehicule").html(data).delay(700).slideDown(700);
+                affVehicules();
+                $("#result_vehicule").delay(2000).slideUp(700);
+                $("#exampleModalMaj").modal("hide");
+            },
+            error: function (xhr, status, error) {
+                console.error("Erreur lors de la mise à jour :", error);
+                $("#result_vehicule").html('<div class="alert alert-danger">Erreur lors de la mis à jour.</div>').delay(2000).slideUp(700);
+            },
+        });
+    });
+});
+///////////////////////////////////////////////////////////////// End Prestataire //////////////////////////////////////////////////////////////////////////////////////////

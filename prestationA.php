@@ -26,7 +26,7 @@ $PAS = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div>
         <h5 class="mb-5">Liste des Produits</h5>
         <div class="table-responsive">
-            <table id="productTable" class="table table-striped table-sm">
+            <table id="PA" class="table table-striped table-sm">
                 <thead>
                     <tr>
                         <th>#</th>

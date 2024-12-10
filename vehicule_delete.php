@@ -1,13 +1,13 @@
 <?php
 include("model.php");
 
-if(isset($_GET['id']) && !empty($_GET['id'])) {
-    $id = $_GET['id'];
+if(isset($_POST['id']) && !empty($_POST['id'])) {
+    $id = $_POST['id'];
 
     if(!removeVehicule($id)) {
-        header('Location: vehicule.php');
+        echo 'Véhicule supprimer avec succès !!!';
     } else {
-        echo 'Échec de la suppression du vehicule.';
+        echo 'Échec de la suppression du vehicule !!!';
     }
 }
 ?>

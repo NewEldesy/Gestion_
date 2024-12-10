@@ -11,7 +11,7 @@ $stocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <div class="col-md-12 order-md-1">
    <h5 class="mb-5">Stock Produits</h5>
    <div class="table-responsive">
-      <table id="Prestataire" class="table table-striped table-sm">
+      <table id="stock" class="table table-striped table-sm">
          <thead>
             <tr>
                 <th>#</th>
@@ -47,4 +47,4 @@ $stocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
    </div>
 </div>
 
-<script>// new DataTable('#stock'); </script>
+<script>new DataTable('#stock'); </script>

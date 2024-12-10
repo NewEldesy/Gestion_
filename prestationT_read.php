@@ -10,7 +10,7 @@ $prestataires = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <div class="col-md-12 order-md-1">
    <h5 class="mb-5">Liste des Prestataires</h5>
    <div class="table-responsive">
-      <table id="Prestataire" class="table table-striped table-sm">
+      <table id="PT" class="table table-striped table-sm">
          <thead>
             <tr>
                 <th>#</th>
@@ -24,19 +24,19 @@ $prestataires = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </tr>
          </thead>
          <tbody>
-            <?php if (!empty($prestataires)) {
-                  foreach ($prestataires as $prestataire) { ?>
+            <?php if (!empty($pts)) {
+                  foreach ($pts as $pt) { ?>
             <tr>
-                <td><?=htmlspecialchars($prestataire['id']); ?></td>
-                <td><?=htmlspecialchars($prestataire['nom']); ?></td>
-                <td><?=htmlspecialchars($prestataire['prenom']); ?></td>
-                <td><?=htmlspecialchars($prestataire['date_naissance']); ?></td>
-                <td><?=htmlspecialchars($prestataire['telephone']); ?></td>
-                <td><?=$prestataire['telephone2'];?></td>
-                <td><?=htmlspecialchars($prestataire['poste']); ?></td>
+                <td><?=htmlspecialchars($pt['id']); ?></td>
+                <td><?=htmlspecialchars($pt['nom']); ?></td>
+                <td><?=htmlspecialchars($pt['prenom']); ?></td>
+                <td><?=htmlspecialchars($pt['date_naissance']); ?></td>
+                <td><?=htmlspecialchars($pt['telephone']); ?></td>
+                <td><?=$pt['telephone2'];?></td>
+                <td><?=htmlspecialchars($pt['poste']); ?></td>
                <td>
-                  <a href="#" class="btn_del_prestataire btn btn-sm btn-danger" data-id="<?=$prestataire['id'];?>">Supprimer</a>
-                  <a href="#" id="btn_up_prestataire" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" value="<?= $prestataire['id']; ?>" class="btn btn-sm btn-warning"></i>Modifier</a>
+                  <a href="#" class="btn_del_pt btn btn-sm btn-danger" data-id="<?=$pt['id'];?>">Supprimer</a>
+                  <a href="#" id="btn_up_pt" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" value="<?= $pt['id']; ?>" class="btn btn-sm btn-warning"></i>Modifier</a>
                </td>
             </tr>
             <?php } 
@@ -54,4 +54,4 @@ $prestataires = $stmt->fetchAll(PDO::FETCH_ASSOC);
    </div>
 </div>
 
-<script> new DataTable('#Prestataire'); </script>
+<script> new DataTable('#PT'); </script>
