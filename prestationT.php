@@ -10,9 +10,6 @@ $stmt = $database->prepare("SELECT t.id, t.date_entree, t.vehicule, t.num_immatr
     LEFT JOIN prestataire p ON t.prestataire = p.id");
 $stmt->execute();
 $tractages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Initialisation des variables pour le modal de modification
-$categorie = ['nom' => ''];
 ?>
 
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">

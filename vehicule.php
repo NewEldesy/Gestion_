@@ -7,7 +7,7 @@ include_once('header.php');
         <h3 class="h3">Gestion Véhicules</h3>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group mr-2">
-                <a href="#" id="addProd" data-bs-toggle="modal" data-bs-target="#exampleModalAdd" class="btn btn-primary">
+                <a href="#" id="addVehicule" data-bs-toggle="modal" data-bs-target="#exampleModalAdd" class="btn btn-primary">
                     Nouveau Vehicule
                 </a>
             </div>

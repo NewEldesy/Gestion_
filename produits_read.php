@@ -9,7 +9,7 @@ $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <div class="col-md-12 order-md-1">
-   <h5 class="mb-5">Liste des Prestataires</h5>
+   <h5 class="mb-5">Liste des Produits</h5>
    <div class="table-responsive">
       <table id="Produit" class="table table-striped table-sm">
          <thead>
@@ -26,11 +26,11 @@ $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php if (!empty($produits)) {
                   foreach ($produits as $produit) { ?>
             <tr>
-                <td><?=htmlspecialchars($produit['id']);?></td>
-                <td><?=htmlspecialchars($produit['designation']);?></td>
-                <td><?=htmlspecialchars($produit['vehicule_nom']);?></td>
-                <td><?=htmlspecialchars($produit['pu']);?> FCFA</td>
-                <td><?=htmlspecialchars($produit['description']);?></td>
+               <td><?=htmlspecialchars($produit['id']);?></td>
+               <td><?=htmlspecialchars($produit['designation']);?></td>
+               <td><?=htmlspecialchars($produit['vehicule_nom']);?></td>
+               <td><?=htmlspecialchars($produit['pu']);?> FCFA</td>
+               <td><?=htmlspecialchars($produit['description']);?></td>
                <td>
                   <a href="#" class="btn_del_produit btn btn-sm btn-danger" data-id="<?=$produit['id'];?>">Supprimer</a>
                   <a href="#" id="btn_up_produit" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" value="<?= $produit['id']; ?>" class="btn btn-sm btn-warning"></i>Modifier</a>

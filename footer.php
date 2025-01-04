@@ -8,12 +8,3 @@
         <script src="assets/dataTables/js/dataTables.js"></script>
     </body>
 </html>
-
-
-
-        
-        
-        
-        <script>
-            $('#productTable').DataTable();
-        </script>

@@ -14,8 +14,8 @@ $vehicules = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <thead>
                 <tr>
                     <th>#</th>
-                        <th>Nom</th>
-                        <th>Options</th>
+                    <th>Nom</th>
+                    <th>Options</th>
                 </tr>
             </thead>
             <tbody>
