@@ -1,8 +1,5 @@
 <?php
     include_once('header.php');
-    if (!isset($_SESSION['user_id']) && !isset($_SESSION['user_email']) && !isset($_SESSION['user_username']) ) {
-        header('Location: index.php'); exit;
-    }
 ?>
 
     
@@ -13,7 +10,7 @@
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
                         <h2 class="h3">Tableau de bord</h2>
                     </div>
-                    <!-- Vente Analyse -->
+                    <!-- Vente Analyse Start -->
                     <div class="container-fluid pt-0 px-4">
                         <div class="row g-4">
                             <h3>Vente <a href="ventes.php">+</a></h3>
@@ -63,7 +60,8 @@
                             </div>
                         </div>
                     </div>    
-                    <!-- Vente Analyse -->
+                    <!-- Vente Analyse End-->
+                    <!-- Prestation Analyse Start-->
                     <div class="container-fluid pt-4 px-4">
                         <div class="row g-4">
                             <h3>Prestation <a href="prestation.php">+</a></h3>
@@ -113,6 +111,7 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Prestation Analyse End-->
                 </main>
             </div>
         </div>

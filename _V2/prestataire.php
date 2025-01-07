@@ -10,7 +10,7 @@
             </a>
           </div>
           <div class="card-body">
-            <div id="result_prestation"></div>
+            <div id="result_prestataire"></div>
             <div id="affPrest"></div>
           </div>
         </div>
@@ -49,7 +49,7 @@
                       <label for="poste" class="form-label">Poste *</label>
                       <input type="text" class="form-control" id="poste" name="poste" required>
                   </div>
-                  <button type="submit" id="btn_add_prestation" class="btn btn-primary">Ajouter</button>
+                  <button type="submit" id="btn_add_prestataire" class="btn btn-primary">Ajouter</button>
                 </form>
               </div>
             </div>
@@ -67,7 +67,7 @@
               </div>
               <div class="modal-body">
                 <div id="prestataire_mod"></div>
-                <button type="button" id="btn_maj_prestation" class="btn btn-primary">Modifier</button>
+                <button type="button" id="btn_maj_prestataire" class="btn btn-primary">Modifier</button>
               </div>
             </div>
           </div>

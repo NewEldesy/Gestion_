@@ -2,7 +2,6 @@
 include_once('model.php');
 $database = dbConnect();
 
-// Récupérer tous les véhicules depuis la base de données
 $stmt = $database->prepare("SELECT * FROM produits");
 $stmt->execute();
 $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -14,7 +13,6 @@ $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <tr class="border-2 border-bottom border-primary border-0"> 
             <th scope="col" class="ps-0">#</th>
             <th scope="col" class="text-center">Désignation</th>
-            <!-- <th scope="col" class="text-center">Marque Véhicule</th> -->
             <th scope="col" class="text-center">Prix</th>
             <th scope="col" class="text-center">Description</th>
             <th scope="col" class="text-center">Options</th>
@@ -26,7 +24,6 @@ $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <tr>
             <th scope="row" class="ps-0 fw-medium"><?=htmlspecialchars($produit['id']);?></th>
             <td class="text-center fw-medium"><?=htmlspecialchars($produit['designation']);?></td>
-            <!-- <th scope="row" class="ps-0 fw-medium"><?//=htmlspecialchars($produit['vehicule_nom']);?></th> -->
             <th scope="row" class="ps-0 fw-medium"><?=htmlspecialchars($produit['pu']);?> FCFA</th>
             <th scope="row" class="ps-0 fw-medium"><?=htmlspecialchars($produit['description']);?></th>
             <td>

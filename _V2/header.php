@@ -1,28 +1,31 @@
 <?php 
-    session_start();
-    require_once('model.php');
+  ob_start(); session_start();
+  require_once('model.php');
+
+  if (!isset($_SESSION['user_id']) && !isset($_SESSION['user_email']) && !isset($_SESSION['user_username']) ) {
+    header('Location: index.php');
+    exit;
+  }
 ?>
 <!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> Login || Garage Software </title>
-  <link rel="shortcut icon" type="image/png" href="assets/images/logos/seodashlogo.png" />
-  <link rel="stylesheet" href="assets/css/styles.min.css" />
+  <title>GARAGE GARANGO PAUL</title>
+  <link rel="shortcut icon" type="image/png" href="assets/images/logos/ggp.ico">
+  <link rel="stylesheet" href="assets/css/styles.min.css">
 </head>
 <body>
   <!--  Body Wrapper -->
-  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
-    data-sidebar-position="fixed" data-header-position="fixed">
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
     <!-- Sidebar Start -->
     <aside class="left-sidebar">
       <!-- Sidebar scroll-->
       <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
-          <a href="index.php" class="text-nowrap logo-img">
-            <!-- <img src="assets/images/logos/logo-light.svg" alt="" /> -->
-            <h5>Gestion Stock</h5>
+          <a href="dashboard.php" class="text-nowrap logo-img">
+            <h5>GARAGE GARANGO PAUL</h5>
           </a>
           <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
             <i class="ti ti-x fs-8"></i>
@@ -31,12 +34,7 @@
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
           <ul id="sidebarnav">
-            <!-- Home / Dashboard -->
-            <!-- Active le sous menu si l'url correspond
-            <a class="sidebar-link active" href="index.php" aria-expanded="false">
-                <span class="hide-menu">Tableau de bord</span>
-            </a> 
-            -->
+            <!-- Home / Dashboard - Start-->
             <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-6"></i>
               <span class="hide-menu">Home</span>
@@ -46,34 +44,29 @@
                 <span class="hide-menu">Tableau de bord</span>
               </a>
             </li>
-            <!-- Home / Dashboard -->
-            <!-- Prestation -->
-            <!-- <li class="nav-small-cap">
+            <!-- Home / Dashboard - End-->
+            <!-- Prestation Start-->
+            <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-6"></i>
               <span class="hide-menu">Prestation</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link <?//=(strpos($_SERVER['REQUEST_URI'], 'prestataire.php') !== false) ? 'active' : '';?>" href="prestataire.php" aria-expanded="false">
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'], 'prestataire.php') !== false) ? 'active' : '';?>" href="prestataire.php" aria-expanded="false">
                 <span class="hide-menu">Prestataire</span>
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link <?//=(strpos($_SERVER['REQUEST_URI'], 'prestationM.php') !== false) ? 'active' : '';?>" href="prestationM.php" aria-expanded="false">
-                <span class="hide-menu">Prestation Mécanique</span>
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'], 'prestation.php') !== false) ? 'active' : '';?>" href="prestation.php" aria-expanded="false">
+                <span class="hide-menu">Prestation</span>
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link <?//=(strpos($_SERVER['REQUEST_URI'], 'prestationT.php') !== false) ? 'active' : '';?>" href="prestationT.php" aria-expanded="false">
-                <span class="hide-menu">Prestation Tractage</span>
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'], 'prestations.php') !== false) ? 'active' : '';?>" href="prestations.php" aria-expanded="false">
+                <span class="hide-menu">Liste Prestation</span>
               </a>
             </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link <?//=(strpos($_SERVER['REQUEST_URI'], 'prestationA.php') !== false) ? 'active' : '';?>" href="prestationA.php" aria-expanded="false">
-                <span class="hide-menu">Autre Prestation</span>
-              </a>
-            </li> -->
-            <!-- Prestation -->
-            <!-- Vente -->
+            <!-- Prestation End-->
+            <!-- Vente Start-->
             <li class="nav-small-cap">
               <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-6" class="fs-6"></iconify-icon>
               <span class="hide-menu">Vente</span>
@@ -93,7 +86,8 @@
                 <span class="hide-menu">Stock</span>
               </a>
             </li>
-            <!-- Vente -->
+            <!-- Vente End -->
+            <!-- Extra Start-->
             <li class="nav-small-cap">
               <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4" class="fs-6"></iconify-icon>
               <span class="hide-menu">EXTRA</span>
@@ -103,6 +97,7 @@
                 <span class="hide-menu">Vehicule</span>
               </a>
             </li>
+            <!-- Extra End-->
           </ul>
         </nav>
         <!-- End Sidebar navigation -->
@@ -121,21 +116,9 @@
                 <i class="ti ti-menu-2"></i>
               </a>
             </li>
-            <!-- <li class="nav-item">
-              <a class="nav-link nav-icon-hover" href="javascript:void(0)">
-                <i class="ti ti-bell-ringing"></i>
-                <div class="notification bg-primary rounded-circle"></div>
-              </a>
-            </li> -->
           </ul>
           <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
             <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
-              <!-- <a href="#" target="_blank"
-                class="btn btn-primary me-2"><span class="d-none d-md-block">Check Pro Version</span> <span class="d-block d-md-none">Pro</span>
-              </a>
-              <a href="#" target="_blank"
-                class="btn btn-success"><span class="d-none d-md-block">Download Free </span> <span class="d-block d-md-none">Free</span>
-              </a> -->
               <li class="nav-item dropdown">
                 <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
                   aria-expanded="false">

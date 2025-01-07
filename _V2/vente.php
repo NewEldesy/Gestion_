@@ -315,15 +315,24 @@
                 });
 
                 // Supprimer un produit du panier
+                // $('#panierTable').on('click', '.supprimer', function () {
+                //     const tr = $(this).closest('tr');
+                //     const produitId = tr.data('id');
+
+                //     panier = panier.filter(item => item.produitId !== produitId);
+                //     total = panier.reduce((acc, item) => acc + item.sousTotal, 0);
+
+                //     tr.remove();
+                //     $('#total').text(total.toFixed(2));
+                // });
+
+                // Supprimer un produit du panier
                 $('#panierTable').on('click', '.supprimer', function () {
-                    const tr = $(this).closest('tr');
-                    const produitId = tr.data('id');
-
-                    panier = panier.filter(item => item.produitId !== produitId);
-                    total = panier.reduce((acc, item) => acc + item.sousTotal, 0);
-
-                    tr.remove();
-                    $('#total').text(total.toFixed(2));
+                    const tr = $(this).closest('tr'); // Sélectionner la ligne associée
+                    const sousTotal = parseFloat(tr.find('td:nth-child(4)').text()); // Récupérer le sous-total de la ligne
+                    total -= sousTotal; // Soustraire le sous-total du produit du total
+                    $('#total').text(total.toFixed(2)); // Mettre à jour le total affiché
+                    tr.remove(); // Supprimer la ligne du tableau
                 });
             });
         </script>

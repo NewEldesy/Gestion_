@@ -6,8 +6,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> Login || Garage Software </title>
-  <link rel="shortcut icon" type="image/png" href="assets/images/logos/seodashlogo.png" />
+  <title>GARAGE GARANGO PAUL</title>
+  <link rel="shortcut icon" type="image/png" href="assets/images/logos/ggp.ico" />
   <link rel="stylesheet" href="assets/css/styles.min.css" />
 </head>
 <body>
@@ -20,7 +20,8 @@
             <div class="card mb-0">
               <div class="card-body">
                 <a href="" class="text-nowrap logo-img text-center d-block py-3 w-100">
-                  <img src="assets/images/logos/logo-light.svg" alt="">
+                  <h4>GARAGE GARANGO PAUL</h4>
+                  <h6>Page de Connexion</h6>
                 </a>
                 <!-- <p class="text-center">Your Social Campaigns</p> -->
                 <form method="POST">
