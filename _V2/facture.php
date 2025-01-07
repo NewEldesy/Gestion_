@@ -1,6 +1,6 @@
 <?php include_once('header.php');?>
 
-<div class="container-fluid">
+<div id="myfrm" class="container-fluid">
     <div class="offset-xl-2 col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 padding">
         <div class="card">
             <div class="card-header p-3">
@@ -10,8 +10,8 @@
                     </div>
                     <table style="width: 100%; border-collapse: collapse;">
                         <tr>
-                            <td style=" text-align: left;"><h3 class="mb-0">Facture N° </h3></td>
-                            <td style=" text-align: right;"><strong>Tenkodogo, le 06 Décembre 2025</strong></td>
+                            <td style=" text-align: left;  font-size: 13px;"><h5 class="mb-0">Facture N° <?php echo $_GET['id'];?></h5></td>
+                            <td style=" text-align: right; font-size: 13px;"><strong>Tenkodogo, le 06 Décembre 2025</strong></td>
                         </tr>
                     </table>
                 </div>
@@ -22,31 +22,31 @@
                         <div>
                             <table style="width: 100%; border-collapse: collapse;">
                                 <tr>
-                                    <td style=" text-align: left;"><strong>Client : John Doe</strong></td>
-                                    <td style=" text-align: right;"><strong>Addresse : Tenkodogo</strong></td>
+                                    <td style=" text-align: left; font-size: 13px;"><strong>Client : John Doe</strong></td>
+                                    <td style=" text-align: right; font-size: 13px;"><strong>Addresse : Tenkodogo</strong></td>
                                 </tr>
                             </table>
                         </div>
                         <div>
                             <table style="width: 100%; border-collapse: collapse;">
                                 <tr>
-                                    <td style=" text-align: left;"><strong>RCCM : 00000000</strong></td>
-                                    <td style=" text-align: right;"><strong>IFU : 00000000</strong></td>
+                                    <td style=" text-align: left; font-size: 13px;"><strong>RCCM : 00000000</strong></td>
+                                    <td style=" text-align: right; font-size: 13px;"><strong>IFU : 00000000</strong></td>
                                 </tr>
                             </table>
                         </div>
                         <div>
                             <table style="width: 100%; border-collapse: collapse;">
                                 <tr>
-                                    <td style=" text-align: left;"><strong>BP : 5124</strong></td>
-                                    <td style=" text-align: right;"><strong>Téléphone : 00000000</strong></td>
+                                    <td style=" text-align: left; font-size: 13px;"><strong>BP : 5124</strong></td>
+                                    <td style=" text-align: right; font-size: 13px;"><strong>Téléphone : 00000000</strong></td>
                                 </tr>
                             </table>
                         </div>
                     </div>
                 </div>
-                <h5>Description : Vente Produits</h5>
-                <div class="table-responsive-sm">
+                <h6>Description : Vente Produits</h6>
+                <div class="table-responsive-sm" style="font-size: 13px;">
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -78,13 +78,6 @@
                                 <td class="right">800 FCFA</td>
                                 <td class="center">10</td>
                                 <td class="right">8000 FCFA</td>
-                            </tr>
-                            <tr>
-                                <td class="center">4</td>
-                                <td class="left">Google Pixel</td>
-                                <td class="right">500 FCFA</td>
-                                <td class="center">10</td>
-                                <td class="right">5000 FCFA</td>
                             </tr>
                         </tbody>
                     </table>
@@ -126,10 +119,25 @@
                 </div>
             </div>
             <div class="card-footer bg-white">
-                <p class="mb-0">BBBootstrap.com, Sounth Block, New delhi, 110034</p>
+                <p class="mb-0" style="text-align: center; font-size: 13px;">C :N°BFTNK 2013 A 194 *** Agrément : 2024-056 *** IFU : N°00051172 B</p>
+                <p class="mb-0" style="text-align: center; font-size: 13px;">Compte N°005045840003-02 BOA N°170458699001-15 ECOBANK</p>
+                <p class="mb-0" style="text-align: center; font-size: 13px;">BP:30 Tenkodogo Tél: (+226) 24 71 07 07  Cel :(+226) 70 27 67 12 /76 96 08 04</p>
+                <p class="mb-0" style="text-align: center; font-size: 13px;">Mail : garagegarangopaul67@gmail.com / juliettekorgo@gmail.com Burkina Faso</p>
             </div>
         </div>
     </div>
 </div>
 
-    <?php include_once('footer.php');?>
+<!-- <input type="button" onclick="PrintElem('myfrm')" value="Imprimer"> -->
+<button onclick="printDiv('myfrm')">Print only the above div</button>
+
+<?php include_once('footer.php');?>
+<script>
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+</script>
