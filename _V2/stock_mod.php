@@ -13,9 +13,10 @@ if (!empty($mod)) {
 <form method="POST">
     <input type="hidden" value="<?=$mod['id']?>" id="stock_id">
     <div class="mb-3">
+        <input type="hidden" value="<?=$mod['id_produit']?>" id="stock_produit">
         <label for="produit" class="form-label">Produits</label>
         <?php $id_prod = $mod['id_produit']; $produit = getProduitsById($id_prod);?>
-        <input type="text" class="form-control" value="<?=$produit['designation']?>" id="stock_produit" name="produit" required>
+        <input type="text" class="form-control" value="<?=$produit['designation']?>" name="produit" required>
     </div>
     <div class="mb-3">
         <label for="quantite" class="form-label">Quantité</label>
