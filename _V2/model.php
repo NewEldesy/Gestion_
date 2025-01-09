@@ -196,6 +196,50 @@ function getPrestations(){
     $stmt = $database->prepare("SELECT * FROM prestations");
     $stmt->execute(); return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+function getIdPrestation() {
+    $database = dbConnect();
+    $query = "SELECT MAX(id) AS lastId FROM prestation";
+    $stmt = $database->prepare($query); $stmt->execute();
+    $data = $stmt->fetch(PDO::FETCH_ASSOC); return $data['lastId'];}
+function add_Prestation($data) {
+    $database = dbConnect();
+
+    $transactionId = $data['venteId']; $prestataire = $data['prestataire'];
+    $date = date('Y-m-d'); $total = $data['total'];
+    $remise = isset($data['remise']) && is_numeric($data['remise']) ? $data['remise'] : 0; // Remise par défaut à 0 si non envoyée
+    $items = json_decode($data['items'], true); // Décoder le JSON des éléments
+    
+    $database->beginTransaction(); // Début de la transaction
+    try {
+        // Insérer les données dans la table `Vente`
+        $queryFacture = "INSERT INTO prestation (id_prestataire, total, remise, date) 
+                            VALUES (:id_prestataire, :total, :remise, :date)";
+        $stmtFacture = $database->prepare($queryFacture);
+        $stmtFacture->bindParam(':id_prestataire', $prestataire);
+        $stmtFacture->bindParam(':total', $total);
+        $stmtFacture->bindParam(':remise', $remise);
+        $stmtFacture->bindParam(':date', $date);
+        $stmtFacture->execute();
+        // Insérer les éléments de la facture dans la table `transaction_details`
+        $queryElementFacture = "INSERT INTO element_prestation (id_prestation, element_prestations, prix) 
+                                VALUES (:id_prestation, :element_prestations, :prix)";
+        $stmt = $database->prepare($queryElementFacture);
+        // Boucle pour traiter chaque élément de la facture
+        foreach ($items as $element) {
+            $produit = $element['produitId'];
+            $pu = $element['produitPrix'];
+            // Ajouter à `transaction_details`
+            $stmt->bindParam(':id_prestation', $transactionId);
+            $stmt->bindParam(':element_prestations', $produit);
+            $stmt->bindParam(':prix', $pu);
+            $stmt->execute();
+        }
+        $database->commit(); // Valider la transaction
+    } catch (Exception $e) {
+        $database->rollBack(); // Annuler la transaction en cas d'erreur
+        throw $e; // Rejeter l'erreur pour un traitement ultérieur
+    }
+}
 // End Gestion Prestation
 // Start Gestion Prestataire
 function addPrestataire($data) {
