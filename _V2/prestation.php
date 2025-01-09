@@ -66,14 +66,11 @@
 
         <script>
             $(document).ready(function () {
-                let panier = [];
-                let total = 0;
-
+                let panier = []; let total = 0;
                 $('#prestation_').on('click', function () {
                     // Montrer l'indicateur de chargement
                     $('#loading').show();
                     $('#prestation_').prop('disabled', true);
-
                     // Récupérer les informations de la facture
                     var venteId = $('#venteId').text();
                     var total = parseFloat($('#total').text());
@@ -81,7 +78,6 @@
                     var prestataire = $('#prestataire').val(); // Récupérer l'ID ou le nom du prestataire
                     var statuts = 'payé';
                     var items = [];
-
                     // Vérifier si un prestataire est sélectionné
                     if (!prestataire) {
                         $("#result_vente").html('<div class="alert alert-danger text-center">Veuillez sélectionner un prestataire.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
@@ -89,7 +85,6 @@
                         $('#prestation_').prop('disabled', false);
                         return; // Arrêter l'exécution
                     }
-
                     // Récupérer les articles du tableau
                     $('#panierTable tbody tr').each(function () {
                         var item = {
@@ -101,7 +96,6 @@
                         };
                         items.push(item);
                     });
-
                     // Vérifier s'il y a des articles ou un total à 0
                     if (items.length === 0 || total <= 0) {
                         $("#result_vente").html('<div class="alert alert-danger text-center">Aucune vente en cours</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
@@ -109,18 +103,14 @@
                         $('#prestation_').prop('disabled', false);
                         return; // Arrêter l'exécution
                     }
-
                     // Envoyer la requête AJAX pour enregistrer la transaction
                     $.ajax({
                         url: 'save_prestation.php',
                         method: 'POST',
                         data: {
-                            venteId: venteId,
-                            total: total,
-                            remise: remise,
-                            prestataire: prestataire, // Ajouter le prestataire
-                            statuts: statuts,
-                            items: JSON.stringify(items) // Sérialiser les articles sous forme JSON
+                            venteId: venteId, total: total,
+                            remise: remise, prestataire: prestataire, // Ajouter le prestataire
+                            statuts: statuts, items: JSON.stringify(items) // Sérialiser les articles sous forme JSON
                         },
                         success: function (response) {
                             // Afficher un message de confirmation
@@ -145,34 +135,26 @@
                 function print() {
                     $('#loading').show();
                     $('#prestation_').prop('disabled', true);
-
                     var venteId = $('#venteId').text(); // Assurez-vous que cet élément contient l'ID de la vente
-
                     if (!venteId) {
                         $("#result_vente").html('<div class="alert alert-danger text-center">Aucune vente sélectionnée.</div>')
                             .delay(700).slideDown(700).delay(2100).slideUp(700);
                         $('#loading').hide();
                         $('#prestation_').prop('disabled', false);
                         return;
-                    }
-
-                    // Redirection vers la page facture avec l'ID comme paramètre GET
-                    window.location.href = `fprestataire.php?id=${venteId}`;
+                    } // Redirection vers la page facture avec l'ID comme paramètre GET
+                    window.location.href = `factureP.php?id=${venteId}`;
                 }
 
                 // Charger les prestations depuis la base de données (AJAX)
-                function chargerPrestations() {
-                    // Afficher un message de chargement dans la liste déroulante
+                function chargerPrestations() { // Afficher un message de chargement dans la liste déroulante
                     $('#prestation').empty().append('<option value="">Chargement des prestations...</option>');
-
                     $.ajax({
                         url: 'getPrestations.php', // Endpoint pour récupérer les prestations
                         method: 'GET',
                         dataType: 'json',
-                        success: function (data) {
-                            // Vider la liste et ajouter l'option par défaut
+                        success: function (data) { // Vider la liste et ajouter l'option par défaut
                             $('#prestation').empty().append('<option value="">Sélectionnez une prestation</option>');
-                            
                             // Ajouter chaque prestation à la liste déroulante
                             data.forEach(function (prestation) {
                                 $('#prestation').append(
@@ -182,8 +164,7 @@
                                 );
                             });
                         },
-                        error: function (xhr, status, error) {
-                            // Gérer les erreurs lors de la requête AJAX
+                        error: function (xhr, status, error) { // Gérer les erreurs lors de la requête AJAX
                             console.error("Erreur lors du chargement des prestations :", error);
                             $('#prestation').empty().append('<option value="">Erreur de chargement des prestations</option>');
                         }
@@ -194,7 +175,6 @@
                 function chargerPrestataires() {
                     // Ajouter un message de chargement dans la liste déroulante
                     $('#prestataire').empty().append('<option value="">Chargement des prestataires...</option>');
-
                     $.ajax({
                         url: 'getPrestataires.php', // Endpoint pour récupérer les prestataires
                         method: 'GET',
@@ -207,12 +187,9 @@
 
                                 // Ajouter chaque prestataire à la liste déroulante
                                 data.forEach(function (prestataire) {
-                                    $('#prestataire').append(
-                                        `<option value="${prestataire.id}">${prestataire.nom} ${prestataire.prenom}</option>`
-                                    );
+                                    $('#prestataire').append(`<option value="${prestataire.id}">${prestataire.nom} ${prestataire.prenom}</option>`);
                                 });
-                            } else {
-                                // Si aucune donnée, afficher un message approprié
+                            } else { // Si aucune donnée, afficher un message approprié
                                 $('#prestataire').empty().append('<option value="">Aucun prestataire trouvé</option>');
                             }
                         },
@@ -222,9 +199,7 @@
                             $('#prestataire').empty().append('<option value="">Erreur lors du chargement des prestataires</option>');
                         }
                     });
-                }
-                chargerPrestations();
-                chargerPrestataires();
+                } chargerPrestations(); chargerPrestataires();
 
                 // Mettre à jour le champ #prix_prestation quand un produit est sélectionné
                 $('#prestation').on('change', function () {
@@ -238,24 +213,20 @@
                     const produitNom = $('#prestation option:selected').text();
                     const produitPrix = parseFloat($('#prestation option:selected').data('prix'));
                     const quantite = 1;
-
                     if (!produitId) {
                         $("#result_vente").html('<div class="alert alert-danger text-center">Veuillez sélectionner un produit.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
                         return;
                     }
-
                     const produitExistant = panier.find(item => item.produitId === produitId);
                     if (produitExistant) {
                         produitExistant.quantite = quantite;
                         produitExistant.sousTotal = produitExistant.quantite * produitPrix;
-
                         const row = $(`#panierTable tr[data-id="${produitId}"]`);
                         row.find('td:nth-child(3)').text(produitExistant.quantite);
                         row.find('td:nth-child(4)').text(produitExistant.sousTotal.toFixed(2) + " FCFA");
                     } else {
                         const sousTotal = produitPrix * quantite;
                         panier.push({ produitId, produitNom, produitPrix, quantite, sousTotal });
-
                         $('#panierTable tbody').append(`
                             <tr data-id="${produitId}">
                                 <td>${produitNom}</td>
@@ -265,17 +236,13 @@
                                 <td><button class="btn btn-danger btn-sm supprimer">Supprimer</button></td>
                             </tr>
                         `);
-                    }
-
-                    recalculerTotal();
+                    } recalculerTotal();
                 });
 
                 // Fonction pour recalculer le total avec la remise
                 function recalculerTotal() {
                     let sousTotal = 0;
-                    panier.forEach(item => {
-                        sousTotal += item.sousTotal;
-                    });
+                    panier.forEach(item => { sousTotal += item.sousTotal; });
                     let remise = parseFloat($('#remise').val()) || 0; // Par défaut, aucune remise si non spécifiée
                     let totalAvecRemise = sousTotal - (sousTotal * (remise / 100));
                     total = totalAvecRemise.toFixed(2);
@@ -286,14 +253,11 @@
                 $('#panierTable').on('click', '.supprimer', function () {
                     const produitId = $(this).closest('tr').data('id');
                     panier = panier.filter(item => item.produitId !== produitId); // Supprimer du panier
-                    $(this).closest('tr').remove(); // Supprimer la ligne du tableau
-                    recalculerTotal(); // Recalculer le total
+                    $(this).closest('tr').remove(); recalculerTotal();
                 });
 
                 // Recalculer le total lorsqu'une remise est saisie
-                $('#remise').on('input', function () {
-                    recalculerTotal();
-                });
+                $('#remise').on('input', function () { recalculerTotal(); });
 
                 // Charger l'ID de la dernière vente
                 function chargerDernierIdPrestation() {
@@ -304,8 +268,7 @@
                         success: function (response) { $('#venteId').text(response.lastId); },
                         error: function () { console.error('Impossible de charger le dernier numéro de facture.'); }
                     });
-                }
-                chargerDernierIdPrestation();
+                } chargerDernierIdPrestation();
 
                 // Fonction pour réinitialiser le contenu du tableau après impression
                 function clearTableBody() {
