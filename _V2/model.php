@@ -51,7 +51,7 @@ function getTransactionTotals() {
 function addVente($data) {
     $database = dbConnect();
     
-    $transactionId = $data['venteId'];
+    $VenteId = $data['venteId'];
     $date = date('Y-m-d'); $total = $data['total'];
     $remise = isset($data['remise']) && is_numeric($data['remise']) ? $data['remise'] : 0; // Remise par défaut à 0 si non envoyée
     $statuts = $data['statuts']; $items = json_decode($data['items'], true); // Décoder le JSON des éléments
@@ -62,47 +62,37 @@ function addVente($data) {
         $totalAvecRemise = $total - ($total * $remise / 100);
 
         // Insérer les données dans la table `Vente`
-        $queryFacture = "INSERT INTO Vente (date_vente, total, remise, statuts) 
-                         VALUES (:date_vente, :total, :remise, :statuts)";
+        $queryFacture = "INSERT INTO Vente (date_vente, total, remise, statuts) VALUES (:date_vente, :total, :remise, :statuts)";
         $stmtFacture = $database->prepare($queryFacture);
-        $stmtFacture->bindParam(':date_vente', $date);
-        $stmtFacture->bindParam(':total', $totalAvecRemise);
-        $stmtFacture->bindParam(':remise', $remise);
-        $stmtFacture->bindParam(':statuts', $statuts);
+        $stmtFacture->bindValue(':date_vente', $date); $stmtFacture->bindValue(':total', $totalAvecRemise);
+        $stmtFacture->bindValue(':remise', $remise); $stmtFacture->bindValue(':statuts', $statuts);
         $stmtFacture->execute();
-
         // Insérer les éléments de la facture dans la table `transaction_details`
-        $queryElementFacture = "INSERT INTO elementVente (vente, produit, pu, quantite, soustotal) 
-                                VALUES (:vente, :produit, :pu, :quantite, :soustotal)";
+        $queryElementFacture = "INSERT INTO elementVente (vente, produit, pu, quantite, soustotal) VALUES (:vente, :produit, :pu, :quantite, :soustotal)";
         $stmt = $database->prepare($queryElementFacture);
-
         // Mettre à jour les quantités des produits dans le stock
         $queryUpdateStock = "UPDATE Stock SET quantite = :quantite WHERE id_produit = :id_produit";
         $stmtUpdateStock = $database->prepare($queryUpdateStock);
-
         // Boucle pour traiter chaque élément de la facture
         foreach ($items as $element) {
             $produit = $element['produitId'];
             $pu = $element['produitPrix'];
             $quantite = $element['quantite'];
             $soustotal = $element['sousTotal'];
-
             // Ajouter à `transaction_details`
-            $stmt->bindParam(':vente', $transactionId);
-            $stmt->bindParam(':produit', $produit);
-            $stmt->bindParam(':pu', $pu);
-            $stmt->bindParam(':quantite', $quantite);
-            $stmt->bindParam(':soustotal', $soustotal);
+            $stmt->bindValue(':vente', $VenteId);
+            $stmt->bindValue(':produit', $produit);
+            $stmt->bindValue(':pu', $pu);
+            $stmt->bindValue(':quantite', $quantite);
+            $stmt->bindValue(':soustotal', $soustotal);
             $stmt->execute();
-
             // Réduire la quantité dans `Stock`
             $qty = getQtyById($produit);
             $quantiteF = $qty - $quantite;
-            $stmtUpdateStock->bindParam(':quantite', $quantiteF, PDO::PARAM_INT);
-            $stmtUpdateStock->bindParam(':id_produit', $produit, PDO::PARAM_INT);
+            $stmtUpdateStock->bindValue(':quantite', $quantiteF, PDO::PARAM_INT);
+            $stmtUpdateStock->bindValue(':id_produit', $produit, PDO::PARAM_INT);
             $stmtUpdateStock->execute();
         }
-
         $database->commit(); // Valider la transaction
     } catch (Exception $e) {
         $database->rollBack(); // Annuler la transaction en cas d'erreur
@@ -204,34 +194,30 @@ function getIdPrestation() {
 function add_Prestation($data) {
     $database = dbConnect();
 
-    $transactionId = $data['venteId']; $prestataire = $data['prestataire'];
+    $PrestationId = $data['venteId']; $prestataire = $data['prestataire'];
     $date = date('Y-m-d'); $total = $data['total'];
     $remise = isset($data['remise']) && is_numeric($data['remise']) ? $data['remise'] : 0; // Remise par défaut à 0 si non envoyée
     $items = json_decode($data['items'], true); // Décoder le JSON des éléments
-    
     $database->beginTransaction(); // Début de la transaction
     try {
         // Insérer les données dans la table `Vente`
-        $queryFacture = "INSERT INTO prestation (id_prestataire, total, remise, date) 
-                            VALUES (:id_prestataire, :total, :remise, :date)";
-        $stmtFacture = $database->prepare($queryFacture);
-        $stmtFacture->bindParam(':id_prestataire', $prestataire);
-        $stmtFacture->bindParam(':total', $total);
-        $stmtFacture->bindParam(':remise', $remise);
-        $stmtFacture->bindParam(':date', $date);
-        $stmtFacture->execute();
+        $queryPrestation = "INSERT INTO prestation (id_prestataire, total, remise, date) VALUES (:id_prestataire, :total, :remise, :date)";
+        $stmtPrestation = $database->prepare($queryPrestation);
+        $stmtPrestation->bindParam(':id_prestataire', $prestataire); $stmtPrestation->bindParam(':total', $total);
+        $stmtPrestation->bindParam(':remise', $remise); $stmtPrestation->bindParam(':date', $date);
+        $stmtPrestation->execute();
         // Insérer les éléments de la facture dans la table `transaction_details`
-        $queryElementFacture = "INSERT INTO element_prestation (id_prestation, element_prestations, prix) 
-                                VALUES (:id_prestation, :element_prestations, :prix)";
-        $stmt = $database->prepare($queryElementFacture);
+        $queryElementPrestation = "INSERT INTO element_prestation (id_prestation, element_prestations, prix) VALUES (:id_prestation, :element_prestations, :prix)";
+        $stmt = $database->prepare($queryElementPrestation);
         // Boucle pour traiter chaque élément de la facture
+        var_dump($items);
         foreach ($items as $element) {
             $produit = $element['produitId'];
             $pu = $element['produitPrix'];
             // Ajouter à `transaction_details`
-            $stmt->bindParam(':id_prestation', $transactionId);
-            $stmt->bindParam(':element_prestations', $produit);
-            $stmt->bindParam(':prix', $pu);
+            $stmt->bindValue(':id_prestation', $PrestationId);
+            $stmt->bindValue(':element_prestations', $produit);
+            $stmt->bindValue(':prix', $pu);
             $stmt->execute();
         }
         $database->commit(); // Valider la transaction
@@ -240,6 +226,32 @@ function add_Prestation($data) {
         throw $e; // Rejeter l'erreur pour un traitement ultérieur
     }
 }
+function getTotalFromTables($startDate, $endDate) {
+    $database = dbConnect();
+    $query = "SELECT SUM(total) AS total FROM prestation WHERE date BETWEEN :startDate AND :endDate";
+    $stmt = $database->prepare($query); $stmt->bindParam(':startDate', $startDate); $stmt->bindParam(':endDate', $endDate);
+    $stmt->execute(); $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'] ? $result['total'] : 0;}
+function getPrestationTotals() {
+    $today = date('Y-m-d'); $startOfWeek = date('Y-m-d', strtotime('monday this week'));
+    $startOfMonth = date('Y-m-01'); $startOfYear = date('Y-01-01');
+    $totals = [
+        'today' => getTotalFromTables($today, $today),
+        'week' => getTotalFromTables($startOfWeek, $today),
+        'month' => getTotalFromTables($startOfMonth, $today),
+        'year' => getTotalFromTables($startOfYear, $today),
+        'total' => getTotalFromTables('1970-01-01', $today),
+    ];
+    return $totals;}
+function getElementPrestationById($id){
+    $database = dbConnect();
+    $query = "SELECT * FROM element_prestation WHERE id_prestation= :id";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->execute(); return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+function getPrestationsById($id){ return getById('prestations', 'id', $id);}
+function getPrestationById($id){ return getById('prestation', 'id', $id);}
 // End Gestion Prestation
 // Start Gestion Prestataire
 function addPrestataire($data) {
@@ -261,7 +273,7 @@ function updatePrestataire($data){
     $stmt->bindValue(':telephone2', $data['telephone2'], PDO::PARAM_STR); $stmt->bindValue(':poste', $data['poste'], PDO::PARAM_STR);
     $stmt->execute();}
 function removePrestataire($id) { deleteRecord('prestataire', 'id', $id); }
-function getPrestataires() {
+function getPrestataire() {
     $database = dbConnect();
     $stmt = $database->prepare("SELECT id, nom, prenom FROM prestataire");
     $stmt->execute(); return $stmt->fetchAll(PDO::FETCH_ASSOC);}

@@ -51,17 +51,17 @@
               <span class="hide-menu">Prestation</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'], 'prestataire.php') !== false) ? 'active' : '';?>" href="prestataire.php" aria-expanded="false">
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'],'prestataire.php')!== false)?'active':'';?>" href="prestataire.php" aria-expanded="false">
                 <span class="hide-menu">Prestataire</span>
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'], 'prestation.php') !== false) ? 'active' : '';?>" href="prestation.php" aria-expanded="false">
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'],'prestation.php')!==false||strpos($_SERVER['REQUEST_URI'],'factureP.php')!==false)?'active':'';?>" href="prestation.php" aria-expanded="false">
                 <span class="hide-menu">Prestation</span>
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'], 'prestations.php') !== false) ? 'active' : '';?>" href="prestations.php" aria-expanded="false">
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'],'prestations.php')!== false)?'active':'';?>" href="prestations.php" aria-expanded="false">
                 <span class="hide-menu">Liste Prestation</span>
               </a>
             </li>

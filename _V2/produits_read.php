@@ -3,8 +3,7 @@ include_once('model.php');
 $database = dbConnect();
 
 $stmt = $database->prepare("SELECT * FROM produits");
-$stmt->execute();
-$produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt->execute(); $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <h5 class="mb-5">Liste des Produits</h5>

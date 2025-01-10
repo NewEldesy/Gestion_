@@ -81,7 +81,7 @@
                     $('#panierTable tbody tr').each(function () {
                         var item = {
                             produitId: $(this).data('id'), // Récupérer l'ID du produit stocké dans l'attribut `data-id`
-                            produitNom: $(this).find('td:eq(0)').text(), // Récupérer le nom du produit à partir de la première colonne
+                            produitNom: $(this).find('td:eq(0)').text().trim(), // Récupérer le nom du produit à partir de la première colonne
                             produitPrix: parseFloat($(this).find('td:eq(1)').text()), // Prix unitaire
                             quantite: parseInt($(this).find('td:eq(2)').text()), // Quantité
                             sousTotal: parseFloat($(this).find('td:eq(3)').text()) // Sous-total

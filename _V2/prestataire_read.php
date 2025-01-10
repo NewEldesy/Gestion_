@@ -3,7 +3,7 @@ include_once('model.php');
 $database = dbConnect();
 
 // Récupérer tous les véhicules depuis la base de données
-$stmt = $database->query("SELECT * FROM prestataire");
+$stmt = $database->prepare("SELECT * FROM prestataire"); $stmt->execute();
 $prestataires = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 

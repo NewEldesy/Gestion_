@@ -41,7 +41,9 @@
                                     <h5 class="mb-0">Facture N° <?php echo $_GET['id']; ?></h5>
                                 </td>
                                 <td style="text-align: right; font-size: 13px;">
-                                    <strong>Tenkodogo, le 06 Décembre 2025</strong>
+                                    <strong> Tenkodogo, 
+                                        <?php setlocale(LC_TIME, 'fr_FR', 'fr'); echo strftime("%A %d %B %Y");?>
+                                    </strong>
                                 </td>
                             </tr>
                         </table>
