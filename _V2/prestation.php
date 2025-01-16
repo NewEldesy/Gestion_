@@ -241,7 +241,7 @@
                     let sousTotal = 0;
                     panier.forEach(item => { sousTotal += item.sousTotal; });
                     let remise = parseFloat($('#remise').val()) || 0; // Par défaut, aucune remise si non spécifiée
-                    let totalAvecRemise = sousTotal - (sousTotal * (remise / 100));
+                    let totalAvecRemise = sousTotal;
                     total = totalAvecRemise.toFixed(2);
                     $('#total').text(total); // Met à jour l'affichage du total
                 }

@@ -4,7 +4,6 @@ $database = dbConnect();
 
 $modif = $_POST['id'];
 function getStockById($id) { return getById('Stock', 'id', $id); }
-function getProduitsById($id) { return getById('Produits', 'id', $id); }
 
 $mod = getStockById($modif);
 

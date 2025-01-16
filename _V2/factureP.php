@@ -2,7 +2,8 @@
     include_once('header.php');
     
     $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-    if(intval($id) == 0){
+    $elements = getElementPrestationById($id);
+    if(!$elements){
 
         ?>
         <div id="myfrm" class="container-fluid">
@@ -12,7 +13,7 @@
                         <div class="row mb-4">
                             <div class="mb-5 mt-5">
                                 <div class="m-5">
-                                    <?='<h2 style="text-align: center;">Aucune Prestation ne correspond à cet numéro</h2>';?>
+                                    <?='<h3 style="text-align: center;">Aucune Prestation ne correspond à ce numéro de facturation</h3>';?>
                                 </div>
                             </div>
                         </div>
@@ -60,14 +61,6 @@
                         <div>
                             <table style="width: 100%; border-collapse: collapse;">
                                 <tr>
-                                    <td style="text-align: left; font-size: 13px;"><strong>Doit à : ........................ </strong></td>
-                                    <td style="text-align: right; font-size: 13px;"><strong></strong></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div>
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <tr>
                                     <td style="text-align: left; font-size: 13px;"><strong>Agrément : 2024-056</strong></td>
                                     <td style="text-align: right; font-size: 13px;"><strong>IFU : N°00051172 B</strong></td>
                                 </tr>
@@ -81,9 +74,17 @@
                                 </tr>
                             </table>
                         </div>
+                        <div>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr>
+                                    <td style="text-align: left; font-size: 13px;"><strong></strong></td>
+                                    <td style="text-align: right; font-size: 13px;"><strong>Envoyer à : ........................................................................</strong></td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <h6>Description : Prestation</h6>
+                <h6>Description : Prestation de services</h6>
                 <div class="table-responsive-sm" style="font-size: 13px;">
                     <table class="table table-striped">
                         <thead>
@@ -97,7 +98,6 @@
                         </thead>
                         <tbody>
                             <?php
-                                $elements = getElementPrestationById($id);
                                 $i = 1;
                                 foreach ($elements as $element) {
                                     // Récupération des informations de prestation via l'ID

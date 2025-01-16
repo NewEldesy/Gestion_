@@ -3,8 +3,6 @@ include ("model.php");
 $database = dbConnect();
 
 $modif = $_POST['id'];
-function getProduitsById($id) { return getById('Produits', 'id', $id); }
-
 $mod = getProduitsById($modif);
 
 if (!empty($mod)) {

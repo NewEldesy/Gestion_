@@ -58,9 +58,8 @@ function addVente($data) {
     
     $database->beginTransaction(); // Début de la transaction
     try {
-        // Calculer le total après remise
-        $totalAvecRemise = $total - ($total * $remise / 100);
-
+        // Calculer le total avec remise
+        $totalAvecRemise = $total;
         // Insérer les données dans la table `Vente`
         $queryFacture = "INSERT INTO Vente (date_vente, total, remise, statuts) VALUES (:date_vente, :total, :remise, :statuts)";
         $stmtFacture = $database->prepare($queryFacture);
@@ -99,6 +98,14 @@ function addVente($data) {
         throw $e; // Rejeter l'erreur pour un traitement ultérieur
     }
 }
+function getVenteById($id){ return getById('Vente', 'id', $id); }
+function getElementVenteById($id){
+    $database = dbConnect();
+    $query = "SELECT * FROM elementVente WHERE vente= :id";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->execute(); return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 // End Gestion Vente
 
 // Start Gestion Produits Et Stock
@@ -123,7 +130,13 @@ function updateProduits($data){
     $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT); $stmt->bindValue(':designation', $data['designation'], PDO::PARAM_STR);
     $stmt->bindValue(':pu', $data['pu'], PDO::PARAM_STR); $stmt->bindValue(':description', $data['description'], PDO::PARAM_STR);
     $stmt->execute();}
-function removeProduits($id) { deleteRecord('Produits', 'id', $id); }
+function removeProduits($id) { 
+    deleteRecord('Produits', 'id', $id);
+    $database = dbConnect();
+    $stmt = $database->prepare("DELETE FROM Stock WHERE id_produit=:id_produit");
+    $stmt->bindParam(':id_produit', $id, PDO::PARAM_INT);
+    $stmt->execute();
+}
 function getProduits() { 
     $database = dbConnect();
     $stmt = $database->query("SELECT id, designation FROM Produits");
@@ -133,6 +146,7 @@ function getProducts() {
     $stmt = $database->prepare("SELECT p.id, p.designation, p.pu, s.quantite FROM Produits p
         LEFT JOIN Stock s ON p.id = s.id_produit WHERE s.quantite IS NOT NULL");
     $stmt->execute(); return $stmt->fetchAll(PDO::FETCH_ASSOC);}
+function getProduitsById($id) { return getById('Produits', 'id', $id); }
 // Stocks Function
 function addStock($data) {
     if (!is_array($data) || !isset($data['id_produit']) || !isset($data['quantite'])) { throw new InvalidArgumentException("Invalid data provided for addStock.");}
@@ -200,10 +214,12 @@ function add_Prestation($data) {
     $items = json_decode($data['items'], true); // Décoder le JSON des éléments
     $database->beginTransaction(); // Début de la transaction
     try {
+        // Calculer le total avec remise
+        $totalAvecRemise = $total;
         // Insérer les données dans la table `Vente`
         $queryPrestation = "INSERT INTO prestation (id_prestataire, total, remise, date) VALUES (:id_prestataire, :total, :remise, :date)";
         $stmtPrestation = $database->prepare($queryPrestation);
-        $stmtPrestation->bindParam(':id_prestataire', $prestataire); $stmtPrestation->bindParam(':total', $total);
+        $stmtPrestation->bindParam(':id_prestataire', $prestataire); $stmtPrestation->bindParam(':total', $totalAvecRemise);
         $stmtPrestation->bindParam(':remise', $remise); $stmtPrestation->bindParam(':date', $date);
         $stmtPrestation->execute();
         // Insérer les éléments de la facture dans la table `transaction_details`

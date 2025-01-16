@@ -1,45 +1,79 @@
-<?php include_once('header.php');?>
+<?php 
+    include_once('header.php');
+    
+    $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+    $elements = getElementVenteById($id);
+    if(!$elements){
+
+        ?>
+        <div id="myfrm" class="container-fluid">
+            <div class="offset-xl-2 col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 padding">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="mb-5 mt-5">
+                                <div class="m-5">
+                                    <?='<h3 style="text-align: center;">Aucune Prestation ne correspond à ce numéro de facturation</h3>';?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+    else{
+?>
 
 <div id="myfrm" class="container-fluid">
     <div class="offset-xl-2 col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 padding">
         <div class="card">
-            <div class="card-header p-3">
-                <div class="float-right">
-                    <div style="text-align: center; margin-top: 20px;" class="mb-4">
-                        <img src="assets/images/Entete.png" alt="Garage Garango Paul - G.G.P." style="max-width: 100%; height: auto;">
-                    </div>
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <tr>
-                            <td style=" text-align: left;  font-size: 13px;"><h5 class="mb-0">Facture N° <?php echo $_GET['id'];?></h5></td>
-                            <td style=" text-align: right; font-size: 13px;"><strong>Tenkodogo, le 06 Décembre 2025</strong></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
             <div class="card-body">
+                <!-- Contenu du card-header déplacé ici -->
+                <div class="p-2">
+                    <div class="float-right">
+                        <div style="text-align: center;" class="mb-2">
+                            <img src="assets/images/Entete.png" alt="Garage Garango Paul - G.G.P." style="max-width: 100%; height: auto;">
+                        </div>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="text-align: left; font-size: 13px;">
+                                    <h5 class="mb-0">Facture N° <?=$id;?></h5>
+                                </td>
+                                <td style="text-align: right; font-size: 13px;">
+                                    <strong> Tenkodogo, 
+                                        <?php setlocale(LC_TIME, 'fr_FR', 'fr'); echo strftime("%A %d %B %Y");?>
+                                    </strong>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <!-- Contenu principal de card-body -->
                 <div class="row mb-4">
                     <div class="col-sm-12">
                         <div>
                             <table style="width: 100%; border-collapse: collapse;">
                                 <tr>
-                                    <td style=" text-align: left; font-size: 13px;"><strong>Client : John Doe</strong></td>
-                                    <td style=" text-align: right; font-size: 13px;"><strong>Addresse : Tenkodogo</strong></td>
+                                    <td style="text-align: left; font-size: 13px;"><strong>Agrément : 2024-056</strong></td>
+                                    <td style="text-align: right; font-size: 13px;"><strong>IFU : N°00051172 B</strong></td>
                                 </tr>
                             </table>
                         </div>
                         <div>
                             <table style="width: 100%; border-collapse: collapse;">
                                 <tr>
-                                    <td style=" text-align: left; font-size: 13px;"><strong>RCCM : 00000000</strong></td>
-                                    <td style=" text-align: right; font-size: 13px;"><strong>IFU : 00000000</strong></td>
+                                    <td style="text-align: left; font-size: 13px;"><strong>BP : 30 Tenkodogo</strong></td>
+                                    <td style="text-align: right; font-size: 13px;"><strong>Téléphone : (+226) 24 71 07 07</strong></td>
                                 </tr>
                             </table>
                         </div>
                         <div>
                             <table style="width: 100%; border-collapse: collapse;">
                                 <tr>
-                                    <td style=" text-align: left; font-size: 13px;"><strong>BP : 5124</strong></td>
-                                    <td style=" text-align: right; font-size: 13px;"><strong>Téléphone : 00000000</strong></td>
+                                    <td style="text-align: left; font-size: 13px;"><strong></strong></td>
+                                    <td style="text-align: right; font-size: 13px;"><strong>Envoyer à : ........................................................................</strong></td>
                                 </tr>
                             </table>
                         </div>
@@ -58,27 +92,31 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="center">1</td>
-                                <td class="left strong">Iphone 10X</td>
-                                <td class="right">1500 FCFA</td>
-                                <td class="center">10</td>
-                                <td class="right">15.000 FCFA</td>
-                            </tr>
-                            <tr>
-                                <td class="center">2</td>
-                                <td class="left">Iphone 8X</td>
-                                <td class="right">1200 FCFA</td>
-                                <td class="center">10</td>
-                                <td class="right">12.000 FCFA</td>
-                            </tr>
-                            <tr>
-                                <td class="center">3</td>
-                                <td class="left">Samsung 4C</td>
-                                <td class="right">800 FCFA</td>
-                                <td class="center">10</td>
-                                <td class="right">8000 FCFA</td>
-                            </tr>
+                            <?php
+                                $i = 1;
+                                foreach ($elements as $element) {
+                                    // Récupération des informations de prestation via l'ID
+                                    $d = getProduitsById($element['produit']);
+                                    ?>
+                                    <tr>
+                                        <!-- Affichage de l'index incrémenté -->
+                                        <td class="center"><?= $i++; ?></td>
+                                
+                                        <!-- Affichage de la désignation de la prestation -->
+                                        <td class="left strong"><?= htmlspecialchars($d['designation']);?></td>
+                                
+                                        <!-- Affichage du prix -->
+                                        <td class="right"><?= number_format($element['pu']);?></td>
+                                
+                                        <!-- Quantité (fixée à 1 pour l'instant) -->
+                                        <td class="center"><?= number_format($element['quantite']);?></td>
+                                
+                                        <!-- Sous-total (prix * quantité) -->
+                                        <td class="right"><?= number_format($element['soustotal']);?></td>
+                                    </tr>
+                                    <?php
+                                }                                
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -87,51 +125,53 @@
                     <div class="col-lg-6 col-sm-6 ml-auto">
                         <table class="table table-clear">
                             <tbody>
+                                <?php $tt = getVenteById($id);?>
                                 <tr>
                                     <td class="left">
                                         <strong class="text-dark">Sous total</strong>
                                     </td>
-                                    <td class="right">28.809,00 FCFA</td>
+                                    <td class="right"><?=$tt['total']?> FCFA</td>
                                 </tr>
                                 <tr>
                                     <td class="left">
-                                        <strong class="text-dark">Remise (20%)</strong>
+                                        <strong class="text-dark">Remise</strong>
                                     </td>
-                                    <td class="right">5.761,00 FCFA</td>
+                                    <td class="right"><?=$tt['remise']?>%</td>
                                 </tr>
                                 <tr>
                                     <td class="left">
                                         <strong class="text-dark">TVA (19%)</strong>
                                     </td>
-                                    <td class="right">2.304,00 FCFA</td>
+                                    <td class="right">0 FCFA</td>
                                 </tr>
                                 <tr>
                                     <td class="left">
                                         <strong class="text-dark">Total</strong>
                                     </td>
                                     <td class="right">
-                                        <strong class="text-dark">20.744,00 FCFA</strong>
+                                        <strong class="text-dark"><?=($tt['total']*(1-($tt['remise']/100)))?> FCFA</strong>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
-            <div class="card-footer bg-white">
-                <p class="mb-0" style="text-align: center; font-size: 13px;">C :N°BFTNK 2013 A 194 *** Agrément : 2024-056 *** IFU : N°00051172 B</p>
-                <p class="mb-0" style="text-align: center; font-size: 13px;">Compte N°005045840003-02 BOA N°170458699001-15 ECOBANK</p>
-                <p class="mb-0" style="text-align: center; font-size: 13px;">BP:30 Tenkodogo Tél: (+226) 24 71 07 07  Cel :(+226) 70 27 67 12 /76 96 08 04</p>
-                <p class="mb-0" style="text-align: center; font-size: 13px;">Mail : garagegarangopaul67@gmail.com / juliettekorgo@gmail.com Burkina Faso</p>
+                
+                <!-- Contenu du card-footer déplacé ici -->
+                <div class="bg-white mt-4">
+                    <p class="mb-0" style="text-align: center; font-size: 13px;">C :N°BFTNK 2013 A 194 *** Agrément : 2024-056 *** IFU : N°00051172 B</p>
+                    <p class="mb-0" style="text-align: center; font-size: 13px;">Compte N°005045840003-02 BOA N°170458699001-15 ECOBANK</p>
+                    <p class="mb-0" style="text-align: center; font-size: 13px;">BP:30 Tenkodogo Tél: (+226) 24 71 07 07  Cel :(+226) 70 27 67 12 /76 96 08 04</p>
+                    <p class="mb-0" style="text-align: center; font-size: 13px;">Mail : garagegarangopaul67@gmail.com / juliettekorgo@gmail.com Burkina Faso</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- <input type="button" onclick="PrintElem('myfrm')" value="Imprimer"> -->
-<button onclick="printDiv('myfrm')">Print only the above div</button>
-
-<?php include_once('footer.php');?>
+<?php }
+    include_once('footer.php');
+?>
 <script>
     function printDiv(divName) {
         var printContents = document.getElementById(divName).innerHTML;

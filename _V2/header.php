@@ -40,7 +40,7 @@
               <span class="hide-menu">Home</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'], 'dashboard.php') !== false) ? 'active' : '';?>" href="dashboard.php" aria-expanded="false">
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'],'dashboard.php')!==false||strpos($_SERVER['REQUEST_URI'],'license.php')!==false)?'active':'';?>" href="dashboard.php" aria-expanded="false">
                 <span class="hide-menu">Tableau de bord</span>
               </a>
             </li>

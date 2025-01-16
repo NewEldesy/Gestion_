@@ -448,3 +448,27 @@ $(document).ready(function () {
     });
 });
 ///////////////////////////////////////////////////////////////// End Vehicule //////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////// Start License //////////////////////////////////////////////////////////////////////////////////////////
+function checkLicense() {
+    $.ajax({
+        url: 'check_license.php',
+        method: 'GET',
+        success: function (response) {
+            const res = JSON.parse(response);
+            let licenseStatusText = '';
+            if (res.status === 'valid') { 
+                licenseStatusText = "Licence valide";
+                console.log(licenseStatusText);
+            } else { 
+                licenseStatusText = "Licence expirée";
+                window.location.href = 'license.php';
+            }
+        }
+    });
+}
+
+// Vérifier si la page n'est ni index.php ni license.php
+if (!window.location.pathname.includes('index.php') && !window.location.pathname.includes('license.php')) {
+    checkLicense();  // Appeler la fonction de vérification
+}
+///////////////////////////////////////////////////////////////// End License //////////////////////////////////////////////////////////////////////////////////////////

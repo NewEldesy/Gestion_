@@ -3,7 +3,7 @@ include ("model.php");
 $database = dbConnect();
 
 $modif = $_POST['id'];
-function getPrestationsById($id) { return getById('prestations', 'id', $id); }
+// function getPrestationsById($id) { return getById('prestations', 'id', $id); }
 
 $mod = getPrestationsById($modif);
 
