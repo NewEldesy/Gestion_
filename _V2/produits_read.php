@@ -11,10 +11,10 @@ $stmt->execute(); $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <thead>
         <tr class="border-2 border-bottom border-primary border-0"> 
             <th scope="col" class="ps-0">#</th>
-            <th scope="col" class="text-center">Désignation</th>
-            <th scope="col" class="text-center">Prix</th>
-            <th scope="col" class="text-center">Description</th>
-            <th scope="col" class="text-center">Options</th>
+            <th scope="row" class="ps-0 fw-medium">Désignation</th>
+            <th scope="row" class="ps-0 fw-medium">Prix</th>
+            <th scope="row" class="ps-0 fw-medium">Description</th>
+            <th scope="row" class="ps-0 fw-medium">Options</th>
         </tr>
     </thead>
     <tbody class="table-group-divider">
@@ -22,7 +22,7 @@ $stmt->execute(); $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($produits as $produit) { ?>
         <tr>
             <th scope="row" class="ps-0 fw-medium"><?=htmlspecialchars($produit['id']);?></th>
-            <td class="text-center fw-medium"><?=htmlspecialchars($produit['designation']);?></td>
+            <td scope="row" class="ps-0 fw-medium"><?=htmlspecialchars($produit['designation']);?></td>
             <th scope="row" class="ps-0 fw-medium"><?=htmlspecialchars($produit['pu']);?> FCFA</th>
             <th scope="row" class="ps-0 fw-medium"><?=htmlspecialchars($produit['description']);?></th>
             <td>

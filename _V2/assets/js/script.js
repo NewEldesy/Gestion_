@@ -1,29 +1,57 @@
-///////////////////////////////////////////////////////////////// Start Login /////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////// Start User /////////////////////////////////////////////////////////////////////////////////////////////////
 $(document).on('click', '#login', function(e) {
     e.preventDefault();
-    var Email1 = $("#Email1").val();
-    var Password1 = $("#Password1").val();
-    if (Email1.trim() !== "" && Password1.trim() !== "") {
-        $.ajax({
-            url: "login.php",
-            type: "POST",
-            data: { Email1: Email1, Password1: Password1 },
-            dataType: "json",
-            success: function(data){
-                $("#login_result").html('<div class="alert alert-'+(data.status=== 'success' ? 'success' : 'danger')+'text-center">'+data.message+'</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
-                if (data.status === 'success') {
-                    setTimeout(function() { window.location.href = "dashboard.php"; }, 1400);
-                }
-            },
-            error: function() {
-                $("#login_result").html('<div class="alert alert-danger text-center">Erreur lors de la connexion.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
-            }
-        });
-    } else {
+    const Email1 = $("#Email1").val().trim();
+    const Password1 = $("#Password1").val().trim();
+    if (Email1 === "" || Password1 === "") {
         $("#login_result").html('<div class="alert alert-warning text-center">Les champs ne peuvent pas être vides.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
+        return;
+    }
+    $.ajax({
+        url: "login.php",
+        type: "POST",
+        data: { Email1: Email1, Password1: Password1 },
+        dataType: "json",
+        success: function(data){
+            const validStatuses = ['success', 'danger', 'warning'];
+            const statusClass = validStatuses.includes(data.status) ? data.status : 'info';
+            $("#login_result").html(`<div class="alert alert-${statusClass} text-center">${data.message}</div>`).delay(700).slideDown(700).delay(2100).slideUp(700);
+            if (data.status === 'success') {
+                setTimeout(function() { window.location.href = "dashboard.php"; }, 1400);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error("Erreur AJAX: ", textStatus, errorThrown);
+            $("#login_result").html('<div class="alert alert-danger text-center">Erreur lors de la connexion. Veuillez réessayer.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
+        }
+    });
+});
+// Gestion de la soumission du formulaire
+$(document).on('click', '#mod_profil', function(e) {
+    e.preventDefault();
+    var id = $("#user_id").val(); var password2 = $("#password2").val(); var password3 = $("#password3").val();
+    // Vérification des mots de passe
+    if (password2 == password3) {
+        $.ajax({
+            method: "POST",
+            url: "profil_update.php",
+            data: { id: id, password2: password2 },
+            success: function (data) {
+                const validStatuses = ['success', 'danger'];
+                const statusClass = validStatuses.includes(data.status) ? data.status : 'info';
+                $("#result_profil").html(`<div class="alert alert-${statusClass} text-center">${data.message}</div>`).delay(700).slideDown(700).delay(2100).slideUp(700);
+                $("#password2, #password3").val('');
+            },
+            error: function (status, statusText) {
+                $("#result_profil").html(`<div class="alert alert-danger text-center">Erreur ${status}: ${statusText}</div>`).delay(700).slideDown(700).delay(2100).slideUp(700);
+            },
+        });
+    }
+    else{
+        $("#result_profil").html(`<div class="alert alert-danger text-center">Les mots de passe sont différents</div>`).delay(700).slideDown(700).delay(2100).slideUp(700);
     }
 });
-///////////////////////////////////////////////////////////////// End Login //////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////// End User //////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////// Start Total Montant ////////////////////////////////////////////////////////////////////////////////////////
 // Fonction pour afficher totals des ventes
 function updateTransactionTotals() {
@@ -148,6 +176,91 @@ $(document).ready(function () {
     });
 });
 ///////////////////////////////////////////////////////////////// End Prestataire //////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////// Start User /////////////////////////////////////////////////////////////////////////////////////////
+// Ajout Utilisateur
+$(document).on('click', '#btn_add_user', function(e) {
+    e.preventDefault();
+    var nom = $("#nom").val(); var prenom = $("#prenom").val(); var username = $("#username").val();
+    if (nom.trim() !== "" && prenom.trim() !== "" && username.trim() !== "") {
+        $.ajax({
+            url: "user_add.php",
+            type: "POST",
+            data: {nom: nom, prenom: prenom, username: username},
+            success: function(data){
+                $("#result_user").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
+                affUsers(); $("#exampleModalAdd").modal("hide");
+            },
+            error: function(){$("#result_user").html('<div class="alert alert-danger">Erreur lors de l\'ajout de l\'utilisateur.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);}
+        });
+        $('#exampleModalAdd').modal('hide');
+    } else {$("#result_user").html('<div class="alert alert-warning">Les champs ne peuvent pas être vide.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);}
+});
+// Afficher Utilisateurs
+function affUsers() {
+    $.ajax({
+        url: "user_read.php",
+        type: "post",
+        success: function(data) { $("#aff_user").html(data); },
+        error: function(jqXHR, textStatus, errorThrown) {
+            $("#aff_user").html('<div class="alert alert-danger">Erreur lors du chargement des catégories.</div>');
+        }
+    });
+}
+affUsers();
+//Supprimer Utilisateur
+$(document).on('click', '.btn_del_user', function(e){
+    e.preventDefault();
+    if (window.confirm("Voulez-vous supprimer cet Utilisateur?")) {
+        var id = $(this).data("id");
+
+        $.ajax({
+            url: "user_delete.php",
+            type: "POST",
+            data: { id: id },
+            success: function(data) {
+                $("#result_user").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
+                affUsers();
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                $("#result_user").html('<div class="alert alert-danger">Erreur lors de la suppression Utilisateur.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
+            }
+        });
+    } else {return false;}
+});
+//Fonction Modification Utilisateur
+function updatePrestataire() {
+    $(document).on("click" , "#btn_up_user" , function(e) {
+        e.preventDefault(); var id = $(this).attr("value");
+        $.ajax({
+            url:"user_mod.php",
+            type:"post",
+            data:{ id:id },
+            success: function(data){ $("#user_mod").html(data); }
+        });
+    });
+}
+updatePrestataire();
+//fonction de mise a jour Utilisateur
+$(document).ready(function () {
+    $(document).on("click", "#btn_maj_user", function (e) {
+        e.preventDefault();
+        var id = $("#u_id").val(); var nom = $("#u_nom").val(); var prenom = $("#u_prenom").val();
+        var username = $("#u_username").val(); var password = $("#u_password").val();
+        $.ajax({
+            url: "user_update.php",
+            type: "POST",
+            data: {id: id, nom: nom, prenom: prenom, username: username, password: password },
+            success: function (data) {
+                $("#result_user").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
+                affUsers(); $("#exampleModalMaj").modal("hide");
+            },
+            error: function (xhr, status, error) {
+                $("#result_user").html('<div class="alert alert-danger">Erreur lors de la mis à jour.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
+            },
+        });
+    });
+});
+///////////////////////////////////////////////////////////////// End User //////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////// Start Produit ///////////////////////////////////////////////////////////////////////////////////////////
 // Add Produit
 $(document).on('click', '#btn_add_produit', function(e) {

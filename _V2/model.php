@@ -22,6 +22,7 @@ function getById($table, $idColumn, $id) {
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute(); return $stmt->fetch(PDO::FETCH_ASSOC);
 }
+// Start User
 function try_login($username) {
     $database = dbConnect();
     $stmt = $database->prepare("SELECT * FROM users WHERE username = :username");
@@ -29,6 +30,34 @@ function try_login($username) {
     $stmt->execute(); $user = $stmt->fetch(PDO::FETCH_ASSOC);
     return $user;
 }
+function AddUser($data) {
+    if (!is_array($data) || !isset($data['nom']) || !isset($data['prenom']) || !isset($data['username'])) {throw new InvalidArgumentException("Invalid data provided for addUser.");}
+    $database = dbConnect();
+    $stmt = $database->prepare("INSERT INTO users (nom, prenom, username, password) VALUES (:nom, :prenom, :username, :password)");
+    $stmt->bindParam(':nom', $data['nom'], PDO::PARAM_STR); $stmt->bindParam(':prenom', $data['prenom'], PDO::PARAM_STR);
+    $stmt->bindParam(':username', $data['username'], PDO::PARAM_STR);
+    $password = password_hash('1234', PASSWORD_DEFAULT); $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+    $stmt->execute(); $user = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+function UpdateUser($data){
+    $database = dbConnect();
+    // Préparation de la requête SQL
+    $sql = "UPDATE users SET nom = :nom, prenom = :prenom, username = :username";
+    if (isset($data['password'])) {  $sql .= ", password = :password"; }
+    $sql .= " WHERE id = :id";
+    //
+    $stmt = $database->prepare($sql);
+    $stmt->bindParam(':id', $data['id'], PDO::PARAM_INT); $stmt->bindParam(':nom', $data['nom'], PDO::PARAM_STR);
+    $stmt->bindParam(':prenom', $data['prenom'], PDO::PARAM_STR); $stmt->bindParam(':username', $data['username'], PDO::PARAM_STR);
+    if (isset($data['password'])) {
+        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+        $stmt->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
+    }
+    $stmt->execute();
+}
+function getUsersById($id) { return getById('users', 'id', $id); }
+function removeUsers($id) {  deleteRecord('users', 'id', $id); }
+// End User
 function getTotalTransactions($startDate, $endDate) { // Start Gestion Vente
     $database = dbConnect();
     $query = "SELECT SUM(total) AS total FROM Vente WHERE date_vente BETWEEN :startDate AND :endDate";

@@ -12,8 +12,8 @@ $vehicules = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <thead>
         <tr class="border-2 border-bottom border-primary border-0"> 
             <th scope="col" class="ps-0">#</th>
-            <th scope="col" class="text-center">Nom</th>
-            <th scope="col" class="text-center">Options</th>
+            <th scope="row" class="ps-0 fw-medium">Nom</th>
+            <th scope="row" class="ps-0 fw-medium">Options</th>
         </tr>
     </thead>
     <tbody class="table-group-divider">
@@ -21,7 +21,7 @@ $vehicules = $stmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($vehicules as $vehicule) { ?>
         <tr>
             <th scope="row" class="ps-0 fw-medium"><?= htmlspecialchars($vehicule['id']);?></th>
-            <td class="text-center fw-medium"><?= htmlspecialchars($vehicule['nom']);?></td>
+            <td scope="row" class="ps-0 fw-medium"><?= htmlspecialchars($vehicule['nom']);?></td>
             <td>
                 <a href="#" class="btn_del_vehicule btn btn-sm btn-danger" data-id="<?=$vehicule['id'];?>">Supprimer</a>
                 <a href="#" id="btn_up_vehicule" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" value="<?=$vehicule['id'];?>" class="btn btn-sm btn-warning"></i>Modifier</a>

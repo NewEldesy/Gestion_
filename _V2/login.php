@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: application/json');
 session_start();
 include_once('model.php');
 
@@ -7,16 +8,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = isset($_POST['Password1']) ? trim($_POST['Password1']) : '';
     
     if (empty($username) || empty($password)) {
-        echo '<div class="alert alert-warning text-center">Les champs ne peuvent pas être vides.</div>';
-        exit();
+        echo json_encode([
+            'status' => 'warning',
+            'message' => 'Les champs ne peuvent pas être vides.'
+        ]); exit();
     }
     
     $user = try_login($username);
+
+    if (!$user) {
+        echo json_encode([
+            'status' => 'danger',
+            'message' => 'Utilisateur non trouvé.'
+        ]); exit();
+    }
     
-    if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_email'] = $user['email'];
-        $_SESSION['user_username'] = $user['username'];
+    if (password_verify($password, $user['password'])) {
+        session_regenerate_id(true);
+        $_SESSION['user_id'] = $user['id']; $_SESSION['user_username'] = $user['username'];
+        $_SESSION['user_nom'] = $user['nom']; $_SESSION['user_prenom'] = $user['prenom'];
         
         echo json_encode([
             'status' => 'success',

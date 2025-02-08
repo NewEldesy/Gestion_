@@ -40,7 +40,7 @@
               <span class="hide-menu">Home</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'],'dashboard.php')!==false||strpos($_SERVER['REQUEST_URI'],'license.php')!==false)?'active':'';?>" href="dashboard.php" aria-expanded="false">
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'],'dashboard.php')!==false||strpos($_SERVER['REQUEST_URI'],'license.php')!==false||strpos($_SERVER['REQUEST_URI'],'profil.php')!==false)?'active':'';?>" href="dashboard.php" aria-expanded="false">
                 <span class="hide-menu">Tableau de bord</span>
               </a>
             </li>
@@ -97,6 +97,13 @@
                 <span class="hide-menu">Vehicule</span>
               </a>
             </li>
+            <?php if (isset($_SESSION['user_username']) && $_SESSION['user_username'] === 'admin') : ?>
+              <li class="sidebar-item">
+                <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'], 'user.php') !== false) ? 'active' : '';?>" href="user.php" aria-expanded="false">
+                  <span class="hide-menu">Utilisateur</span>
+                </a>
+              </li>
+            <?php endif; ?>
             <!-- Extra End-->
           </ul>
         </nav>
@@ -126,11 +133,11 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
                   <div class="message-body">
-                    <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                    <a href="profil.php" class="d-flex align-items-center gap-2 dropdown-item">
                       <i class="ti ti-user fs-6"></i>
-                      <p class="mb-0 fs-3">Mon Profil</p>
+                      <p class="mb-0 fs-3"><?= $_SESSION['user_nom'].", ".$_SESSION['user_prenom'];?></p>
                     </a>
-                    <a href="logout.php" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                    <a href="logout.php" class="btn btn-outline-primary mx-3 mt-2 d-block">Deconnexion</a>
                   </div>
                 </div>
               </li>

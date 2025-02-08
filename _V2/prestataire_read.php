@@ -12,13 +12,13 @@ $prestataires = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <thead>
         <tr class="border-2 border-bottom border-primary border-0"> 
             <th scope="col" class="ps-0">#</th>
-            <th scope="col" class="text-center">Nom</th>
-            <th scope="col" class="text-center">Prénom</th>
-            <th scope="col" class="text-center">Date Naissance</th>
-            <th scope="col" class="text-center">Téléphone</th>
-            <th scope="col" class="text-center">Téléphone 2</th>
-            <th scope="col" class="text-center">Poste</th>
-            <th scope="col" class="text-center">Options</th>
+            <th scope="row" class="ps-0 fw-medium">Nom</th>
+            <th scope="row" class="ps-0 fw-medium">Prénom</th>
+            <th scope="row" class="ps-0 fw-medium">Date Naissance</th>
+            <th scope="row" class="ps-0 fw-medium">Téléphone</th>
+            <th scope="row" class="ps-0 fw-medium">Téléphone 2</th>
+            <th scope="row" class="ps-0 fw-medium">Poste</th>
+            <th scope="row" class="ps-0 fw-medium">Options</th>
         </tr>
     </thead>
     <tbody class="table-group-divider">
@@ -26,12 +26,12 @@ $prestataires = $stmt->fetchAll(PDO::FETCH_ASSOC);
                   foreach ($prestataires as $prestataire) { ?>
         <tr>
             <th scope="row" class="ps-0 fw-medium"><?=htmlspecialchars($prestataire['id']);?></th>
-            <td class="text-center fw-medium"><?=htmlspecialchars($prestataire['nom']);?></td>
-            <td class="text-center fw-medium"><?=htmlspecialchars($prestataire['prenom']);?></td>
-            <td class="text-center fw-medium"><?=htmlspecialchars($prestataire['date_naissance']);?></td>
-            <td class="text-center fw-medium"><?=htmlspecialchars($prestataire['telephone']);?></td>
-            <td class="text-center fw-medium"><?=htmlspecialchars($prestataire['telephone2']);?></td>
-            <td class="text-center fw-medium"><?=htmlspecialchars($prestataire['poste']);?></td>
+            <td scope="row" class="ps-0 fw-medium"><?=htmlspecialchars($prestataire['nom']);?></td>
+            <td scope="row" class="ps-0 fw-medium"><?=htmlspecialchars($prestataire['prenom']);?></td>
+            <td scope="row" class="ps-0 fw-medium"><?=htmlspecialchars($prestataire['date_naissance']);?></td>
+            <td scope="row" class="ps-0 fw-medium"><?=htmlspecialchars($prestataire['telephone']);?></td>
+            <td scope="row" class="ps-0 fw-medium"><?=htmlspecialchars($prestataire['telephone2']);?></td>
+            <td scope="row" class="ps-0 fw-medium"><?=htmlspecialchars($prestataire['poste']);?></td>
             <td>
                 <a href="#" class="btn_del_prestataire btn btn-sm btn-danger" data-id="<?=$prestataire['id'];?>">Supprimer</a>
                 <a href="#" id="btn_up_prestataire" data-bs-toggle="modal" data-bs-target="#exampleModalMaj" value="<?= $prestataire['id']; ?>" class="btn btn-sm btn-warning"></i>Modifier</a>
