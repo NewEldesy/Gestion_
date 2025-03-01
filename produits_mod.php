@@ -3,8 +3,6 @@ include ("model.php");
 $database = dbConnect();
 
 $modif = $_POST['id'];
-function getProduitsById($id) { return getById('Produits', 'id', $id); }
-
 $mod = getProduitsById($modif);
 
 if (!empty($mod)) {
@@ -14,19 +12,6 @@ if (!empty($mod)) {
     <div class="mb-3">
         <label for="designation" class="form-label">Designation</label>
         <input type="text" class="form-control" value="<?=$mod['designation']?>" id="produit_designation">
-    </div>
-    <div class="mb-3">
-        <label for="vehicule" class="form-label">Marque Véhicule</label>
-        <select name="vehicule" id="produit_vehicule" class="form-select">
-            <option value="">Sélectionnez un Vehicule</option>
-            <?php 
-                $vehicules = getVehicule();
-                foreach($vehicules as $vehicule) {
-            ?>
-            <option value="<?=$vehicule['id'];?>"><?=$vehicule['nom'];?></option>
-            <option value="<?=$vehicule['id'];?>" <?= $vehicule['id'] == $mod['vehicule'] ? 'selected' : ''; ?>><?=$vehicule['nom'];?></option>
-            <?php } ?>
-        </select>
     </div>
     <div class="mb-3">
         <label for="prixunitaire" class="form-label">Prix Unitaire</label>

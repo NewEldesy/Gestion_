@@ -1,3 +1,57 @@
+///////////////////////////////////////////////////////////////// Start User /////////////////////////////////////////////////////////////////////////////////////////////////
+$(document).on('click', '#login', function(e) {
+    e.preventDefault();
+    const Email1 = $("#Email1").val().trim();
+    const Password1 = $("#Password1").val().trim();
+    if (Email1 === "" || Password1 === "") {
+        $("#login_result").html('<div class="alert alert-warning text-center">Les champs ne peuvent pas être vides.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
+        return;
+    }
+    $.ajax({
+        url: "login.php",
+        type: "POST",
+        data: { Email1: Email1, Password1: Password1 },
+        dataType: "json",
+        success: function(data){
+            const validStatuses = ['success', 'danger', 'warning'];
+            const statusClass = validStatuses.includes(data.status) ? data.status : 'info';
+            $("#login_result").html(`<div class="alert alert-${statusClass} text-center">${data.message}</div>`).delay(700).slideDown(700).delay(2100).slideUp(700);
+            if (data.status === 'success') {
+                setTimeout(function() { window.location.href = "dashboard.php"; }, 1400);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error("Erreur AJAX: ", textStatus, errorThrown);
+            $("#login_result").html('<div class="alert alert-danger text-center">Erreur lors de la connexion. Veuillez réessayer.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
+        }
+    });
+});
+// Gestion de la soumission du formulaire
+$(document).on('click', '#mod_profil', function(e) {
+    e.preventDefault();
+    var id = $("#user_id").val(); var password2 = $("#password2").val(); var password3 = $("#password3").val();
+    // Vérification des mots de passe
+    if (password2 == password3) {
+        $.ajax({
+            method: "POST",
+            url: "profil_update.php",
+            data: { id: id, password2: password2 },
+            success: function (data) {
+                const validStatuses = ['success', 'danger'];
+                const statusClass = validStatuses.includes(data.status) ? data.status : 'info';
+                $("#result_profil").html(`<div class="alert alert-${statusClass} text-center">${data.message}</div>`).delay(700).slideDown(700).delay(2100).slideUp(700);
+                $("#password2, #password3").val('');
+            },
+            error: function (status, statusText) {
+                $("#result_profil").html(`<div class="alert alert-danger text-center">Erreur ${status}: ${statusText}</div>`).delay(700).slideDown(700).delay(2100).slideUp(700);
+            },
+        });
+    }
+    else{
+        $("#result_profil").html(`<div class="alert alert-danger text-center">Les mots de passe sont différents</div>`).delay(700).slideDown(700).delay(2100).slideUp(700);
+    }
+});
+///////////////////////////////////////////////////////////////// End User //////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////// Start Total Montant ////////////////////////////////////////////////////////////////////////////////////////
 // Fonction pour afficher totals des ventes
 function updateTransactionTotals() {
@@ -10,9 +64,7 @@ function updateTransactionTotals() {
             $('#t_week').text(Number(data.week).toFixed(2)); $('#t_month').text(Number(data.month).toFixed(2));
             $('#t_year').text(Number(data.year).toFixed(2));
         },
-        error: function(xhr, status, error) {
-            console.error('Erreur Ajax:', status, error);
-        }
+        error: function(xhr, status, error) { console.error('Erreur Ajax:', status, error); }
     });
 }
 updateTransactionTotals();
@@ -27,21 +79,16 @@ function updatePrestationTotals() {
                 $('#p_total').text(Number(data.total).toFixed(2)); $('#p_today').text(Number(data.today).toFixed(2));
                 $('#p_week').text(Number(data.week).toFixed(2)); $('#p_month').text(Number(data.month).toFixed(2));
                 $('#p_year').text(Number(data.year).toFixed(2));
-            } else {
-                console.error('Données invalides reçues:', data);
-            }
+            } else { console.error('Données invalides reçues:', data); }
         },        
-        error: function(xhr, status, error) {
-            console.error('Erreur Ajax:', status, error);
-            alert('Impossible de récupérer les données. Veuillez réessayer plus tard.');
-        }        
+        error: function(xhr, status, error) { console.error('Erreur Ajax:', status, error); }     
     });
 }
 updatePrestationTotals();
 ///////////////////////////////////////////////////////////////// End Total Montant /////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////// Start Prestataire /////////////////////////////////////////////////////////////////////////////////////////
 // Add Prestation
-$(document).on('click', '#btn_add_prestation', function(e){
+$(document).on('click', '#btn_add_prestataire', function(e) {
     e.preventDefault();
     var nom = $("#nom").val(); var prenom = $("#prenom").val(); var date_naissance = $("#date_naissance").val();
     var telephone = $("#telephone").val(); var telephone2 = $("#telephone2").val(); var poste = $("#poste").val();
@@ -49,30 +96,23 @@ $(document).on('click', '#btn_add_prestation', function(e){
         $.ajax({
             url: "prestataire_add.php",
             type: "POST",
-            data: {nom: nom, prenom: prenom, date_naissance: date_naissance, telephone:telephone,
-                telephone2:telephone2,
-                poste:poste
-            },
+            data: {nom: nom, prenom: prenom, date_naissance: date_naissance, telephone:telephone, telephone2:telephone2, poste:poste},
             success: function(data){
-                $("#result_prestation").html(data).delay(700).slideDown(700);
-                affPrestataires();
-                $("#result_prestation").delay(2000).slideUp(700);
+                $("#result_prestataire").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
+                affPrestataires(); $("#exampleModalAdd").modal("hide");
             },
-            error: function(){$("#result_prestation").html('<div class="alert alert-danger">Erreur lors de l\'ajout du prestataire.</div>');}
+            error: function(){$("#result_prestataire").html('<div class="alert alert-danger">Erreur lors de l\'ajout du prestataire.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);}
         });
         $('#exampleModalAdd').modal('hide');
-    } else {$("#result_prestation").html('<div class="alert alert-warning">Les champs ne peuvent pas être vide.</div>');}
+    } else {$("#result_prestataire").html('<div class="alert alert-warning">Les champs ne peuvent pas être vide.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);}
 });
 // Aff Prestataire
-function affPrestataires(){
+function affPrestataires() {
     $.ajax({
         url: "prestataire_read.php",
         type: "post",
-        success: function(data) {
-            $("#affPrest").html(data).delay(500).slideDown(500);
-        },
+        success: function(data) { $("#affPrest").html(data); },
         error: function(jqXHR, textStatus, errorThrown) {
-            console.error('Erreur lors de la récupération des catégories :', textStatus, errorThrown);
             $("#affPrest").html('<div class="alert alert-danger">Erreur lors du chargement des catégories.</div>');
         }
     });
@@ -89,223 +129,349 @@ $(document).on('click', '.btn_del_prestataire', function(e){
             type: "post",
             data: { id: id },
             success: function(data) {
-                $("#result_prestation").html(data).delay(700).slideDown(700);
+                $("#result_prestataire").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
                 affPrestataires();
-                $("#result_prestation").delay(2000).slideUp(700);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error('Erreur lors de la suppression :', textStatus, errorThrown);
-                $("#result_prestation").html('<div class="alert alert-danger">Erreur lors de la suppression du prestataire.</div>').delay(2000).slideUp(700);
+                $("#result_prestataire").html('<div class="alert alert-danger">Erreur lors de la suppression du prestataire.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
             }
         });
     } else {return false;}
 });
 //Fonction pour modifier le prestataire
-function updatePrestataire()
-{
-    $(document).on("click" , "#btn_up_prestataire" , function(e)
-    {
+function updatePrestataire() {
+    $(document).on("click" , "#btn_up_prestataire" , function(e) {
         e.preventDefault(); var id = $(this).attr("value");
         $.ajax({
             url:"prestataire_mod.php",
             type:"post",
-            data:{
-                id:id
-            },
-            success: function(data){
-                $("#prestataire_mod").html(data);
-            }
+            data:{ id:id },
+            success: function(data){ $("#prestataire_mod").html(data); }
         });
     });
 }
 updatePrestataire();
-//fonction de mise a jour categorie
+//fonction de mise a jour Prestataire
 $(document).ready(function () {
-    // Capture le clic sur le bouton de mise à jour
-    $(document).on("click", "#btn_maj_prestation", function (e) {
-        e.preventDefault(); // Empêche le comportement par défaut
-        // Récupère les données du formulaire
+    $(document).on("click", "#btn_maj_prestataire", function (e) {
+        e.preventDefault();
         var id = $("#pres_id").val(); var nom = $("#pres_nom").val();
         var prenom = $("#pres_prenom").val(); var date_naissance = $("#pres_date_naissance").val();
         var telephone = $("#pres_telephone").val(); var telephone2 = $("#pres_telephone2").val(); var poste = $("#pres_poste").val();
-        // Envoie les données via AJAX
         $.ajax({
-            url: "prestataire_update.php", // Le script côté serveur qui gère la mise à jour
+            url: "prestataire_update.php",
             type: "POST",
             data: {id: id, nom: nom, prenom: prenom, date_naissance: date_naissance,
-                telephone: telephone, telephone2: telephone2, poste: poste,
+                telephone: telephone, telephone2: telephone2, poste: poste
             },
             success: function (data) {
-                $("#result_prestation").html(data).delay(700).slideDown(700);
-                affPrestataires();
-                $("#result_prestation").delay(2000).slideUp(700);
-                $("#exampleModalMaj").modal("hide");
+                $("#result_prestataire").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
+                affPrestataires(); $("#exampleModalMaj").modal("hide");
             },
             error: function (xhr, status, error) {
-                console.error("Erreur lors de la mise à jour :", error);
-                $("#result_prestation").html('<div class="alert alert-danger">Erreur lors de la mis à jour.</div>').delay(2000).slideUp(700);
+                $("#result_prestataire").html('<div class="alert alert-danger">Erreur lors de la mis à jour.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
             },
         });
     });
 });
 ///////////////////////////////////////////////////////////////// End Prestataire //////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////// Start User /////////////////////////////////////////////////////////////////////////////////////////
+// Ajout Utilisateur
+$(document).on('click', '#btn_add_user', function(e) {
+    e.preventDefault();
+    var nom = $("#nom").val(); var prenom = $("#prenom").val(); var username = $("#username").val();
+    if (nom.trim() !== "" && prenom.trim() !== "" && username.trim() !== "") {
+        $.ajax({
+            url: "user_add.php",
+            type: "POST",
+            data: {nom: nom, prenom: prenom, username: username},
+            success: function(data){
+                $("#result_user").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
+                affUsers(); $("#exampleModalAdd").modal("hide");
+            },
+            error: function(){$("#result_user").html('<div class="alert alert-danger">Erreur lors de l\'ajout de l\'utilisateur.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);}
+        });
+        $('#exampleModalAdd').modal('hide');
+    } else {$("#result_user").html('<div class="alert alert-warning">Les champs ne peuvent pas être vide.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);}
+});
+// Afficher Utilisateurs
+function affUsers() {
+    $.ajax({
+        url: "user_read.php",
+        type: "post",
+        success: function(data) { $("#aff_user").html(data); },
+        error: function(jqXHR, textStatus, errorThrown) {
+            $("#aff_user").html('<div class="alert alert-danger">Erreur lors du chargement des catégories.</div>');
+        }
+    });
+}
+affUsers();
+//Supprimer Utilisateur
+$(document).on('click', '.btn_del_user', function(e){
+    e.preventDefault();
+    if (window.confirm("Voulez-vous supprimer cet Utilisateur?")) {
+        var id = $(this).data("id");
+
+        $.ajax({
+            url: "user_delete.php",
+            type: "POST",
+            data: { id: id },
+            success: function(data) {
+                $("#result_user").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
+                affUsers();
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                $("#result_user").html('<div class="alert alert-danger">Erreur lors de la suppression Utilisateur.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
+            }
+        });
+    } else {return false;}
+});
+//Fonction Modification Utilisateur
+function updatePrestataire() {
+    $(document).on("click" , "#btn_up_user" , function(e) {
+        e.preventDefault(); var id = $(this).attr("value");
+        $.ajax({
+            url:"user_mod.php",
+            type:"post",
+            data:{ id:id },
+            success: function(data){ $("#user_mod").html(data); }
+        });
+    });
+}
+updatePrestataire();
+//fonction de mise a jour Utilisateur
+$(document).ready(function () {
+    $(document).on("click", "#btn_maj_user", function (e) {
+        e.preventDefault();
+        var id = $("#u_id").val(); var nom = $("#u_nom").val(); var prenom = $("#u_prenom").val();
+        var username = $("#u_username").val(); var password = $("#u_password").val();
+        $.ajax({
+            url: "user_update.php",
+            type: "POST",
+            data: {id: id, nom: nom, prenom: prenom, username: username, password: password },
+            success: function (data) {
+                $("#result_user").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
+                affUsers(); $("#exampleModalMaj").modal("hide");
+            },
+            error: function (xhr, status, error) {
+                $("#result_user").html('<div class="alert alert-danger">Erreur lors de la mis à jour.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
+            },
+        });
+    });
+});
+///////////////////////////////////////////////////////////////// End User //////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////// Start Produit ///////////////////////////////////////////////////////////////////////////////////////////
 // Add Produit
-$(document).on('click', '#btn_add_produit', function(e){
+$(document).on('click', '#btn_add_produit', function(e) {
     e.preventDefault();
-    var designation = $("#designation").val(); var vehicule = $("#vehicule").val(); var pu = $("#pu").val(); var description = $("#description").val();
-    if (designation.trim() !== "" && designation.trim() !== "" && vehicule.trim() !== "" && pu.trim() !== "") {
+    var designation = $("#designation").val(); var pu = $("#pu").val(); var description = $("#description").val();
+    if (designation.trim() !== "" && designation.trim() !== "" && pu.trim() !== "") {
         $.ajax({
             url: "produits_add.php",
             type: "POST",
-            data: {designation: designation, vehicule: vehicule, pu: pu,description:description},
+            data: {designation: designation, pu: pu,description:description},
             success: function(data){
-                $("#result_produit").html(data).delay(700).slideDown(700);
+                $("#result_produit").html(data).delay(500).slideDown(700).delay(2100).slideUp(700);
                 affProduits();
-                $("#result_produit").delay(2000).slideUp(700);
             },
-            error: function(){$("#result_produit").html('<div class="alert alert-danger">Erreur lors de l\'ajout du prestataire.</div>');}
+            error: function(){$("#result_produit").html('<div class="alert alert-danger">Erreur lors de l\'ajout du prestataire.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);}
         });
         $('#exampleModalAdd').modal('hide');
-    } else {$("#result_produit").html('<div class="alert alert-warning">Les champs ne peuvent pas être vide.</div>');}
+    } else {$("#result_produit").html('<div class="alert alert-warning">Les champs ne peuvent pas être vide.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);}
 });
 // Aff Produit
-function affProduits(){
+function affProduits() {
     $.ajax({
         url: "produits_read.php",
         type: "post",
-        success: function(data) {
-            $("#aff_produit").html(data).delay(500).slideDown(500);
-        },
+        success: function(data) { $("#aff_produit").html(data); },
         error: function(jqXHR, textStatus, errorThrown) {
-            console.error('Erreur lors de la récupération des produits :', textStatus, errorThrown);
             $("#aff_produit").html('<div class="alert alert-danger">Erreur lors du chargement des produits.</div>');
         }
     });
 }
 affProduits();
 //Supprimer Produit
-$(document).on('click', '.btn_del_produit', function(e){
+$(document).on('click', '.btn_del_produit', function(e) {
     e.preventDefault();
     if (window.confirm("Voulez-vous supprimer ce Produit?")) {
         var id = $(this).data("id");
-
         $.ajax({
             url: "produits_delete.php",
             type: "post",
             data: { id: id },
             success: function(data) {
-                $("#result_produit").html(data).delay(700).slideDown(700);
+                $("#result_produit").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
                 affProduits();
-                $("#result_produit").delay(2000).slideUp(700);
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                console.error('Erreur lors de la suppression :', textStatus, errorThrown);
-                $("#result_produit").html('<div class="alert alert-danger">Erreur lors de la suppression du prestataire.</div>').delay(2000).slideUp(700);
+                $("#result_produit").html('<div class="alert alert-danger">Erreur lors de la suppression du prestataire.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
             }
         });
     } else {return false;}
 });
 //Fonction pour modifier le Produit
-function updateProduit()
-{
-    $(document).on("click" , "#btn_up_produit" , function(e)
-    {
+function updateProduit() {
+    $(document).on("click" , "#btn_up_produit" , function(e) {
         e.preventDefault(); var id = $(this).attr("value");
         $.ajax({
             url:"produits_mod.php",
             type:"post",
-            data:{
-                id:id
-            },
-            success: function(data){
-                $("#produit_mod").html(data);
-            }
+            data:{ id:id },
+            success: function(data){ $("#produit_mod").html(data); }
         });
     });
 }
 updateProduit();
 //fonction de mise a jour du Produit
 $(document).ready(function () {
-    // Capture le clic sur le bouton de mise à jour
     $(document).on("click", "#btn_maj_produit", function (e) {
-        e.preventDefault(); // Empêche le comportement par défaut
-        var id = $("#produit_id").val(); var designation = $("#produit_designation").val(); // Récupère les données du formulaire
-        var vehicule = $("#produit_vehicule").val(); var pu = $("#produit_prixunitaire").val();
-        var description = $("#produit_description").val();
-        $.ajax({ // Envoie les données via AJAX
-            url: "produits_update.php", // Le script côté serveur qui gère la mise à jour
+        e.preventDefault();
+        var id = $("#produit_id").val(); var designation = $("#produit_designation").val();
+        var pu = $("#produit_prixunitaire").val(); var description = $("#produit_description").val();
+        $.ajax({
+            url: "produits_update.php",
             type: "POST",
-            data: {id: id, designation: designation, vehicule: vehicule, pu: pu, description: description,
+            data: {id: id, designation: designation, pu: pu, description: description,
             },
             success: function (data) {
-                $("#result_produit").html(data).delay(700).slideDown(700);
-                affProduits();
-                $("#result_produit").delay(2000).slideUp(700);
-                $("#exampleModalMaj").modal("hide");
+                $("#result_produit").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
+                affProduits(); $("#exampleModalMaj").modal("hide");
             },
             error: function (xhr, status, error) {
-                console.error("Erreur lors de la mise à jour :", error);
-                $("#result_produit").html('<div class="alert alert-danger">Erreur lors de la mis à jour.</div>').delay(2000).slideUp(700);
+                $("#result_produit").html('<div class="alert alert-danger">Erreur lors de la mis à jour.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
             },
         });
     });
 });
 ///////////////////////////////////////////////////////////////// End Produit /////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////// Start Prestation ///////////////////////////////////////////////////////////////////////////////////////////
+// Add Prestation
+$(document).on('click', '#btn_add_prestation', function(e) {
+    e.preventDefault();
+    var designation = $("#designation").val(); var prix = $("#prix").val(); var description = $("#description").val();
+    if (designation.trim() !== "" && prix.trim() !== "" && description.trim() !== "") {
+        $.ajax({
+            url: "prestations_add.php",
+            type: "POST",
+            data: {designation: designation, prix: prix, description: description},
+            success: function(data){
+                $("#result_prestation").html(data).delay(500).slideDown(700).delay(2100).slideUp(700);
+                affPrestations();
+            },
+            error: function(){$("#result_prestation").html('<div class="alert alert-danger">Erreur lors de l\'ajout de la prestation.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);}
+        });
+        $('#exampleModalAdd').modal('hide');
+    } else {$("#result_prestation").html('<div class="alert alert-warning">Les champs ne peuvent pas être vide.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);}
+});
+// Aff Prestation
+function affPrestations() {
+    $.ajax({
+        url: "prestations_read.php",
+        type: "post",
+        success: function(data) { $("#aff_prestation").html(data); },
+        error: function(jqXHR, textStatus, errorThrown) {
+            $("#aff_prestation").html('<div class="alert alert-danger">Erreur lors de la récupération des prestations !!!</div>');
+        }
+    });
+}
+affPrestations();
+//Supprimer Prestation
+$(document).on('click', '.btn_del_prestation', function(e) {
+    e.preventDefault();
+    if (window.confirm("Voulez-vous supprimer ce Prestation ?")) {
+        var id = $(this).data("id");
+        $.ajax({
+            url: "prestations_delete.php",
+            type: "post",
+            data: { id: id },
+            success: function(data) {
+                $("#result_prestation").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
+                affPrestations();
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                $("#result_prestation").html('<div class="alert alert-danger">Erreur lors de la suppression du prestation.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
+            }
+        });
+    } else {return false;}
+});
+//Fonction pour modifier le Prestation
+function updatePrestation() {
+    $(document).on("click" , "#btn_up_prestation" , function(e) {
+        e.preventDefault(); var id = $(this).attr("value");
+        $.ajax({
+            url:"prestations_mod.php",
+            type:"post",
+            data:{ id:id },
+            success: function(data){ $("#prestation_mod").html(data); }
+        });
+    });
+}
+updatePrestation();
+//fonction de mise a jour du Produit
+$(document).ready(function () {
+    $(document).on("click", "#btn_maj_prestation", function (e) {
+        e.preventDefault();
+        var id = $("#prestation_id").val(); var designation = $("#prestation_designation").val();
+        var prix = $("#prestation_prix").val(); var description = $("#prestation_description").val();
+        $.ajax({
+            url: "prestations_update.php",
+            type: "POST",
+            data: {id: id, designation: designation, prix: prix, description: description,
+            },
+            success: function (data) {
+                $("#result_prestation").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
+                affPrestations(); $("#exampleModalMaj").modal("hide");
+            },
+            error: function (xhr, status, error) {
+                $("#result_prestation").html('<div class="alert alert-danger">Erreur lors de la mis à jour.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
+            },
+        });
+    });
+});
+///////////////////////////////////////////////////////////////// End Prestation /////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////// Start Stock ///////////////////////////////////////////////////////////////////////////////////////////
 // Aff Stock
-function affStocks(){
+function affStocks() {
     $.ajax({
         url: "stock_read.php",
         type: "post",
-        success: function(data) {
-            $("#affStock").html(data).delay(500).slideDown(500);
-        },
+        success: function(data) { $("#affStock").html(data); },
         error: function(jqXHR, textStatus, errorThrown) {
-            console.error('Erreur lors de la récupération du stock des produits :', textStatus, errorThrown);
-            $("#affStock").html('<div class="alert alert-danger">Erreur lors du chargement des produits en stock.</div>');
+            $("#affStock").html('<div class="alert alert-danger">Erreur lors de la récupération du stock des produits !!!</div>');
         }
     });
 }
 affStocks();
 //Fonction pour modifier le Stock
-function updateStock()
-{
-    $(document).on("click" , "#btn_up_stock" , function(e)
-    {
+function updateStock() {
+    $(document).on("click" , "#btn_up_stock" , function(e) {
         e.preventDefault(); var id = $(this).attr("value");
         $.ajax({
             url:"stock_mod.php",
             type:"post",
-            data:{
-                id:id
-            },
-            success: function(data){
-                $("#stock_mod").html(data);
-            }
+            data:{ id:id },
+            success: function(data){ $("#stock_mod").html(data); }
         });
     });
 }
 updateStock();
 //fonction de mise a jour Stock
 $(document).ready(function () {
-    // Capture le clic sur le bouton de mise à jour
     $(document).on("click", "#btn_maj_stock", function (e) {
-        e.preventDefault(); // Empêche le comportement par défaut
-        var id = $("#stock_id").val(); var id_produit = $("#stock_produit").val(); var quantite = $("#stock_quantite").val();
-        $.ajax({ // Envoie les données via AJAX
-            url: "stock_update.php", // Le script côté serveur qui gère la mise à jour
+        e.preventDefault(); var id = $("#stock_id").val();
+        var id_produit = $("#stock_produit").val(); var quantite = $("#stock_quantite").val();
+        $.ajax({
+            url: "stock_update.php",
             type: "POST",
-            data: {id: id, id_produit: id_produit, quantite: quantite,},
+            data: {id: id, id_produit: id_produit, quantite: quantite},
             success: function (data) {
-                $("#result_stock").html(data).delay(700).slideDown(700);
-                affStocks();
-                $("#result_stock").delay(2000).slideUp(700);
-                $("#exampleModalMaj").modal("hide");
+                $("#result_stock").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
+                affStocks(); $("#exampleModalMaj").modal("hide");
             },
             error: function (xhr, status, error) {
-                console.error("Erreur lors de la mise à jour :", error);
-                $("#result_stock").html('<div class="alert alert-danger">Erreur lors de la mis à jour.</div>').delay(2000).slideUp(700);
+                $("#result_stock").html('<div class="alert alert-danger">Erreur lors de la mis à jour du stock.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
             },
         });
     });
@@ -313,41 +479,36 @@ $(document).ready(function () {
 ///////////////////////////////////////////////////////////////// End Stock /////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////// Start Vehicule /////////////////////////////////////////////////////////////////////////////////////////
 // Add Vehicule
-$(document).on('click', '#btn_add_vehicule', function(e){
-    e.preventDefault();
-    var nom = $("#nom").val();
+$(document).on('click', '#btn_add_vehicule', function(e) {
+    e.preventDefault(); var nom = $("#nom").val();
     if (nom.trim() !== "") {
         $.ajax({
             url: "vehicule_add.php",
             type: "POST",
             data: {nom: nom,},
             success: function(data){
-                $("#result_vehicule").html(data).delay(700).slideDown(700);
-                affPrestataires();
-                $("#result_vehicule").delay(2000).slideUp(700);
+                $("#result_vehicule").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
+                affVehicules(); $("#exampleModalAdd").modal("hide");
             },
-            error: function(){$("#result_vehicule").html('<div class="alert alert-danger">Erreur lors de l\'ajout du prestataire.</div>');}
+            error: function(){$("#result_vehicule").html('<div class="alert alert-danger">Erreur lors de l\'ajout du prestataire.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);}
         });
         $('#exampleModalAdd').modal('hide');
-    } else {$("#result_vehicule").html('<div class="alert alert-warning">Les champs ne peuvent pas être vide.</div>');}
+    } else {$("#result_vehicule").html('<div class="alert alert-warning">Les champs ne peuvent pas être vide.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);}
 });
 // Aff Vehicule
-function affVehicules(){
+function affVehicules() {
     $.ajax({
         url: "vehicule_read.php",
         type: "post",
-        success: function(data) {
-            $("#affVehicule").html(data).delay(500).slideDown(500);
-        },
+        success: function(data) { $("#affVehicule").html(data); },
         error: function(jqXHR, textStatus, errorThrown) {
-            console.error('Erreur lors de la récupération des véhicules :', textStatus, errorThrown);
-            $("#affVehicule").html('<div class="alert alert-danger">Erreur lors du chargement des véhicules.</div>');
+            $("#affVehicule").html('<div class="alert alert-danger">Erreur lors de la récupération des véhicules.</div>');
         }
     });
 }
 affVehicules();
 //Supprimer Vehicule
-$(document).on('click', '.btn_del_vehicule', function(e){
+$(document).on('click', '.btn_del_vehicule', function(e) {
     e.preventDefault();
     if (window.confirm("Voulez-vous supprimer ce véhicule?")) {
         var v_id = $(this).data("id");
@@ -356,13 +517,11 @@ $(document).on('click', '.btn_del_vehicule', function(e){
             type: "POST",
             data: { id: v_id },
             success: function(response) {
-                $("#result_vehicule").html(response).delay(700).slideDown(700);
+                $("#result_vehicule").html(response).delay(700).slideDown(700).delay(2100).slideUp(700);
                 affVehicules();
-                $("#result_vehicule").delay(2000).slideUp(700);
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                console.error('Erreur lors de la suppression :', textStatus, errorThrown);
-                $("#result_vehicule").html('<div class="alert alert-danger">Erreur lors de la suppression du véhicule.</div>').delay(2000).slideUp(700);
+                $("#result_vehicule").html('<div class="alert alert-danger">Erreur lors de la suppression du véhicule.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
             }
         });
     } else {return false;}
@@ -376,37 +535,133 @@ function updateVehicule() {
             url:"vehicule_mod.php",
             type:"POST",
             data:{ id: vehiculeId  },
-            success: function(response){
-                $("#vehicule_mod").html(response);
-            },
-            error: function (xhr, status, error) {
-                console.error("Erreur lors du chargement du formulaire :", error);
-            }
+            success: function(response){ $("#vehicule_mod").html(response); },
+            error: function (xhr, status, error) { console.error("Erreur lors du chargement du formulaire :", error); }
         });
     });
 }
 updateVehicule();
 //fonction de mise a jour Vehicule
 $(document).ready(function () {
-    // Capture le clic sur le bouton de mise à jour
     $(document).on("click", "#btn_maj_vehicule", function (e) {
-        e.preventDefault(); // Empêche le comportement par défaut
-        var id = $("#vehicule_id").val(); var nom = $("#vehicule_nom").val(); // Récupère les données du formulaire
-        $.ajax({ // Envoie les données via AJAX
-            url: "vehicule_update.php", // Le script côté serveur qui gère la mise à jour
+        e.preventDefault();
+        var id = $("#vehicule_id").val(); var nom = $("#vehicule_nom").val();
+        $.ajax({
+            url: "vehicule_update.php",
             type: "POST",
             data: {id: id, nom: nom },
             success: function (data) {
-                $("#result_vehicule").html(data).delay(700).slideDown(700);
-                affVehicules();
-                $("#result_vehicule").delay(2000).slideUp(700);
-                $("#exampleModalMaj").modal("hide");
+                $("#result_vehicule").html(data).delay(700).slideDown(700).delay(2100).slideUp(700);
+                affVehicules(); $("#exampleModalMaj").modal("hide");
             },
             error: function (xhr, status, error) {
-                console.error("Erreur lors de la mise à jour :", error);
-                $("#result_vehicule").html('<div class="alert alert-danger">Erreur lors de la mis à jour.</div>').delay(2000).slideUp(700);
+                $("#result_vehicule").html('<div class="alert alert-danger">Erreur lors de la mis à jour.</div>').delay(700).slideDown(700).delay(2100).slideUp(700);
             },
         });
     });
 });
-///////////////////////////////////////////////////////////////// End Prestataire //////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////// End Vehicule //////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////// Start License //////////////////////////////////////////////////////////////////////////////////////////
+function checkLicense() {
+    $.ajax({
+        url: 'check_license.php',
+        method: 'GET',
+        success: function (response) {
+            const res = JSON.parse(response);
+            let licenseStatusText = '';
+            if (res.status === 'valid') { 
+                licenseStatusText = "Licence valide";
+                console.log(licenseStatusText);
+            } else { 
+                licenseStatusText = "Licence expirée ou invalide";
+                alert(licenseStatusText);
+                window.location.href = 'license.php';
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Erreur lors de la vérification de la licence: ", error);
+            alert("Une erreur s'est produite lors de la vérification de la licence. Veuillez réessayer.");
+        }
+    });
+}
+// Vérifier si la page n'est ni index.php ni license.php
+if (!window.location.pathname.includes('index.php') && !window.location.pathname.includes('license.php')) {
+    checkLicense();  // Appeler la fonction de vérification
+}
+function formatLicence(input) {
+    // Remplacer tout ce qui n'est pas une lettre majuscule ou un chiffre par une chaîne vide
+    let value = input.value.replace(/[^A-Z0-9]/g, '');
+    // Limiter la longueur à 16 caractères (4 groupes de 4)
+    if (value.length > 16) value = value.slice(0, 16);
+    // Formater la licence avec des tirets tous les 4 caractères
+    let formattedValue = '';
+    for (let i = 0; i < value.length; i++) {
+        if (i > 0 && i % 4 === 0) formattedValue += '-';
+        formattedValue += value[i];
+    }
+    // Mettre à jour la valeur de l'input
+    input.value = formattedValue;
+}
+//Activation Licence
+$('#activeLicence').click(function() {
+    let licence = $('#licence').val().toUpperCase(); // Convertir en majuscules pour correspondre au format
+
+    // Valider le format de la licence
+    if (licence.match(/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/)) {
+        $.ajax({
+            url: 'activate_license.php', // URL du script PHP
+            method: 'POST',
+            data: { licence: licence }, // Données envoyées au serveur
+            beforeSend: function() {
+                // Afficher un indicateur de chargement (optionnel)
+                $('#loadingSpinner').show();
+            },
+            success: function(response) {
+                // Cacher l'indicateur de chargement
+                $('#loadingSpinner').hide();
+
+                // Parser la réponse JSON
+                const res = JSON.parse(response);
+
+                // Afficher le message de succès ou d'erreur
+                if (res.status === 'success') {
+                    $('#result_licence').text(res.message).css('color', 'green').delay(700).slideDown(700).delay(2100).slideUp(700);
+                } else {
+                    $('#result_licence').text(res.message).css('color', 'red').delay(700).slideDown(700).delay(2100).slideUp(700);
+                }
+            },
+            error: function(xhr, status, error) {
+                // Cacher l'indicateur de chargement
+                $('#loadingSpinner').hide();
+
+                // Afficher un message d'erreur en cas de problème avec la requête AJAX
+                console.error("Erreur lors de l'activation de la licence: ", error);
+                $('#result_licence').text("Une erreur s'est produite lors de l'activation de la licence.").css('color', 'red').delay(700).slideDown(700).delay(2100).slideUp(700);
+            }
+        });
+    } else {
+        // Afficher une alerte si le format de la licence est invalide
+        alert('Format de licence invalide. Veuillez saisir une licence au format K4RQ-Z3PT-X4B7-4VNP.');
+    }
+});
+// Fonction pour récupérer les données via AJAX
+function fetchLicenceInfo() {
+    $.ajax({
+        url: 'get_licence_info.php', // URL du script PHP
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            if (data.length > 0) {
+                // Mettre à jour le contenu de l'élément avec l'ID "jour_licence"
+                $('#jour_licence').text('Expiration : ' + data[0].date_fin);
+            } else {
+                $('#jour_licence').text('Aucune licence active trouvée.');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Erreur AJAX: " + status + error);
+            $('#jour_licence').text('Erreur lors de la récupération des données.');
+        }
+    });
+} fetchLicenceInfo();
+///////////////////////////////////////////////////////////////// End License //////////////////////////////////////////////////////////////////////////////////////////

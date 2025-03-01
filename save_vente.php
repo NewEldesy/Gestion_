@@ -1,9 +1,4 @@
-<!-- <script>
-    var test = <?php echo json_encode($_POST); ?>;
-    alert(JSON.stringify(test));
-</script> -->
-
-<?php
+<?php echo json_encode($_POST);
 include_once('model.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

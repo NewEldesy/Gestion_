@@ -1,113 +1,151 @@
 <?php 
-    session_start();
-    require_once('model.php');
+  ob_start(); session_start();
+  require_once('model.php');
+
+  if (!isset($_SESSION['user_id']) && !isset($_SESSION['user_email']) && !isset($_SESSION['user_username']) ) {
+    header('Location: index.php');
+    exit;
+  }
 ?>
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <!-- title page -->
-        <title>__Gestion__</title>
-        <!-- CSS -->
-        <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-        <link href="assets/font-awesome/css/all.min.css" rel="stylesheet">
-        <link href="assets/dataTables/css/dataTables.dataTables.css" rel="stylesheet">
-        <!-- Custom styles for print -->
-        <style>
-            @media print {
-                .facture {
-                    width: 80mm; /* Largeur de la facture en millimètres */
-                    margin: 0 auto; /* Centrer la facture sur la page */
-                    padding: 10mm; /* Ajouter du padding autour de la facture */
-                }
-                body * {
-                    visibility: hidden;
-                }
-                .facture, .facture * {
-                    visibility: visible;
-                }
-                .facture {
-                    position: absolute;
-                    left: 0;
-                    top: 0;
-                }
-                .action-col {
-                    display: none;
-                }
-            }
-        </style>
-    </head>
-
-    <body>
-        <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-2">
-            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Entreprise Name</a>
-            <ul class="navbar-nav px-3">
-                <li class="nav-item text-nowrap">
-                <a class="nav-link" href="#">Deconnection</a>
-                </li>
-            </ul>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GARAGE GARANGO PAUL</title>
+  <link rel="shortcut icon" type="image/png" href="assets/images/logos/ggp.ico">
+  <link rel="stylesheet" href="assets/css/styles.min.css">
+</head>
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+    <!-- Sidebar Start -->
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="dashboard.php" class="text-nowrap logo-img">
+            <h5>GARAGE GARANGO PAUL</h5>
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+          <ul id="sidebarnav">
+            <!-- Home / Dashboard - Start-->
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-6"></i>
+              <span class="hide-menu">Home</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'],'dashboard.php')!==false||strpos($_SERVER['REQUEST_URI'],'license.php')!==false||strpos($_SERVER['REQUEST_URI'],'profil.php')!==false)?'active':'';?>" href="dashboard.php" aria-expanded="false">
+                <span class="hide-menu">Tableau de bord</span>
+              </a>
+            </li>
+            <!-- Home / Dashboard - End-->
+            <!-- Prestation Start-->
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-6"></i>
+              <span class="hide-menu">Prestation</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'],'prestataire.php')!== false)?'active':'';?>" href="prestataire.php" aria-expanded="false">
+                <span class="hide-menu">Prestataire</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'],'prestation.php')!==false||strpos($_SERVER['REQUEST_URI'],'factureP.php')!==false)?'active':'';?>" href="prestation.php" aria-expanded="false">
+                <span class="hide-menu">Prestation</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'],'prestations.php')!== false)?'active':'';?>" href="prestations.php" aria-expanded="false">
+                <span class="hide-menu">Liste Prestation</span>
+              </a>
+            </li>
+            <!-- Prestation End-->
+            <!-- Vente Start-->
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-6" class="fs-6"></iconify-icon>
+              <span class="hide-menu">Vente</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'],'vente.php')!==false||strpos($_SERVER['REQUEST_URI'],'facture.php')!==false)?'active':'';?>" href="vente.php" aria-expanded="false">
+                <span class="hide-menu">Vente</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'], 'produits.php') !== false) ? 'active' : '';?>" href="produits.php" aria-expanded="false">
+                <span class="hide-menu">Produits</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'], 'stock.php') !== false) ? 'active' : '';?>" href="stock.php" aria-expanded="false">
+                <span class="hide-menu">Stock</span>
+              </a>
+            </li>
+            <!-- Vente End -->
+            <!-- Extra Start-->
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4" class="fs-6"></iconify-icon>
+              <span class="hide-menu">EXTRA</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'], 'vehicule.php') !== false) ? 'active' : '';?>" href="vehicule.php" aria-expanded="false">
+                <span class="hide-menu">Vehicule</span>
+              </a>
+            </li>
+            <?php if (isset($_SESSION['user_username']) && $_SESSION['user_username'] === 'admin') : ?>
+              <li class="sidebar-item">
+                <a class="sidebar-link <?=(strpos($_SERVER['REQUEST_URI'], 'user.php') !== false) ? 'active' : '';?>" href="user.php" aria-expanded="false">
+                  <span class="hide-menu">Utilisateur</span>
+                </a>
+              </li>
+            <?php endif; ?>
+            <!-- Extra End-->
+          </ul>
         </nav>
-
-        <div class="container-fluid">
-            <div class="row">
-                <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-                    <div class="sidebar-sticky">
-                        <ul class="nav flex-column">
-                            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                                
-                            </h6>
-                            <li class="nav-item">
-                                <a class="nav-link" href="index.php">
-                                    Tableau de bord
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="prestataire.php">
-                                    Prestataire
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="produits.php">
-                                    Produits
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="stock.php">
-                                    Stock
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="vehicule.php">
-                                    Vehicule
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="vente.php">
-                                    Vente
-                                </a>
-                            </li>
-                        </ul>
-                        <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                            <span>Prestation</span>
-                        </h5>
-                        <ul class="nav flex-column mb-2">
-                            <li class="nav-item">
-                                <a class="nav-link" href="prestationM.php">
-                                    Mécanique
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="prestationT.php">
-                                    Tractage
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="prestationA.php">
-                                    Autre
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header">
+        <nav class="navbar navbar-expand-lg navbar-light">
+          <ul class="navbar-nav">
+            <li class="nav-item d-block d-xl-none">
+              <a class="nav-link sidebartoggler nav-icon-hover" id="headerCollapse" href="javascript:void(0)">
+                <i class="ti ti-menu-2"></i>
+              </a>
+            </li>
+          </ul>
+          <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+            <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+              <li class="nav-item dropdown">
+                <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <img src="assets/images/profile/user-1.jpg" alt="" width="35" height="35" class="rounded-circle">
+                </a>
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
+                  <div class="message-body">
+                    <a href="profil.php" class="d-flex align-items-center gap-2 dropdown-item">
+                      <i class="ti ti-user fs-6"></i>
+                      <p class="mb-0 fs-3"><?= $_SESSION['user_nom'].", ".$_SESSION['user_prenom'];?></p>
+                    </a>
+                    <a class="d-flex align-items-center gap-2 dropdown-item">
+                      <p class="mb-0 fs-3" id="jour_licence"></p>
+                    </a>
+                    <a href="logout.php" class="btn btn-outline-primary mx-3 mt-2 d-block">Deconnexion</a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <!--  Header End -->

@@ -5,9 +5,9 @@ if(isset($_POST['id']) && !empty($_POST['id'])) {
     $id = $_POST['id'];
 
     if(!removeVehicule($id)) {
-        echo 'Véhicule supprimer avec succès !!!';
+        echo '<div class="alert alert-success" role="alert">Véhicule supprimer avec succès !!!</div>';
     } else {
-        echo 'Échec de la suppression du vehicule !!!';
+        echo '<div class="alert alert-danger" role="alert">Échec de la suppression du vehicule !!!</div>';
     }
 }
 ?>

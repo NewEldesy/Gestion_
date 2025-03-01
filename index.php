@@ -1,126 +1,55 @@
 <?php
-    // if(!isset($_SESSION)){
-    //     header('Location: /Gestion_/login.php');
-    // }
-    require_once('header.php');
+  ob_start(); session_start();
 ?>
-
-                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-                        <h2 class="h3">Tableau de bord</h2>
-                        <div class="btn-toolbar mb-2 mb-md-0">
-                            <div class="btn-group mr-2">
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Vente Analyse -->
-                    <div class="container-fluid pt-4 px-4">
-                        <div class="row g-4">
-                            <h3>Vente</h3>
-                            <div class="col-sm col-xl">
-                                <div class="bg-success rounded shadow-lg d-flex align-items-center justify-content-between p-5">
-                                    <div class="ms-3 text-white">
-                                        <h6 class="mb-0">Total Général</h6>
-                                        <p class="mb-2"><span id="t_total"></span> F CFA</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="container-fluid pt-4 px-4 mb-3">
-                        <div class="row g-4">
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="bg-primary rounded shadow-lg d-flex align-items-center justify-content-between p-5">
-                                    <div class="ms-3 text-white">
-                                        <h6 class="mb-0">Aujourd'hui</h6>
-                                        <p class="mb-2"><span id="t_today"></span> F CFA</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="bg-warning rounded shadow-lg d-flex align-items-center justify-content-between p-5">
-                                    <div class="ms-3 text-white">
-                                        <h6 class="mb-0">Cette semaine</h6>
-                                        <p class="mb-2"><span id="t_week"></span> F CFA</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="bg-danger rounded shadow-lg d-flex align-items-center justify-content-between p-5">
-                                    <div class="ms-3 text-white">
-                                        <h6 class="mb-0">Ce mois</h6>
-                                        <p class="mb-2"><span id="t_month"></span> F CFA</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="bg-light rounded shadow-lg d-flex align-items-center justify-content-between p-5">
-                                    <div class="ms-3">
-                                        <h6 class="mb-0">Cette année</h6>
-                                        <p class="mb-2"><span id="t_year"></span> F CFA</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>    
-                    <!-- Vente Analyse -->
-                    <div class="container-fluid pt-4 px-4">
-                        <div class="row g-4">
-                            <h3>Prestation</h3>
-                            <div class="col-sm col-xl">
-                                <div class="bg-success rounded shadow-lg d-flex align-items-center justify-content-between p-5">
-                                    <div class="ms-3 text-white">
-                                        <h6 class="mb-0">Total Général</h6>
-                                        <p class="mb-2"><span id="p_total"></span> F CFA</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="container-fluid pt-4 px-4 mb-3">
-                        <div class="row g-4">
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="bg-primary rounded shadow-lg d-flex align-items-center justify-content-between p-5">
-                                    <div class="ms-3 text-white">
-                                        <h6 class="mb-0">Aujourd'hui</h6>
-                                        <p class="mb-2"><span id="p_today"></span> F CFA</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="bg-warning rounded shadow-lg d-flex align-items-center justify-content-between p-5">
-                                    <div class="ms-3 text-white">
-                                        <h6 class="mb-0">Cette semaine</h6>
-                                        <p class="mb-2"><span id="p_week"></span> F CFA</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="bg-danger rounded shadow-lg d-flex align-items-center justify-content-between p-5">
-                                    <div class="ms-3 text-white">
-                                        <h6 class="mb-0">Ce mois</h6>
-                                        <p class="mb-2"><span id="p_month"></span> F CFA</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="bg-light rounded shadow-lg d-flex align-items-center justify-content-between p-5">
-                                    <div class="ms-3">
-                                        <h6 class="mb-0">Cette année</h6>
-                                        <p class="mb-2"><span id="p_year"></span> F CFA</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </main>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GARAGE GARANGO PAUL</title>
+  <link rel="shortcut icon" type="image/png" href="assets/images/logos/ggp.ico" />
+  <link rel="stylesheet" href="assets/css/styles.min.css" />
+</head>
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+    <div class="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
+      <div class="d-flex align-items-center justify-content-center w-100">
+        <div class="row justify-content-center w-100">
+          <div class="col-md-8 col-lg-6 col-xxl-3">
+            <div class="card mb-0">
+              <div class="card-body">
+                <a href="" class="text-nowrap logo-img text-center d-block py-3 w-100">
+                  <h4>GARAGE GARANGO PAUL</h4>
+                  <h6>Page de Connexion</h6>
+                </a>
+                <!-- <p class="text-center">Your Social Campaigns</p> -->
+                <form method="POST">
+                  <div class="mb-3">
+                    <label for="Email1" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="Email1">
+                  </div>
+                  <div class="mb-4">
+                    <label for="Password1" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="Password1">
+                  </div>
+                  <div id="login_result"></div>
+                  <button type="button" id="login" class="btn btn-primary w-100 py-8 fs-4 mb-4">Sign In</button>
+                  <!-- <div class="d-flex align-items-center justify-content-center">
+                    <p class="fs-4 mb-0 fw-bold">New to SeoDash?</p>
+                    <a class="text-primary fw-bold ms-2" href="./authentication-register.html">Create an account</a>
+                  </div> -->
+                </form>
+              </div>
             </div>
+          </div>
         </div>
-        
-        <!-- JavaScript -->
-        <script src="assets/js/jquery-3.6.0.min.js"></script>
-        <script src="assets/js/script.js"></script>
-        <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="assets/font-awesome/js/all.min.js"></script>
-    </body>
+      </div>
+    </div>
+  </div>
+  <script src="assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/iconify-icon.min.js"></script>
+  <script src="assets/js/script.js"></script>
+</body>
 </html>

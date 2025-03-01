@@ -22,8 +22,43 @@ function getById($table, $idColumn, $id) {
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute(); return $stmt->fetch(PDO::FETCH_ASSOC);
 }
-// Start Gestion Vente
-function getTotalTransactions($startDate, $endDate) {
+// Start User
+function try_login($username) {
+    $database = dbConnect();
+    $stmt = $database->prepare("SELECT * FROM users WHERE username = :username");
+    $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+    $stmt->execute(); $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $user;
+}
+function AddUser($data) {
+    if (!is_array($data) || !isset($data['nom']) || !isset($data['prenom']) || !isset($data['username'])) {throw new InvalidArgumentException("Invalid data provided for addUser.");}
+    $database = dbConnect();
+    $stmt = $database->prepare("INSERT INTO users (nom, prenom, username, password) VALUES (:nom, :prenom, :username, :password)");
+    $stmt->bindParam(':nom', $data['nom'], PDO::PARAM_STR); $stmt->bindParam(':prenom', $data['prenom'], PDO::PARAM_STR);
+    $stmt->bindParam(':username', $data['username'], PDO::PARAM_STR);
+    $password = password_hash('1234', PASSWORD_DEFAULT); $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+    $stmt->execute(); $user = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+function UpdateUser($data){
+    $database = dbConnect();
+    // Préparation de la requête SQL
+    $sql = "UPDATE users SET nom = :nom, prenom = :prenom, username = :username";
+    if (isset($data['password'])) {  $sql .= ", password = :password"; }
+    $sql .= " WHERE id = :id";
+    //
+    $stmt = $database->prepare($sql);
+    $stmt->bindParam(':id', $data['id'], PDO::PARAM_INT); $stmt->bindParam(':nom', $data['nom'], PDO::PARAM_STR);
+    $stmt->bindParam(':prenom', $data['prenom'], PDO::PARAM_STR); $stmt->bindParam(':username', $data['username'], PDO::PARAM_STR);
+    if (isset($data['password'])) {
+        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+        $stmt->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
+    }
+    $stmt->execute();
+}
+function getUsersById($id) { return getById('users', 'id', $id); }
+function removeUsers($id) {  deleteRecord('users', 'id', $id); }
+// End User
+function getTotalTransactions($startDate, $endDate) { // Start Gestion Vente
     $database = dbConnect();
     $query = "SELECT SUM(total) AS total FROM Vente WHERE date_vente BETWEEN :startDate AND :endDate";
     $stmt = $database->prepare($query); $stmt->bindParam(':startDate', $startDate); $stmt->bindParam(':endDate', $endDate);
@@ -45,78 +80,72 @@ function getTransactionTotals() {
 function addVente($data) {
     $database = dbConnect();
     
-    $transactionId = $data['venteId'];
+    $VenteId = $data['venteId'];
     $date = date('Y-m-d'); $total = $data['total'];
     $remise = isset($data['remise']) && is_numeric($data['remise']) ? $data['remise'] : 0; // Remise par défaut à 0 si non envoyée
     $statuts = $data['statuts']; $items = json_decode($data['items'], true); // Décoder le JSON des éléments
     
     $database->beginTransaction(); // Début de la transaction
     try {
-        // Calculer le total après remise
-        $totalAvecRemise = $total - ($total * $remise / 100);
-
+        // Calculer le total avec remise
+        $totalAvecRemise = $total;
         // Insérer les données dans la table `Vente`
-        $queryFacture = "INSERT INTO Vente (date_vente, total, remise, statuts) 
-                         VALUES (:date_vente, :total, :remise, :statuts)";
+        $queryFacture = "INSERT INTO Vente (date_vente, total, remise, statuts) VALUES (:date_vente, :total, :remise, :statuts)";
         $stmtFacture = $database->prepare($queryFacture);
-        $stmtFacture->bindParam(':date_vente', $date);
-        $stmtFacture->bindParam(':total', $totalAvecRemise);
-        $stmtFacture->bindParam(':remise', $remise);
-        $stmtFacture->bindParam(':statuts', $statuts);
+        $stmtFacture->bindValue(':date_vente', $date); $stmtFacture->bindValue(':total', $totalAvecRemise);
+        $stmtFacture->bindValue(':remise', $remise); $stmtFacture->bindValue(':statuts', $statuts);
         $stmtFacture->execute();
-
         // Insérer les éléments de la facture dans la table `transaction_details`
-        $queryElementFacture = "INSERT INTO elementVente (vente, produit, pu, quantite, soustotal) 
-                                VALUES (:vente, :produit, :pu, :quantite, :soustotal)";
+        $queryElementFacture = "INSERT INTO elementVente (vente, produit, pu, quantite, soustotal) VALUES (:vente, :produit, :pu, :quantite, :soustotal)";
         $stmt = $database->prepare($queryElementFacture);
-
         // Mettre à jour les quantités des produits dans le stock
         $queryUpdateStock = "UPDATE Stock SET quantite = :quantite WHERE id_produit = :id_produit";
         $stmtUpdateStock = $database->prepare($queryUpdateStock);
-
         // Boucle pour traiter chaque élément de la facture
         foreach ($items as $element) {
             $produit = $element['produitId'];
             $pu = $element['produitPrix'];
             $quantite = $element['quantite'];
             $soustotal = $element['sousTotal'];
-
             // Ajouter à `transaction_details`
-            $stmt->bindParam(':vente', $transactionId);
-            $stmt->bindParam(':produit', $produit);
-            $stmt->bindParam(':pu', $pu);
-            $stmt->bindParam(':quantite', $quantite);
-            $stmt->bindParam(':soustotal', $soustotal);
+            $stmt->bindValue(':vente', $VenteId);
+            $stmt->bindValue(':produit', $produit);
+            $stmt->bindValue(':pu', $pu);
+            $stmt->bindValue(':quantite', $quantite);
+            $stmt->bindValue(':soustotal', $soustotal);
             $stmt->execute();
-
             // Réduire la quantité dans `Stock`
             $qty = getQtyById($produit);
             $quantiteF = $qty - $quantite;
-            $stmtUpdateStock->bindParam(':quantite', $quantiteF, PDO::PARAM_INT);
-            $stmtUpdateStock->bindParam(':id_produit', $produit, PDO::PARAM_INT);
+            $stmtUpdateStock->bindValue(':quantite', $quantiteF, PDO::PARAM_INT);
+            $stmtUpdateStock->bindValue(':id_produit', $produit, PDO::PARAM_INT);
             $stmtUpdateStock->execute();
         }
-
         $database->commit(); // Valider la transaction
     } catch (Exception $e) {
         $database->rollBack(); // Annuler la transaction en cas d'erreur
         throw $e; // Rejeter l'erreur pour un traitement ultérieur
     }
 }
+function getVenteById($id){ return getById('Vente', 'id', $id); }
+function getElementVenteById($id){
+    $database = dbConnect();
+    $query = "SELECT * FROM elementVente WHERE vente= :id";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->execute(); return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 // End Gestion Vente
 
 // Start Gestion Produits Et Stock
 // Produits Function
 function addProduit($data) {
-    if (!is_array($data) || !isset($data['designation']) || !isset($data['vehicule']) || !isset($data['pu'])) {throw new InvalidArgumentException("Invalid data provided for addProduit.");}
+    if (!is_array($data) || !isset($data['designation']) || !isset($data['pu'])) {throw new InvalidArgumentException("Invalid data provided for addProduit.");}
     $database = dbConnect();
-    $query = "INSERT INTO Produits (designation, vehicule, pu, description) VALUES (:designation, :vehicule, :pu, :description)";
+    $query = "INSERT INTO Produits (designation, pu, description) VALUES (:designation, :pu, :description)";
     $stmt = $database->prepare($query);
-    $stmt->bindValue(':designation', $data['designation'], PDO::PARAM_STR); 
-    $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
-    $stmt->bindValue(':pu', $data['pu'], PDO::PARAM_STR); 
-    $stmt->bindValue(':description', $data['description'], PDO::PARAM_STR);
-    $stmt->execute();
+    $stmt->bindValue(':designation', $data['designation'], PDO::PARAM_STR); $stmt->bindValue(':pu', $data['pu'], PDO::PARAM_STR); 
+    $stmt->bindValue(':description', $data['description'], PDO::PARAM_STR); $stmt->execute();
     $productId = $database->lastInsertId(); // Récupérer l'ID du produit inséré
     $stockQuery = "INSERT INTO Stock (id_produit, quantite) VALUES (:id_produit, :quantite)"; // Insérer une entrée dans la table Stock avec la quantité initialisée à 0
     $stockStmt = $database->prepare($stockQuery);
@@ -125,23 +154,28 @@ function addProduit($data) {
     $stockStmt->execute();}
 function updateProduits($data){
     $database = dbConnect();
-    $query = "UPDATE Produits SET designation=:designation, vehicule=:vehicule, pu=:pu, description=:description WHERE id = :id";
+    $query = "UPDATE Produits SET designation=:designation, pu=:pu, description=:description WHERE id = :id";
     $stmt = $database->prepare($query);
-    $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
-    $stmt->bindValue(':designation', $data['designation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
+    $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT); $stmt->bindValue(':designation', $data['designation'], PDO::PARAM_STR);
     $stmt->bindValue(':pu', $data['pu'], PDO::PARAM_STR); $stmt->bindValue(':description', $data['description'], PDO::PARAM_STR);
     $stmt->execute();}
-function removeProduits($id) { deleteRecord('Produits', 'id', $id); }
+function removeProduits($id) { 
+    deleteRecord('Produits', 'id', $id);
+    $database = dbConnect();
+    $stmt = $database->prepare("DELETE FROM Stock WHERE id_produit=:id_produit");
+    $stmt->bindParam(':id_produit', $id, PDO::PARAM_INT);
+    $stmt->execute();
+}
 function getProduits() { 
     $database = dbConnect();
     $stmt = $database->query("SELECT id, designation FROM Produits");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);}
 function getProducts() {
     $database = dbConnect();
-    $stmt = $database->query("
-        SELECT p.id, p.designation,p.pu , s.quantite FROM Produits p
+    $stmt = $database->prepare("SELECT p.id, p.designation, p.pu, s.quantite FROM Produits p
         LEFT JOIN Stock s ON p.id = s.id_produit WHERE s.quantite IS NOT NULL");
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);}
+    $stmt->execute(); return $stmt->fetchAll(PDO::FETCH_ASSOC);}
+function getProduitsById($id) { return getById('Produits', 'id', $id); }
 // Stocks Function
 function addStock($data) {
     if (!is_array($data) || !isset($data['id_produit']) || !isset($data['quantite'])) { throw new InvalidArgumentException("Invalid data provided for addStock.");}
@@ -172,110 +206,98 @@ function getQtyById($id) {
     $stmt->bindParam(':id_produit', $id, PDO::PARAM_INT); $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC); return $result['quantite'];}
 // End Gestion Produits Et Stock
-
 // Start Gestion Prestation
-// Prestation Mécanique Function
-function updatePM($data) {
+function addPrestation($data) {
+    if (!is_array($data) || !isset($data['designation']) || !isset($data['prix'])) {throw new InvalidArgumentException("Invalid data provided for addPrestation.");}
     $database = dbConnect();
-    $query = "UPDATE Mecaniques SET num_immatriculation=:num_immatriculation, vehicule=:vehicule, montant=:montant, proprietaire_contact=:proprietaire_contact, 
-        date_entree=:date_entree, date_sortie=:date_sortie, prestataire=:prestataire, observation=:observation WHERE id = :id";
+    $query = "INSERT INTO prestations (designation, prix, description) VALUES (:designation, :prix, :description)";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':designation', $data['designation'], PDO::PARAM_STR);
+    $stmt->bindValue(':prix', $data['prix'], PDO::PARAM_STR); 
+    $stmt->bindValue(':description', $data['description'], PDO::PARAM_STR);
+    $stmt->execute();}
+function updatePrestation($data){
+    $database = dbConnect();
+    $query = "UPDATE prestations SET designation= :designation, prix= :prix, description=:description WHERE id = :id";
     $stmt = $database->prepare($query);
     $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
-    $stmt->bindValue(':num_immatriculation', $data['num_immatriculation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
-    $stmt->bindValue(':montant', $data['montant'], PDO::PARAM_STR); $stmt->bindValue(':proprietaire_contact', $data['proprietaire_contact'], PDO::PARAM_STR);
-    $stmt->bindValue(':date_entree', $data['date_entree'], PDO::PARAM_STR); $stmt->bindValue(':date_sortie', $data['date_sortie'], PDO::PARAM_STR);
-    $stmt->bindValue(':prestataire', $data['prestataire'], PDO::PARAM_STR); $stmt->bindValue(':observation', $data['observation'], PDO::PARAM_STR);
-    $stmt->execute();}
-    function removePM($id) { deleteRecord('Mecaniques', 'id', $id); }
-    function addPM($data) {
-        if (!is_array($data) || !isset($data['num_immatriculation']) || !isset($data['vehicule']) || !isset($data['montant']) || !isset($data['proprietaire_contact']) || !isset($data['date_entree'])
-            || !isset($data['date_sortie']) || !isset($data['prestataire']) || !isset($data['observation'])) {throw new InvalidArgumentException("Invalid data provided for addPrestionM.");}
-        $database = dbConnect();
-        $query = "INSERT INTO Mecaniques (num_immatriculation, vehicule, montant, proprietaire_contact, date_entree, date_sortie, prestataire, observation) 
-            VALUES (:num_immatriculation, :vehicule, :montant, :proprietaire_contact, :date_entree, :date_sortie, :prestataire, :observation)";
-        $stmt = $database->prepare($query);
-        $stmt->bindValue(':num_immatriculation', $data['num_immatriculation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
-        $stmt->bindValue(':montant', $data['montant'], PDO::PARAM_STR); $stmt->bindValue(':proprietaire_contact', $data['proprietaire_contact'], PDO::PARAM_STR);
-        $stmt->bindValue(':date_entree', $data['date_entree'], PDO::PARAM_STR); $stmt->bindValue(':date_sortie', $data['date_sortie'], PDO::PARAM_STR);
-        $stmt->bindValue(':prestataire', $data['prestataire'], PDO::PARAM_STR); $stmt->bindValue(':observation', $data['observation'], PDO::PARAM_STR);
-        $stmt->execute();}
-// Prestation Tractage Function
-function updatePT($data) {
+    $stmt->bindValue(':designation', $data['designation'], PDO::PARAM_STR); $stmt->bindValue(':prix', $data['prix'], PDO::PARAM_STR);
+    $stmt->bindValue(':description', $data['description'], PDO::PARAM_STR); $stmt->execute();}
+function removePrestation($id) { deleteRecord('prestations', 'id', $id); }
+function getPrestations(){
     $database = dbConnect();
-    $query = "UPDATE Tractage SET num_immatriculation=:num_immatriculation, vehicule=:vehicule, montant=:montant, proprietaire_contact=:proprietaire_contact, 
-        date_entree=:date_entree, lieu_kilometrage=:lieu_kilometrage, prestataire=:prestataire, observation=:observation WHERE id = :id";
-    $stmt = $database->prepare($query);
-    $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
-    $stmt->bindValue(':num_immatriculation', $data['num_immatriculation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
-    $stmt->bindValue(':montant', $data['montant'], PDO::PARAM_STR); $stmt->bindValue(':proprietaire_contact', $data['proprietaire_contact'], PDO::PARAM_STR);
-    $stmt->bindValue(':date_entree', $data['date_entree'], PDO::PARAM_STR); $stmt->bindValue(':lieu_kilometrage', $data['lieu_kilometrage'], PDO::PARAM_STR);
-    $stmt->bindValue(':prestataire', $data['prestataire'], PDO::PARAM_STR); $stmt->bindValue(':observation', $data['observation'], PDO::PARAM_STR);
-    $stmt->execute();}
-    function removePT($id) { deleteRecord('Tractage', 'id', $id); }
-    function addPT($data) {
-        if (!is_array($data) || !isset($data['num_immatriculation']) || !isset($data['vehicule']) || !isset($data['montant']) || !isset($data['proprietaire_contact']) || !isset($data['date_entree'])
-            || !isset($data['lieu_kilometrage']) || !isset($data['prestataire']) || !isset($data['observation'])) {throw new InvalidArgumentException("Invalid data provided for addPrestionT.");}
-        $database = dbConnect();
-        $query = "INSERT INTO Tractage (num_immatriculation, vehicule, montant, proprietaire_contact, date_entree, lieu_kilometrage, prestataire, observation) 
-            VALUES (:num_immatriculation, :vehicule, :montant, :proprietaire_contact, :date_entree, :lieu_kilometrage, :prestataire, :observation)";
-        $stmt = $database->prepare($query);
-        $stmt->bindValue(':num_immatriculation', $data['num_immatriculation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
-        $stmt->bindValue(':montant', $data['montant'], PDO::PARAM_STR); $stmt->bindValue(':proprietaire_contact', $data['proprietaire_contact'], PDO::PARAM_STR);
-        $stmt->bindValue(':date_entree', $data['date_entree'], PDO::PARAM_STR); $stmt->bindValue(':lieu_kilometrage', $data['lieu_kilometrage'], PDO::PARAM_STR);
-        $stmt->bindValue(':prestataire', $data['prestataire'], PDO::PARAM_STR); $stmt->bindValue(':observation', $data['observation'], PDO::PARAM_STR);
-        $stmt->execute();}
-// Prestation Autre Function
-function updatePA($data) {
+    $stmt = $database->prepare("SELECT * FROM prestations");
+    $stmt->execute(); return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+function getIdPrestation() {
     $database = dbConnect();
-    $query = "UPDATE AutreP SET num_immatriculation=:num_immatriculation, vehicule=:vehicule, contact_proprietaire=:contact_proprietaire, type_prestation=:type_prestation,
-        montant=:montant, date_entree=:date_entree, prestataire=:prestataire, observation=:observation WHERE id = :id";
-    $stmt = $database->prepare($query);
-    $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
-    $stmt->bindValue(':num_immatriculation', $data['num_immatriculation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
-    $stmt->bindValue(':montant', $data['montant'], PDO::PARAM_STR); $stmt->bindValue(':contact_proprietaire', $data['contact_proprietaire'], PDO::PARAM_STR);
-    $stmt->bindValue(':date_entree', $data['date_entree'], PDO::PARAM_STR); $stmt->bindValue(':type_prestation', $data['type_prestation'], PDO::PARAM_STR);
-    $stmt->bindValue(':prestataire', $data['prestataire'], PDO::PARAM_STR); $stmt->bindValue(':observation', $data['observation'], PDO::PARAM_STR);
-    $stmt->execute();}
-    function removePA($id) { deleteRecord('AutreP', 'id', $id); }
-    function addPA($data) {
-        if (!is_array($data) || !isset($data['num_immatriculation']) || !isset($data['vehicule']) || !isset($data['montant']) || !isset($data['contact_proprietaire']) || !isset($data['date_entree'])
-            || !isset($data['type_prestation']) || !isset($data['prestataire']) || !isset($data['observation'])) {throw new InvalidArgumentException("Invalid data provided for addPrestionT.");}
-        $database = dbConnect();
-        $query = "INSERT INTO AutreP (num_immatriculation, vehicule, contact_proprietaire, type_prestation, montant, date_entree, prestataire, observation) 
-            VALUES (:num_immatriculation, :vehicule, :contact_proprietaire, :type_prestation, :montant, :date_entree, :prestataire, :observation)";
-        $stmt = $database->prepare($query);
-        $stmt->bindValue(':num_immatriculation', $data['num_immatriculation'], PDO::PARAM_STR); $stmt->bindValue(':vehicule', $data['vehicule'], PDO::PARAM_STR);
-        $stmt->bindValue(':montant', $data['montant'], PDO::PARAM_STR); $stmt->bindValue(':contact_proprietaire', $data['contact_proprietaire'], PDO::PARAM_STR);
-        $stmt->bindValue(':date_entree', $data['date_entree'], PDO::PARAM_STR); $stmt->bindValue(':type_prestation', $data['type_prestation'], PDO::PARAM_STR);
-        $stmt->bindValue(':prestataire', $data['prestataire'], PDO::PARAM_STR); $stmt->bindValue(':observation', $data['observation'], PDO::PARAM_STR);
-        $stmt->execute();}
-    function getTotalFromTables($startDate, $endDate) {
-        $database = dbConnect();
-        $queries = [ "SELECT SUM(montant) AS total FROM Mecaniques WHERE date_entree BETWEEN :startDate AND :endDate",
-            "SELECT SUM(montant) AS total FROM Tractage WHERE date_entree BETWEEN :startDate AND :endDate",
-            "SELECT SUM(montant) AS total FROM AutreP WHERE date_entree BETWEEN :startDate AND :endDate"];
-        $total = 0;
-        foreach ($queries as $query) {
-            $stmt = $database->prepare($query); $stmt->bindParam(':startDate', $startDate);
-            $stmt->bindParam(':endDate', $endDate); $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC); $total += $result['total'] ?? 0;}
-        return $total;}
-    function getPrestationTotals() {
-        $today = date('Y-m-d'); $startOfWeek = date('Y-m-d', strtotime('monday this week'));
-        $startOfMonth = date('Y-m-01'); $startOfYear = date('Y-01-01');
-        $totals = [
-            'today' => getTotalFromTables($today, $today),
-            'week' => getTotalFromTables($startOfWeek, $today),
-            'month' => getTotalFromTables($startOfMonth, $today),
-            'year' => getTotalFromTables($startOfYear, $today),
-            'total' => getTotalFromTables('1970-01-01', $today),
-        ];
-        return $totals;}
-    function getPrestataire(){
-        $database = dbConnect(); $query = "SELECT id, nom, prenom FROM Prestataire";
-        $stmt = $database->prepare($query); $stmt->execute(); return $stmt->fetchAll(PDO::FETCH_ASSOC);}
-// End Gestion Prestation
+    $query = "SELECT MAX(id) AS lastId FROM prestation";
+    $stmt = $database->prepare($query); $stmt->execute();
+    $data = $stmt->fetch(PDO::FETCH_ASSOC); return $data['lastId'];}
+function add_Prestation($data) {
+    $database = dbConnect();
 
+    $PrestationId = $data['venteId']; $prestataire = $data['prestataire'];
+    $date = date('Y-m-d'); $total = $data['total'];
+    $remise = isset($data['remise']) && is_numeric($data['remise']) ? $data['remise'] : 0; // Remise par défaut à 0 si non envoyée
+    $items = json_decode($data['items'], true); // Décoder le JSON des éléments
+    $database->beginTransaction(); // Début de la transaction
+    try {
+        // Calculer le total avec remise
+        $totalAvecRemise = $total;
+        // Insérer les données dans la table `Vente`
+        $queryPrestation = "INSERT INTO prestation (id_prestataire, total, remise, date) VALUES (:id_prestataire, :total, :remise, :date)";
+        $stmtPrestation = $database->prepare($queryPrestation);
+        $stmtPrestation->bindParam(':id_prestataire', $prestataire); $stmtPrestation->bindParam(':total', $totalAvecRemise);
+        $stmtPrestation->bindParam(':remise', $remise); $stmtPrestation->bindParam(':date', $date);
+        $stmtPrestation->execute();
+        // Insérer les éléments de la facture dans la table `transaction_details`
+        $queryElementPrestation = "INSERT INTO element_prestation (id_prestation, element_prestations, prix) VALUES (:id_prestation, :element_prestations, :prix)";
+        $stmt = $database->prepare($queryElementPrestation);
+        // Boucle pour traiter chaque élément de la facture
+        var_dump($items);
+        foreach ($items as $element) {
+            $produit = $element['produitId'];
+            $pu = $element['produitPrix'];
+            // Ajouter à `transaction_details`
+            $stmt->bindValue(':id_prestation', $PrestationId);
+            $stmt->bindValue(':element_prestations', $produit);
+            $stmt->bindValue(':prix', $pu);
+            $stmt->execute();
+        }
+        $database->commit(); // Valider la transaction
+    } catch (Exception $e) {
+        $database->rollBack(); // Annuler la transaction en cas d'erreur
+        throw $e; // Rejeter l'erreur pour un traitement ultérieur
+    }
+}
+function getTotalFromTables($startDate, $endDate) {
+    $database = dbConnect();
+    $query = "SELECT SUM(total) AS total FROM prestation WHERE date BETWEEN :startDate AND :endDate";
+    $stmt = $database->prepare($query); $stmt->bindParam(':startDate', $startDate); $stmt->bindParam(':endDate', $endDate);
+    $stmt->execute(); $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'] ? $result['total'] : 0;}
+function getPrestationTotals() {
+    $today = date('Y-m-d'); $startOfWeek = date('Y-m-d', strtotime('monday this week'));
+    $startOfMonth = date('Y-m-01'); $startOfYear = date('Y-01-01');
+    $totals = [
+        'today' => getTotalFromTables($today, $today),
+        'week' => getTotalFromTables($startOfWeek, $today),
+        'month' => getTotalFromTables($startOfMonth, $today),
+        'year' => getTotalFromTables($startOfYear, $today),
+        'total' => getTotalFromTables('1970-01-01', $today),
+    ];
+    return $totals;}
+function getElementPrestationById($id){
+    $database = dbConnect();
+    $query = "SELECT * FROM element_prestation WHERE id_prestation= :id";
+    $stmt = $database->prepare($query);
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->execute(); return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+function getPrestationsById($id){ return getById('prestations', 'id', $id);}
+function getPrestationById($id){ return getById('prestation', 'id', $id);}
+// End Gestion Prestation
 // Start Gestion Prestataire
 function addPrestataire($data) {
     if (!is_array($data) || !isset($data['nom']) || !isset($data['prenom']) || !isset($data['date_naissance']) || !isset($data['telephone']) || !isset($data['poste'])) {throw new InvalidArgumentException("Invalid data provided for addPrestaire.");}
@@ -296,6 +318,10 @@ function updatePrestataire($data){
     $stmt->bindValue(':telephone2', $data['telephone2'], PDO::PARAM_STR); $stmt->bindValue(':poste', $data['poste'], PDO::PARAM_STR);
     $stmt->execute();}
 function removePrestataire($id) { deleteRecord('prestataire', 'id', $id); }
+function getPrestataire() {
+    $database = dbConnect();
+    $stmt = $database->prepare("SELECT id, nom, prenom FROM prestataire");
+    $stmt->execute(); return $stmt->fetchAll(PDO::FETCH_ASSOC);}
 // End Gestion Prestataire
 
 // Start Gestion Vehicule

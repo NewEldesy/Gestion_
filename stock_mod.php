@@ -12,16 +12,10 @@ if (!empty($mod)) {
 <form method="POST">
     <input type="hidden" value="<?=$mod['id']?>" id="stock_id">
     <div class="mb-3">
+        <input type="hidden" value="<?=$mod['id_produit']?>" id="stock_produit">
         <label for="produit" class="form-label">Produits</label>
-        <select id="stock_produit" name="produit" class="form-select">
-            <option value="">Sélectionnez un Produit</option>
-            <?php 
-                $produits = getProduits();
-                foreach($produits as $produit) {
-            ?>
-            <option value="<?=$produit['id'];?>" <?=$produit['id'] == $mod['id_produit'] ? 'selected' : '';?>><?=$produit['designation'];?></option>
-            <?php } ?>
-        </select>
+        <?php $id_prod = $mod['id_produit']; $produit = getProduitsById($id_prod);?>
+        <input type="text" class="form-control" value="<?=$produit['designation']?>" name="produit" required>
     </div>
     <div class="mb-3">
         <label for="quantite" class="form-label">Quantité</label>

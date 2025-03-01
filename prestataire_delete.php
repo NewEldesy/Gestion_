@@ -1,13 +1,13 @@
 <?php
 include("model.php");
 
-if(isset($_GET['id']) && !empty($_GET['id'])) {
-    $id = $_GET['id'];
+if(isset($_POST['id']) && !empty($_POST['id'])) {
+    $id = $_POST['id'];
 
     if(!removePrestataire($id)) {
-        echo 'Prestataire supprimer avec succès.';
+        echo '<div class="alert alert-success" role="alert">Prestataire supprimer avec succès !!!</div>';
     } else {
-        echo 'Échec de la suppression du prestataire.';
+        echo '<div class="alert alert-danger" role="alert">Échec de la suppression du prestataire !!!</div>';
     }
 }
 ?>
